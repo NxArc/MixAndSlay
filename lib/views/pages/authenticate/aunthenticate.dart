@@ -11,11 +11,12 @@ class Auth {
     required String email,
     required String password,
   }) async {
-    await _firebaseAuth.createUserWithEmailAndPassword(
+    await _firebaseAuth.signInWithEmailAndPassword(  // Changed from createUserWithEmailAndPassword
       email: email,
       password: password,
     );
   }
+
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
   }

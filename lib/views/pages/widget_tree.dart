@@ -1,9 +1,10 @@
-import 'package:fasionrecommender/views/pages/authenticate/aunthenticate.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fasionrecommender/views/pages/home/homepage.dart';
 import 'package:fasionrecommender/views/pages/authenticate/login_page.dart';
 import 'package:fasionrecommender/views/pages/onboarding_page.dart';
+import 'package:fasionrecommender/views/pages/authenticate/aunthenticate.dart'; // auth wrapper
+import 'package:firebase_auth/firebase_auth.dart';
 
 class WidgetTree extends StatefulWidget {
   const WidgetTree({super.key});
@@ -13,41 +14,48 @@ class WidgetTree extends StatefulWidget {
 }
 
 class _WidgetTreeState extends State<WidgetTree> {
-  Future<bool> _checkOnboardingStatus() async {
+  Future<bool> _checkOnboardingStatus(String uid) async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('hasSeenOnboarding') ?? false;
+    return prefs.getBool('hasSeenOnboarding_$uid') ?? false;
   }
 
-  Future<void> _completeOnboarding() async {
+  Future<void> _completeOnboarding(String uid) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('hasSeenOnboarding', true);
-    setState(() {}); // Refresh the widget tree
+    await prefs.setBool('hasSeenOnboarding_$uid', true);
+    setState(() {}); // Rebuild with updated onboarding status
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-      
-      future: _checkOnboardingStatus(),
+    return StreamBuilder<User?>(
+      stream: Auth().authStateChanges,
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+        final user = snapshot.data;
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        if (!snapshot.data!) {
-          return OnboardingPage(onFinish: _completeOnboarding);
+
+        if (user == null) {
+          return const LoginPage(); // Not signed in yet
         }
 
-
-        return StreamBuilder(
-          stream: Auth().authStateChanges,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Home();
-            } else {
-              return const LoginPage();
+        return FutureBuilder<bool>(
+          future: _checkOnboardingStatus(user.uid),
+          builder: (context, onboardingSnapshot) {
+            if (!onboardingSnapshot.hasData) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
             }
+            if (!onboardingSnapshot.data!) {
+              return OnboardingPage(
+                onFinish: () => _completeOnboarding(user.uid),
+              );
+            }
+            return Home(); // Signed in and onboarding complete
           },
         );
       },

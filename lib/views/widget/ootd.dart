@@ -11,7 +11,6 @@ class Ootd extends StatefulWidget {
 
 class _OotdState extends State<Ootd> {
   String location = 'Batangas City';
-  String date = 'Today, Jan 1';
   int temp = 38;
   String imageDirect = 'assets/images/onboard-bg.jpg';
   DateTime now = DateTime.now();
@@ -21,13 +20,13 @@ class _OotdState extends State<Ootd> {
     // Get the screen size for responsive design
     final screenSize = MediaQuery.of(context).size;
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(5),
       child: ValueListenableBuilder(
         valueListenable: isDarkModeNotifier,
         builder: (context, value, child) {
           return Container(
             decoration: BoxDecoration(
-              color: value ? Colors.white : Colors.white70,
+              color: value ? Colors.black38 : Colors.white70,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
@@ -57,6 +56,7 @@ class _OotdState extends State<Ootd> {
                             style: TextStyle(
                               fontSize: screenSize.width * 0.045, // Responsive font size
                               fontWeight: FontWeight.w500,
+                              color: value? Colors.white : Colors.black
                             ),
                           ),
                           SizedBox(height: screenSize.height * 0.01), // Responsive space
@@ -65,7 +65,7 @@ class _OotdState extends State<Ootd> {
                               Icon(
                                 Icons.location_on,
                                 size: screenSize.width * 0.05, // Responsive icon size
-                                color: Colors.black54,
+                                color: value? Colors.grey : Colors.black
                               ),
                               SizedBox(width: 4),
                               Text(

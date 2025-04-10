@@ -1,9 +1,12 @@
+import 'package:fasionrecommender/views/pages/authenticate/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fasionrecommender/controllers/onboarding_page_controller.dart';
+import 'package:fasionrecommender/data/responsive_utils.dart'; // Import the utility file
 
 class OnboardingPage extends StatefulWidget {
   final VoidCallback onFinish;
   const OnboardingPage({super.key, required this.onFinish});
+
   @override
   State<OnboardingPage> createState() => _OnboardingPageState();
 }
@@ -27,17 +30,26 @@ class _OnboardingPageState extends State<OnboardingPage> {
   void _updateState(int newIndex, int newCounter) {
     setState(() {
       _currentIndex = newIndex;
-      controller.counter = newCounter;
     });
+  }
+
+  void _navigateToSignIn() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()), // Replace with SignInPage
+    );
+    widget.onFinish();
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isTablet = size.width >= 600;
-    double titleSize = isTablet ? 48 : 36;
-    double subtitleSize = isTablet ? 20 : 16;
-    double buttonPadding = isTablet ? 32 : 16;
+
+    // Use responsive utils for sizing
+    double titleSize = ResponsiveUtils.titleSize(context, isTablet: isTablet);
+    double subtitleSize = ResponsiveUtils.subtitleSize(context, isTablet: isTablet);
+    double buttonPadding = ResponsiveUtils.buttonPadding(context, isTablet: isTablet);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -47,15 +59,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
         backgroundColor: Colors.transparent,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed:
-              _currentIndex == 0
-                  ? null
-                  : () => controller.goBack(
-                    context: context,
-                    currentIndex: _currentIndex,
+          onPressed: controller.isFirstPage()
+              ? null
+              : () {
+                  if (controller.moveToPreviousPage(
                     totalPages: titles.length,
                     updateState: _updateState,
-                  ),
+                  )) {
+                    // Successfully moved back, no additional navigation needed
+                  } else {
+                    Navigator.pop(context); // Handle edge case (shouldn't occur)
+                  }
+                },
         ),
       ),
       body: Stack(
@@ -98,14 +113,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                       const SizedBox(height: 32),
                       ElevatedButton(
-                        onPressed:
-                            () => controller.nextText(
-                              context: context,
-                              currentIndex: _currentIndex,
-                              totalPages: titles.length,
-                              onFinish: widget.onFinish,
-                              updateState: _updateState,
-                            ),
+                        onPressed: () {
+                          if (controller.moveToNextPage(
+                            totalPages: titles.length,
+                            updateState: _updateState,
+                          )) {
+                            // Successfully moved to next page
+                          } else {
+                            _navigateToSignIn(); // Reached the end, go to SignIn
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(
                             horizontal: buttonPadding * 5,
