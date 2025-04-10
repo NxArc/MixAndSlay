@@ -160,6 +160,8 @@ class _HomeState extends State<Home> {
                   child: OutfitGrid(),
                 ),
               ),
+
+
               SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -169,6 +171,8 @@ class _HomeState extends State<Home> {
                   child: Center(child: Text('Formal content')),
                 ),
               ),
+
+
               SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -178,6 +182,8 @@ class _HomeState extends State<Home> {
                   child: Center(child: Text('Sporty content')),
                 ),
               ),
+
+
               SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -187,6 +193,8 @@ class _HomeState extends State<Home> {
                   child: Center(child: Text('Summer content')),
                 ),
               ),
+
+
               SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -196,6 +204,8 @@ class _HomeState extends State<Home> {
                   child: Center(child: Text('Winter content')),
                 ),
               ),
+
+
               SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -205,6 +215,8 @@ class _HomeState extends State<Home> {
                   child: Center(child: Text('Party content')),
                 ),
               ),
+
+              
             ],
           ),
         ),
