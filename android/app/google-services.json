@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "819990231025",
+    "project_id": "mixandslay",
+    "storage_bucket": "mixandslay.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:819990231025:android:829ca68e684189831ab650",
+        "android_client_info": {
+          "package_name": "com.example.mixnslay"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaepYYK0nK1rFKeuxYTP7BZgm5rFihWFw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
