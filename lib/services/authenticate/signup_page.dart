@@ -1,6 +1,6 @@
 import 'package:fasionrecommender/controllers/signup_page_controller.dart';
 import 'package:fasionrecommender/data/notifiers.dart';
-import 'package:fasionrecommender/views/pages/authenticate/login_page.dart';
+import 'package:fasionrecommender/services/authenticate/login_page.dart';
 import 'package:fasionrecommender/views/widget/appbar.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart';
 import 'package:flutter/material.dart';

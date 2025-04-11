@@ -1,6 +1,6 @@
 import 'package:fasionrecommender/controllers/homepage_controller.dart';
 import 'package:fasionrecommender/data/notifiers.dart';
-import 'package:fasionrecommender/views/pages/authenticate/login_page.dart';
+import 'package:fasionrecommender/services/authenticate/login_page.dart';
 import 'package:fasionrecommender/views/widget/category_grid.dart';
 import 'package:fasionrecommender/views/widget/ootd.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart';

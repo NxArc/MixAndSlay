@@ -9,21 +9,12 @@ class OutfitGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     // Define a list of image paths (updated to include four images)
     List<String> imagePaths = [
-      'assets/images/app_logo.png',
       'assets/images/onboard-bg.jpg',
       'assets/images/S2 EP7 4K (23).jpg', // Replace with your actual image path
-      'assets/images/004588.png',
-      'assets/images/004588.png',
-      'assets/images/004588.png',
       'assets/images/f72c10ba81298872a28a67723e1da6ce.jpg',
       'assets/images/Godrick.jpg',
       'assets/images/004588.png',
-      'assets/images/f72c10ba81298872a28a67723e1da6ce.jpg',
-      'assets/images/004588.png',
-      'assets/images/004588.png',
-      'assets/images/004588.png',
-      'assets/images/004588.png',
-      'assets/images/f72c10ba81298872a28a67723e1da6ce.jpg'
+      'assets/images/Blaidd.jpg'
     ];
 
     return MasonryGridView.builder(

@@ -73,5 +73,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'mixandslay.firebasestorage.app',
     measurementId: 'G-ZE2NKQ2PFW',
   );
-
 }

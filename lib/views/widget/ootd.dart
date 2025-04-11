@@ -4,17 +4,14 @@ import 'package:intl/intl.dart';
 
 class Ootd extends StatefulWidget {
   const Ootd({super.key});
-
   @override
   State<Ootd> createState() => _OotdState();
 }
-
 class _OotdState extends State<Ootd> {
   String location = 'Batangas City';
   int temp = 38;
   String imageDirect = 'assets/images/onboard-bg.jpg';
   DateTime now = DateTime.now();
-
   @override
   Widget build(BuildContext context) {
     // Get the screen size for responsive design
@@ -72,7 +69,7 @@ class _OotdState extends State<Ootd> {
                                 location,
                                 style: TextStyle(
                                   fontSize: screenSize.width * 0.045, // Responsive text size
-                                  color: Colors.black87,
+                                  color: value? Colors.black87 : Colors.white,
                                 ),
                               ),
                             ],
