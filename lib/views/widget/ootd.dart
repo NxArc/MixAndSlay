@@ -1,20 +1,48 @@
+import 'package:fasionrecommender/services/openweathermap.dart';
 import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:geocoding/geocoding.dart';
+
 
 class Ootd extends StatefulWidget {
   const Ootd({super.key});
   @override
   State<Ootd> createState() => _OotdState();
 }
+
 class _OotdState extends State<Ootd> {
-  String location = 'Batangas City';
-  int temp = 38;
+  String location = 'Loading...';
+  String temp = '--';
   String imageDirect = 'assets/images/onboard-bg.jpg';
   DateTime now = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchWeatherAndLocation();
+  }
+
+  Future<void> _fetchWeatherAndLocation() async {
+    try {
+      final position = await getCurrentLocation(); // uses your utility method
+      final fetchedTemp = await getTemperature(position.latitude, position.longitude); // uses your utility method
+
+      final placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+      final place = placemarks.first;
+      final loc = '${place.locality}, ${place.country}';
+
+      setState(() {
+        location = loc;
+        temp = fetchedTemp;
+      });
+    } catch (e) {
+      print('Error getting location or weather: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Get the screen size for responsive design
     final screenSize = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.all(5),
@@ -34,16 +62,15 @@ class _OotdState extends State<Ootd> {
               ],
             ),
             child: SizedBox(
-              height: screenSize.height * 0.3, // Adjust height based on screen size
+              height: screenSize.height * 0.3,
               child: Row(
                 children: [
-                  // Left side
                   Expanded(
                     flex: 3,
                     child: Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: screenSize.width * 0.05, // Responsive horizontal padding
-                        vertical: screenSize.height * 0.03, // Responsive vertical padding
+                        horizontal: screenSize.width * 0.05,
+                        vertical: screenSize.height * 0.03,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,25 +78,25 @@ class _OotdState extends State<Ootd> {
                           Text(
                             'Today, ${DateFormat('MMM').format(now)} ${now.day}',
                             style: TextStyle(
-                              fontSize: screenSize.width * 0.045, // Responsive font size
+                              fontSize: screenSize.width * 0.045,
                               fontWeight: FontWeight.w500,
-                              color: value? Colors.white : Colors.black
+                              color: value ? Colors.white : Colors.black,
                             ),
                           ),
-                          SizedBox(height: screenSize.height * 0.01), // Responsive space
+                          SizedBox(height: screenSize.height * 0.01),
                           Row(
                             children: [
                               Icon(
                                 Icons.location_on,
-                                size: screenSize.width * 0.05, // Responsive icon size
-                                color: value? Colors.grey : Colors.black
+                                size: screenSize.width * 0.04,
+                                color: value ? Colors.grey : Colors.black,
                               ),
                               SizedBox(width: 4),
                               Text(
                                 location,
                                 style: TextStyle(
-                                  fontSize: screenSize.width * 0.045, // Responsive text size
-                                  color: value? Colors.black87 : Colors.white,
+                                  fontSize: screenSize.width * 0.045,
+                                  color: value ? Colors.grey : Colors.black,
                                 ),
                               ),
                             ],
@@ -84,33 +111,31 @@ class _OotdState extends State<Ootd> {
                               Text(
                                 '$temp°C',
                                 style: TextStyle(
-                                  fontSize: screenSize.width * 0.06, // Responsive font size
+                                  fontSize: screenSize.width * 0.06,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               SizedBox(width: 8),
-                              Icon(Icons.wb_sunny, color: Colors.orange, size: screenSize.width * 0.06), // Responsive icon
+                              Icon(Icons.wb_sunny, color: Colors.orange, size: screenSize.width * 0.06),
                             ],
                           ),
                         ],
                       ),
                     ),
                   ),
-
-                  // Right side: outfit image
                   Expanded(
                     flex: 2,
                     child: Padding(
                       padding: EdgeInsets.only(
-                        top: screenSize.height * 0.02, // Responsive padding
-                        right: screenSize.width * 0.05, // Responsive padding
-                        bottom: screenSize.height * 0.02, // Responsive padding
+                        top: screenSize.height * 0.02,
+                        right: screenSize.width * 0.05,
+                        bottom: screenSize.height * 0.02,
                       ),
                       child: Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20), // Adjust the radius for rounded corners
+                          borderRadius: BorderRadius.circular(20),
                           image: DecorationImage(
-                            image: AssetImage(imageDirect), // Use the uploaded image
+                            image: AssetImage(imageDirect),
                             fit: BoxFit.contain,
                           ),
                         ),
