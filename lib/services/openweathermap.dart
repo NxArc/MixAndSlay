@@ -1,16 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 // Assuming you have an Auth service file with Auth().currentUser and signOut() methods.
-import 'package:fasionrecommender/services/authenticate/aunthenticate.dart';
-
-final User? user = Auth().currentUser;
-
-Future<void> signOut() async {
-  await Auth().signOut();
-}
+// Get the current user from Supabase
+final user = Supabase.instance.client.auth.currentUser;
 
 // Request location permission and get current position
 Future<Position> getCurrentLocation() async {
@@ -33,6 +27,7 @@ Future<Position> getCurrentLocation() async {
 
   return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 }
+
 // Fetch temperature using OpenWeatherMap API
 Future<String> getTemperature(double latitude, double longitude) async {
   final String apiKey = '580980c95268fc1878fa6db4455c3d40'; // Replace with your real API key

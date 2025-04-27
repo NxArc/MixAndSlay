@@ -2,16 +2,26 @@ import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:fasionrecommender/services/storage/storage.dart';
 import 'package:fasionrecommender/views/pages/widget_tree.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:provider/provider.dart'; // Import firebase_core
+import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
-  // Ensure Flutter bindings are initialized before Firebase
+Future<void> main() async {
+  // Ensure Flutter bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
-  // Run the app with Firebase initialization
+
+  // Initialize Supabase
+  await Supabase.initialize(
+    url: 'https://dqderqwpilsitwnbvjhj.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxZGVycXdwaWxzaXR3bmJ2amhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU3MzY1MzEsImV4cCI6MjA2MTMxMjUzMX0.JVLsiuyq2aExJFpRnGqfeuIBPcCeZgqjXAjF2ZdmLwU',
+  );
+
+  // Create the SupabaseClient instance
+  final supabaseClient = Supabase.instance.client;
+
+  // Run the app
   runApp(
     ChangeNotifierProvider(
-      create: (context) => StorageService(),
+      create: (context) => StorageService(supabaseClient),
       child: const MyApp(),
     ),
   );
@@ -25,54 +35,20 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  // Add a Future to track Firebase initialization
-  late Future<void> _initializeFirebase;
-  @override
-  void initState() {
-    super.initState();
-    // Initialize Firebase
-    _initializeFirebase = Firebase.initializeApp();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      // Wait for Firebase to initialize
-      future: _initializeFirebase,
-      builder: (context, snapshot) {
-        // Check for errors during initialization
-        if (snapshot.hasError) {
-          return const MaterialApp(
-            home: Scaffold(
-              body: Center(child: Text('Error initializing Firebase')),
+    return ValueListenableBuilder(
+      valueListenable: isDarkModeNotifier,
+      builder: (context, isDarkMode, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.teal,
+              brightness: isDarkMode ? Brightness.dark : Brightness.light,
             ),
-          );
-        }
-
-        // If Firebase is still initializing, show a loading screen
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const MaterialApp(
-            home: Scaffold(body: Center(child: CircularProgressIndicator())),
-          );
-        }
-        // Once Firebase is initialized, proceed with the app
-        return ValueListenableBuilder(
-          valueListenable: isDarkModeNotifier,
-          builder: (context, isDarkMode, child) {
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              theme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(
-                  seedColor: Colors.teal,
-                  brightness:
-                      isDarkMode
-                          ? Brightness.dark
-                          : Brightness.light, // Fixed the brightness logic
-                ),
-              ),
-              home: const WidgetTree(),
-            );
-          },
+          ),
+          home: const WidgetTree(),
         );
       },
     );

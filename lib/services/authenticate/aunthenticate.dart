@@ -1,23 +1,42 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Auth {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final SupabaseClient _supabase = Supabase.instance.client;
 
-  User? get currentUser => _firebaseAuth.currentUser;
+  // Supabase doesn't have a direct `currentUser`, but you can get it like this
+  User? get currentUser => _supabase.auth.currentUser;
 
-  Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
+  // Supabase auth state stream
+  Stream<AuthState> get authStateChanges => _supabase.auth.onAuthStateChange;
 
   Future<void> signInwithEmailAndPassword({
     required String email,
     required String password,
   }) async {
-    await _firebaseAuth.signInWithEmailAndPassword(  // Changed from createUserWithEmailAndPassword
-      email: email,
-      password: password,
-    );
+    try {
+      final response = await _supabase.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+      if (response.user == null) {
+        throw response.session == null
+            ? Exception(response.error?.message ?? 'Unknown login error')
+            : Exception('Unknown login error');
+      }
+    } catch (error) {
+      throw Exception('Login failed: ${error.toString()}');
+    }
   }
 
   Future<void> signOut() async {
-    await _firebaseAuth.signOut();
+    try {
+      await _supabase.auth.signOut();
+    } catch (error) {
+      throw Exception('Logout failed: ${error.toString()}');
+    }
   }
+}
+
+extension on AuthResponse {
+  get error => null;
 }

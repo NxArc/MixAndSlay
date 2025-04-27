@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-// Avoid global controllers if possible; manage them in a widget or state management solution
+// Controllers for email and password input fields
 final TextEditingController emailController = TextEditingController();
 final TextEditingController passwordController = TextEditingController();
 
+// Sign in function using the Auth class for consistency
 Future<void> signInwithEmailAndPassword() async {
   try {
     // Basic input validation
@@ -15,44 +16,31 @@ Future<void> signInwithEmailAndPassword() async {
       throw Exception('Password cannot be empty');
     }
 
-    // Call the authentication method
+    // Use the Auth class to handle the actual sign-in
     await Auth().signInwithEmailAndPassword(
       email: emailController.text.trim(),
       password: passwordController.text.trim(),
     );
-
-    // If no exception is thrown, login is successful
-  } on FirebaseAuthException catch (e) {
-    // Re-throw the exception with a meaningful message so the UI can handle it
-    switch (e.code) {
-      case 'user-not-found':
-        throw Exception('No account found with this email.');
-      case 'wrong-password':
-        throw Exception('Incorrect password. Please try again.');
-      case 'invalid-email':
-        throw Exception('Invalid email format.');
-      case 'user-disabled':
-        throw Exception('This account has been disabled.');
-      default:
-        throw Exception('Login failed: ${e.message}');
-    }
   } catch (e) {
-    // Re-throw any other unexpected errors
-    rethrow;
+    rethrow; // Pass the error up to be handled by the caller
   }
 }
 
-// Optional: Verify the Auth class implementation
+// Auth class to manage authentication logic
 class Auth {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final SupabaseClient _supabase = Supabase.instance.client;
 
   Future<void> signInwithEmailAndPassword({
     required String email,
     required String password,
   }) async {
-    await _auth.signInWithEmailAndPassword(
+    final response = await _supabase.auth.signInWithPassword(
       email: email,
       password: password,
     );
+
+    if (response.user == null) {
+      throw Exception('Login failed: Invalid credentials');
+    }
   }
 }

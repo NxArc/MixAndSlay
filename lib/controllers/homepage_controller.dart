@@ -1,8 +1,10 @@
 import 'package:fasionrecommender/services/authenticate/aunthenticate.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-final User? user = Auth().currentUser;
+// Get the current user
+final User? user = Supabase.instance.client.auth.currentUser;
 
-  Future<void> signOut() async {
-    await Auth().signOut();
-  }
+// Sign out method
+Future<void> signOut() async {
+  final response = await Supabase.instance.client.auth.signOut();
+}

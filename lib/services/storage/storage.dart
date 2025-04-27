@@ -1,106 +1,148 @@
 import 'dart:io';
-
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class StorageService with ChangeNotifier {
-  final firebaseStorage = FirebaseStorage.instance;
-  List<String> _imageUrls = [];
-  bool _isLoading = false;
-  bool _isUploading = false;
+  final SupabaseClient supabase;
 
-  List<String> get imageUrls => _imageUrls;
-  bool get isLoading => _isLoading;
-  bool get isUploading => isUploading;
+  StorageService(this.supabase);
 
-
-  //NOTE: IMAGES ARE STORED AS DOWNLOAD URLS
-
-  //READ IMAGES
-  Future<void> readImages() async {
-    //start loading
-    _isLoading = true;
-    //get list under the directory
-    final ListResult result = await firebaseStorage.ref('uploaded_images/').listAll();
-
-    //get the download URLs for each image
-    final urls = 
-      await Future.wait(result.items.map((ref) => ref.getDownloadURL()));
-
-    //Update URLs
-    _imageUrls = urls;
-
-    //loading finished
-    _isLoading = false;
-
-    //update UI
-    notifyListeners();
-  }
-
-
-String extractPathFromUrl(String url){
-      Uri uri = Uri.parse(url);
-
-      //extracting path of the url
-      String encodedPath = uri.pathSegments.last;
-
-      return Uri.decodeComponent(encodedPath);
-    }
-
-  //DELETE IMAGES
-  Future<void> deleteImage(String ImageUrl) async {
+  // Upload Image and Clothing Item to Supabase
+  Future<void> uploadClothingItem(
+    File imageFile,
+    String color,
+    String clothingType,
+    String name,
+    String category,
+  ) async {
     try {
-      //remove from local list
-      _imageUrls.remove(ImageUrl);
+      // Upload image to Supabase Storage
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-      //get path and delete from firebase
-      final String path = extractPathFromUrl(ImageUrl);
-      await firebaseStorage.ref(path).delete();
-    }catch(e){
-      print("Error deleting image: $e");
+      final storageResponse = await supabase.storage
+          .from('clothing-items')
+          .upload(fileName, imageFile);
+
+      //Get the public URL for the uploaded image
+      final imageUrl = supabase.storage.from('clothing-items').getPublicUrl(fileName);
+
+      // Step 3: Insert clothing item metadata into the user_clothing_items table
+      final user = supabase.auth.currentUser;
+      if (user == null) {
+        throw Exception('User is not authenticated');
+      }
+
+      final insertResponse = await supabase.from('user_clothing_items').insert({
+        'image_url': imageUrl,
+        'category': category,
+        'color': color,
+        'clothing_type': clothingType,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+
+      if (insertResponse.error != null) {
+        throw Exception('Failed to insert clothing item: ${insertResponse.error!.message}');
+      }
+
+      print('Clothing item uploaded successfully!');
+      notifyListeners();
+    } catch (e) {
+      print('Error uploading clothing item: $e');
+      rethrow;
     }
-
-    notifyListeners();
   }
 
 
-  //UPLOAD IMAGES
-  Future<void> uploadImages() async {
-    //start upload
-    _isUploading = true;
-    notifyListeners();
 
-    //pick an image
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
-    if(image == null) return;
 
-    File file = File(image.path);
 
-    try{
-      //Define the path in storage
-      String filePath = 'uploaded_images/${DateTime.now()}.png';
+  // Retrieve Clothing Items by Category for the Authenticated User
+  Future<List<Map<String, dynamic>>> getClothingItemsByCategory(String category) async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) {
+        throw Exception('User is not authenticated');
+      }
 
-      //upload the file to firebase
-      await firebaseStorage.ref(filePath).putFile(file);
-      //fetch download url
-      String downloadUrl = await firebaseStorage.ref(filePath).getDownloadURL();
+      // Query clothing items by category for the current user
+      final response = await supabase
+          .from('user_clothing_items')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('category', category)
+          .order('created_at', ascending: false);
 
-      //update the image url list and UI
-      _imageUrls.add(downloadUrl);
-      notifyListeners();
-    }catch (e){
-      print('Error Uploading...$e');
+      // Response is already a List<Map<String, dynamic>> if successful
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      print('Error retrieving clothing items: $e');
+      return [];
     }
+  }
 
-    finally {
-      _isLoading = false;
-      notifyListeners();
+
+
+
+  // Image Picker function to select an image
+  Future<File?> pickImage() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        return File(pickedFile.path);
+      }
+      return null;
+    } catch (e) {
+      print('Error picking image: $e');
+      return null;
+    }
+  }
+
+
+
+
+  // Delete Clothing Item from Supabase
+  Future<void> deleteClothingItem(String itemId) async {
+    try {
+      // Step 1: Get the user and check if they are authenticated
+      final user = supabase.auth.currentUser;
+      if (user == null) {
+        throw Exception('User is not authenticated');
+      }
+
+      // Get the clothing item from the database
+      final itemResponse = await supabase
+          .from('user_clothing_items')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('id', itemId)
+          .single();
+
+      // SDelete the image from Supabase Storage
+      final imageUrl = itemResponse['image_url'];
+      final fileName = Uri.parse(imageUrl).pathSegments.last;
+
+      final storageResponse = await supabase.storage
+          .from('clothing-items')
+          .remove([fileName]);
+
+      // Delete the clothing item metadata from the user_clothing_items table
+      final deleteResponse = await supabase
+          .from('user_clothing_items')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('id', itemId);
+
+      if (deleteResponse.error != null) {
+        throw Exception('Failed to delete clothing item: ${deleteResponse.error!.message}');
+      }
+
+      notifyListeners(); // Notify listeners to update UI
+    } catch (e) {
+      rethrow; // Rethrow to allow caller to handle the error
     }
   }
 }
-
-
-
