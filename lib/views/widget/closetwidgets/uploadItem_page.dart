@@ -5,15 +5,15 @@ import 'dart:io';
 import 'package:fasionrecommender/services/storage/storage.dart';
 import 'package:provider/provider.dart'; // Import your notifiers.dart file
 
-class ItemDetailsPage extends StatefulWidget {
+class uploadItemPage extends StatefulWidget {
   final File imageFile;
-  const ItemDetailsPage({super.key, required this.imageFile});
+  const uploadItemPage({super.key, required this.imageFile});
 
   @override
-  State<ItemDetailsPage> createState() => _ItemDetailsPageState();
+  State<uploadItemPage> createState() => _uploadItemPageState();
 }
 
-class _ItemDetailsPageState extends State<ItemDetailsPage> {
+class _uploadItemPageState extends State<uploadItemPage> {
   final ScrollController _imageScrollController = ScrollController();
   final TextEditingController _nameController = TextEditingController();
 
@@ -41,11 +41,11 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
   }
 
   Future<void> _saveItem() async {
-    final String name = _nameController.text;
-    final String category = selectedCategory ?? '';
     final String color = selectedColor ?? '';
     final String clothingType = selectedClothingType ?? '';
+    final String name = _nameController.text;
     final String material = selectedMaterial ?? '';
+    final String category = selectedCategory ?? '';
 
     final storageService = Provider.of<StorageService>(context, listen: false);
 
@@ -55,8 +55,8 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
         color,
         clothingType,
         name,
-        category,
         material,
+        category,
       );
       ScaffoldMessenger.of(
         context,
@@ -154,6 +154,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                               isDarkMode ? Colors.grey[800] : Colors.grey[300],
                           boxShadow: [
                             BoxShadow(
+                              // ignore: deprecated_member_use
                               color: Colors.black.withOpacity(0.15),
                               offset: const Offset(0, 4),
                               blurRadius: 8,
@@ -163,6 +164,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                         clipBehavior: Clip.hardEdge,
                         child: Image.file(widget.imageFile, fit: BoxFit.cover),
                       ),
+
                       SizedBox(height: ResponsiveUtils.paddingV(context)),
 
                       Column(
@@ -218,55 +220,6 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                               color: isDarkMode ? Colors.white : Colors.black,
                             ),
                             decoration: InputDecoration(
-                              labelText: 'Category',
-                              labelStyle: TextStyle(
-                                fontSize: ResponsiveUtils.inputFontSize(
-                                  context,
-                                ),
-                                color: isDarkMode ? Colors.white : Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              filled: true,
-                              fillColor:
-                                  isDarkMode
-                                      ? Colors.grey[700]
-                                      : Colors.grey[200],
-                            ),
-                            items:
-                                ['Formal', 'Party', 'Swimming', 'Ewan'].map((
-                                  size,
-                                ) {
-                                  return DropdownMenuItem<String>(
-                                    value: size,
-                                    child: Text(
-                                      size,
-                                      style: TextStyle(
-                                        color:
-                                            isDarkMode
-                                                ? Colors.white
-                                                : Colors.black,
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                selectedCategory = value;
-                              });
-                            },
-                          ),
-
-                          SizedBox(height: ResponsiveUtils.paddingV(context)),
-
-                          DropdownButtonFormField<String>(
-                            isExpanded: true,
-                            style: TextStyle(
-                              fontSize: ResponsiveUtils.inputFontSize(context),
-                              color: isDarkMode ? Colors.white : Colors.black,
-                            ),
-                            decoration: InputDecoration(
                               labelText: 'Color',
                               labelStyle: TextStyle(
                                 fontSize: ResponsiveUtils.inputFontSize(
@@ -301,6 +254,55 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                             onChanged: (value) {
                               setState(() {
                                 selectedColor = value;
+                              });
+                            },
+                          ),
+
+                          SizedBox(height: ResponsiveUtils.paddingV(context)),
+
+                          DropdownButtonFormField<String>(
+                            isExpanded: true,
+                            style: TextStyle(
+                              fontSize: ResponsiveUtils.inputFontSize(context),
+                              color: isDarkMode ? Colors.white : Colors.black,
+                            ),
+                            decoration: InputDecoration(
+                              labelText: 'Clothing Type',
+                              labelStyle: TextStyle(
+                                fontSize: ResponsiveUtils.inputFontSize(
+                                  context,
+                                ),
+                                color: isDarkMode ? Colors.white : Colors.black,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              filled: true,
+                              fillColor:
+                                  isDarkMode
+                                      ? Colors.grey[700]
+                                      : Colors.grey[200],
+                            ),
+                            items:
+                                ['T-shirt', 'Dress', 'Jeans', 'Shorts'].map((
+                                  color,
+                                ) {
+                                  return DropdownMenuItem<String>(
+                                    value: color,
+                                    child: Text(
+                                      color,
+                                      style: TextStyle(
+                                        color:
+                                            isDarkMode
+                                                ? Colors.white
+                                                : Colors.black,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                selectedClothingType = value;
                               });
                             },
                           ),
@@ -361,7 +363,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                               color: isDarkMode ? Colors.white : Colors.black,
                             ),
                             decoration: InputDecoration(
-                              labelText: 'Clothing Type',
+                              labelText: 'Category',
                               labelStyle: TextStyle(
                                 fontSize: ResponsiveUtils.inputFontSize(
                                   context,
@@ -378,13 +380,17 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                                       : Colors.grey[200],
                             ),
                             items:
-                                ['T-shirt', 'Dress', 'Jeans', 'Shorts'].map((
-                                  color,
-                                ) {
+                                [
+                                  'Headwear',
+                                  'Top',
+                                  'Bottom',
+                                  'Accessory',
+                                  'Footwear',
+                                ].map((size) {
                                   return DropdownMenuItem<String>(
-                                    value: color,
+                                    value: size,
                                     child: Text(
-                                      color,
+                                      size,
                                       style: TextStyle(
                                         color:
                                             isDarkMode
@@ -396,7 +402,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                                 }).toList(),
                             onChanged: (value) {
                               setState(() {
-                                selectedClothingType = value;
+                                selectedCategory = value;
                               });
                             },
                           ),
@@ -432,7 +438,6 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                           ),
                         ),
                       ),
-
                       SizedBox(height: ResponsiveUtils.paddingV(context)),
                     ],
                   ),

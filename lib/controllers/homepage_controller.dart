@@ -1,4 +1,3 @@
-import 'package:fasionrecommender/services/authenticate/aunthenticate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 // Get the current user

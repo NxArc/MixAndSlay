@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart';
 
 class OutfitCreationPage extends StatefulWidget {
-  const OutfitCreationPage({Key? key}) : super(key: key);
+  const OutfitCreationPage({super.key});
 
   @override
   State<OutfitCreationPage> createState() => _OutfitCreationPageState();
