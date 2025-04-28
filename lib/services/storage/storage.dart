@@ -16,6 +16,7 @@ class StorageService with ChangeNotifier {
     String clothingType,
     String name,
     String category,
+    String material
   ) async {
     try {
       // Upload image to Supabase Storage
@@ -36,9 +37,11 @@ class StorageService with ChangeNotifier {
 
       final insertResponse = await supabase.from('user_clothing_items').insert({
         'image_url': imageUrl,
-        'category': category,
         'color': color,
         'clothing_type': clothingType,
+        'name': name,
+        'category': category,
+        'material': material,
         'created_at': DateTime.now().toIso8601String(),
       });
 
@@ -86,22 +89,6 @@ class StorageService with ChangeNotifier {
 
 
 
-  // Image Picker function to select an image
-  Future<File?> pickImage() async {
-    try {
-      final ImagePicker picker = ImagePicker();
-      final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
-      if (pickedFile != null) {
-        return File(pickedFile.path);
-      }
-      return null;
-    } catch (e) {
-      print('Error picking image: $e');
-      return null;
-    }
-  }
-
-
 
 
   // Delete Clothing Item from Supabase
@@ -145,4 +132,109 @@ class StorageService with ChangeNotifier {
       rethrow; // Rethrow to allow caller to handle the error
     }
   }
+
+
+
+  Future<List<Map<String, dynamic>>> getClothingItemsByType(
+    String clothingType,
+  ) async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) {
+        throw Exception('User is not authenticated');
+      }
+
+      // Query clothing items by clothing type for the current user
+      final response = await supabase
+          .from('user_clothing_items')
+          .select('*')
+          .eq('uid', user.id)
+          .eq('clothing_type', clothingType) // Filter by clothing type
+          .order('created_at', ascending: false);
+
+      // Response is already a List<Map<String, dynamic>> if successful
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      print('Error retrieving clothing items by clothing type: $e');
+      return [];
+    }
+  }
+  Future<void> createOutfit({
+    required String outfitName,
+    required List<String> clothingItemIds,
+    required String weatherFit, 
+  }) async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) {
+        throw Exception('User is not authenticated');
+      }
+
+      // Map the clothing item ids to their respective columns
+      final itemMap = {
+        'headwear': clothingItemIds.length > 0 ? clothingItemIds[0] : null,
+        'top': clothingItemIds.length > 1 ? clothingItemIds[1] : null,
+        'bottom': clothingItemIds.length > 2 ? clothingItemIds[2] : null,
+        'accessories': clothingItemIds.length > 3 ? clothingItemIds[3] : null,
+      };
+
+      // Create the outfit with references to clothing items
+      final insertResponse =
+          await supabase
+              .from('user_outfits')
+              .insert({
+                'uuid': user.id,
+                'outfit_name': outfitName,
+                'weatherFit': weatherFit,  // Added weatherFit
+                'created_at': DateTime.now().toIso8601String(),
+                'headwear': itemMap['headwear'],
+                'top': itemMap['top'],
+                'bottom': itemMap['bottom'],
+                'accessories': itemMap['accessories'],
+              })
+              .select('outfit_id')
+              .single();
+
+      if (insertResponse == null || insertResponse['outfit_id'] == null) {
+        throw Exception('Failed to create outfit: No ID returned');
+      }
+
+      print('Outfit created successfully!');
+      notifyListeners();
+    } catch (e) {
+      print('Error creating outfit: $e');
+      rethrow;
+    }
+  }
+
+  // DELETE AN OUTFIT
+  Future<void> deleteOutfit(String outfitId) async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) {
+        throw Exception('User is not authenticated');
+      }
+
+      // Step 1: Delete the outfit itself
+      final deleteOutfitResponse = await supabase
+          .from('user_outfits')
+          .delete()
+          .eq('outfit_id', outfitId)
+          .eq('uuid', user.id);
+
+      if (deleteOutfitResponse.error != null) {
+        throw Exception(
+          'Failed to delete outfit: ${deleteOutfitResponse.error!.message}',
+        );
+      }
+
+      print('Outfit deleted successfully!');
+      notifyListeners();
+    } catch (e) {
+      print('Error deleting outfit: $e');
+      rethrow;
+    }
+  }
+
+
 }

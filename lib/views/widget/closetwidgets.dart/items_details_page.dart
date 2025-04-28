@@ -20,6 +20,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
   String? selectedCategory;
   String? selectedColor;
   String? selectedClothingType;
+  String? selectedMaterial;
 
   @override
   void initState() {
@@ -44,16 +45,32 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     final String category = selectedCategory ?? '';
     final String color = selectedColor ?? '';
     final String clothingType = selectedClothingType ?? '';
+    final String material = selectedMaterial ?? '';
 
     final storageService = Provider.of<StorageService>(context, listen: false);
 
-    await storageService.uploadClothingItem(
-      widget.imageFile,
-      color,
-      clothingType,
-      name,
-      category,
-    );
+    try {
+      await storageService.uploadClothingItem(
+        widget.imageFile,
+        color,
+        clothingType,
+        name,
+        category,
+        material,
+      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Item saved successfully!')));
+      Navigator.pop(context);
+    } catch (e) {
+      // Improved error handling and logging
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save item. Please try again.')),
+      );
+      print(
+        "Error during upload: ${e.toString()}",
+      ); // Print the full error message
+    }
   }
 
   @override
@@ -86,7 +103,9 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                 ),
               ),
               leading: Padding(
-                padding: EdgeInsets.only(left: ResponsiveUtils.paddingH(context)),
+                padding: EdgeInsets.only(
+                  left: ResponsiveUtils.paddingH(context),
+                ),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
@@ -131,10 +150,10 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                         height: size.height * 0.30,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: isDarkMode ? Colors.grey[800] : Colors.grey[300],
+                          color:
+                              isDarkMode ? Colors.grey[800] : Colors.grey[300],
                           boxShadow: [
                             BoxShadow(
-                              // ignore: deprecated_member_use
                               color: Colors.black.withOpacity(0.15),
                               offset: const Offset(0, 4),
                               blurRadius: 8,
@@ -161,7 +180,9 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                             ),
                           ),
 
-                          SizedBox(height: ResponsiveUtils.paddingV(context) * 0.5),
+                          SizedBox(
+                            height: ResponsiveUtils.paddingV(context) * 0.5,
+                          ),
 
                           TextField(
                             controller: _nameController,
@@ -172,14 +193,19 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                             decoration: InputDecoration(
                               labelText: 'Name',
                               labelStyle: TextStyle(
-                                fontSize: ResponsiveUtils.inputFontSize(context),
+                                fontSize: ResponsiveUtils.inputFontSize(
+                                  context,
+                                ),
                                 color: isDarkMode ? Colors.white : Colors.black,
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               filled: true,
-                              fillColor: isDarkMode ? Colors.grey[700] : Colors.grey[200],
+                              fillColor:
+                                  isDarkMode
+                                      ? Colors.grey[700]
+                                      : Colors.grey[200],
                             ),
                           ),
 
@@ -194,22 +220,34 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                             decoration: InputDecoration(
                               labelText: 'Category',
                               labelStyle: TextStyle(
-                                fontSize: ResponsiveUtils.inputFontSize(context),
+                                fontSize: ResponsiveUtils.inputFontSize(
+                                  context,
+                                ),
                                 color: isDarkMode ? Colors.white : Colors.black,
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               filled: true,
-                              fillColor: isDarkMode ? Colors.grey[700] : Colors.grey[200],
+                              fillColor:
+                                  isDarkMode
+                                      ? Colors.grey[700]
+                                      : Colors.grey[200],
                             ),
                             items:
-                                ['Formal', 'Party', 'Swimming', 'Ewan'].map((size) {
+                                ['Formal', 'Party', 'Swimming', 'Ewan'].map((
+                                  size,
+                                ) {
                                   return DropdownMenuItem<String>(
                                     value: size,
                                     child: Text(
                                       size,
-                                      style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+                                      style: TextStyle(
+                                        color:
+                                            isDarkMode
+                                                ? Colors.white
+                                                : Colors.black,
+                                      ),
                                     ),
                                   );
                                 }).toList(),
@@ -231,14 +269,19 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                             decoration: InputDecoration(
                               labelText: 'Color',
                               labelStyle: TextStyle(
-                                fontSize: ResponsiveUtils.inputFontSize(context),
+                                fontSize: ResponsiveUtils.inputFontSize(
+                                  context,
+                                ),
                                 color: isDarkMode ? Colors.white : Colors.black,
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               filled: true,
-                              fillColor: isDarkMode ? Colors.grey[700] : Colors.grey[200],
+                              fillColor:
+                                  isDarkMode
+                                      ? Colors.grey[700]
+                                      : Colors.grey[200],
                             ),
                             items:
                                 ['Red', 'Yellow', 'Green', 'Blue'].map((color) {
@@ -246,7 +289,12 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                                     value: color,
                                     child: Text(
                                       color,
-                                      style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+                                      style: TextStyle(
+                                        color:
+                                            isDarkMode
+                                                ? Colors.white
+                                                : Colors.black,
+                                      ),
                                     ),
                                   );
                                 }).toList(),
@@ -266,24 +314,83 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                               color: isDarkMode ? Colors.white : Colors.black,
                             ),
                             decoration: InputDecoration(
-                              labelText: 'Clothing Type',
+                              labelText: 'Materials',
                               labelStyle: TextStyle(
-                                fontSize: ResponsiveUtils.inputFontSize(context),
+                                fontSize: ResponsiveUtils.inputFontSize(
+                                  context,
+                                ),
                                 color: isDarkMode ? Colors.white : Colors.black,
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               filled: true,
-                              fillColor: isDarkMode ? Colors.grey[700] : Colors.grey[200],
+                              fillColor:
+                                  isDarkMode
+                                      ? Colors.grey[700]
+                                      : Colors.grey[200],
                             ),
                             items:
-                                ['T-shirt', 'Dress', 'Jeans', 'Shorts'].map((color) {
+                                ['Cotton', 'Hemp', 'Idk'].map((size) {
+                                  return DropdownMenuItem<String>(
+                                    value: size,
+                                    child: Text(
+                                      size,
+                                      style: TextStyle(
+                                        color:
+                                            isDarkMode
+                                                ? Colors.white
+                                                : Colors.black,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                selectedMaterial = value;
+                              });
+                            },
+                          ),
+
+                          SizedBox(height: ResponsiveUtils.paddingV(context)),
+
+                          DropdownButtonFormField<String>(
+                            isExpanded: true,
+                            style: TextStyle(
+                              fontSize: ResponsiveUtils.inputFontSize(context),
+                              color: isDarkMode ? Colors.white : Colors.black,
+                            ),
+                            decoration: InputDecoration(
+                              labelText: 'Clothing Type',
+                              labelStyle: TextStyle(
+                                fontSize: ResponsiveUtils.inputFontSize(
+                                  context,
+                                ),
+                                color: isDarkMode ? Colors.white : Colors.black,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              filled: true,
+                              fillColor:
+                                  isDarkMode
+                                      ? Colors.grey[700]
+                                      : Colors.grey[200],
+                            ),
+                            items:
+                                ['T-shirt', 'Dress', 'Jeans', 'Shorts'].map((
+                                  color,
+                                ) {
                                   return DropdownMenuItem<String>(
                                     value: color,
                                     child: Text(
                                       color,
-                                      style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+                                      style: TextStyle(
+                                        color:
+                                            isDarkMode
+                                                ? Colors.white
+                                                : Colors.black,
+                                      ),
                                     ),
                                   );
                                 }).toList(),
@@ -303,24 +410,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                       SizedBox(
                         width: ResponsiveUtils.buttonWidth(context),
                         child: ElevatedButton(
-                          onPressed: () {
-                            try {
-                              _saveItem();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Item saved successfully!')),
-                              );
-                              Navigator.pop(context);
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Failed to save item. Please try again.',
-                                  ),
-                                ),
-                              );
-                              print("Error: $e");
-                            }
-                          },
+                          onPressed: _saveItem,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF918E8E),
                             padding: EdgeInsets.symmetric(

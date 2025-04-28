@@ -2,29 +2,28 @@ import 'package:fasionrecommender/controllers/homepage_controller.dart';
 import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:fasionrecommender/services/authenticate/login_page.dart';
 import 'package:fasionrecommender/views/pages/closet.dart';
+import 'package:fasionrecommender/views/pages/outfit_creation.dart';
 import 'package:fasionrecommender/views/pages/searchpage.dart';
-import 'package:fasionrecommender/views/pages/testbuttons.dart';
 import 'package:fasionrecommender/views/widget/homepage%20widgets/homepage_widget.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
-  
 
   @override
   State<Home> createState() => _HomeState();
-  
 }
 
 class _HomeState extends State<Home> {
-  
   List<Widget> body = const [
     HomeWidget(),
     Searchpage(),
     VirtualClosetPage(),
-    Testbuttons(),
+    OutfitCreationPage(),
   ];
   int _currentIndex = 0;
+  final PageController _pageController = PageController();
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -42,25 +41,24 @@ class _HomeState extends State<Home> {
           leading: IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-              final confirmed = await showDialog<bool>(
+              final confirmed = await showDialog<bool>( 
                 context: context,
-                builder:
-                    (context) => AlertDialog(
-                      title: const Text('Confirm Logout'),
-                      content: const Text('Are you sure you want to log out?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, false),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context, true);
-                          },
-                          child: const Text('Logout'),
-                        ),
-                      ],
+                builder: (context) => AlertDialog(
+                  title: const Text('Confirm Logout'),
+                  content: const Text('Are you sure you want to log out?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('Cancel'),
                     ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, true);
+                      },
+                      child: const Text('Logout'),
+                    ),
+                  ],
+                ),
               );
               if (confirmed == true) {
                 signOut();
@@ -86,54 +84,69 @@ class _HomeState extends State<Home> {
           ],
         ),
 
-        body: body[_currentIndex],
-
-        bottomNavigationBar: BottomAppBar(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 8.0,
-            ), // more consistent padding
-            child: Row(
-              mainAxisAlignment:
-                  MainAxisAlignment
-                      .spaceEvenly, // even spacing across the width
-              children: [
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _currentIndex = 0;
-                    });
-                  },
-                  icon: const Icon(Icons.home),
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _currentIndex = 1;
-                    });
-                  },
-                  icon: const Icon(Icons.search),
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _currentIndex = 2;
-                    });
-                  },
-                  icon: const Icon(Icons.question_mark_rounded),
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _currentIndex = 3;
-                    });
-                  },
-                  icon: const Icon(Icons.question_mark_rounded),
-                ),
-              ],
-            ),
-          ),
+        // Body now uses PageView for swipe functionality
+        body: PageView(
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          children: body,
         ),
+
+
+        bottomNavigationBar: _currentIndex == 3
+            ? null
+            : BottomAppBar(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8.0,
+                  ), // more consistent padding
+                  child: Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment.spaceEvenly, // even spacing across the width
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _currentIndex = 0;
+                          });
+                          _pageController.jumpToPage(0); // Sync PageView
+                        },
+                        icon: const Icon(Icons.home),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _currentIndex = 1;
+                          });
+                          _pageController.jumpToPage(1); // Sync PageView
+                        },
+                        icon: const Icon(Icons.search),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _currentIndex = 2;
+                          });
+                          _pageController.jumpToPage(2); // Sync PageView
+                        },
+                        icon: const Icon(Icons.question_mark_rounded),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _currentIndex = 3;
+                          });
+                          _pageController.jumpToPage(3); // Sync PageView
+                        },
+                        icon: const Icon(Icons.question_mark_rounded),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
       ),
     );
   }
