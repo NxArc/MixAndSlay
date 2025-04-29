@@ -1,3 +1,4 @@
+import 'package:fasionrecommender/views/widget/homepage%20widgets/category_grid.dart';
 import 'package:fasionrecommender/views/widget/homepage%20widgets/ootd.dart';
 import 'package:flutter/material.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart';
@@ -90,9 +91,12 @@ class _HomeWidgetState extends State<HomeWidget> {
           ],
       body: TabBarView(
         children: [
-          SingleChildScrollView(child: Center(child: Text('INSERT IMAGES'))),
+          SingleChildScrollView(
+            child:
+            OutfitGrid(category: 'Tops'),
+          ),
 
-          SingleChildScrollView(child: Center(child: Text('INSERT IMAGES'))),
+          SingleChildScrollView(child: OutfitGrid(category: 'Bottoms')),
 
           SingleChildScrollView(child: Center(child: Text('INSERT IMAGES'))),
 

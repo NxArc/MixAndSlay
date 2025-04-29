@@ -57,6 +57,7 @@ class StorageService with ChangeNotifier {
   }
 
 
+
   // Retrieve Clothing Items by Category for the Authenticated User
   Future<List<Map<String, dynamic>>> getClothingItemsByCategory(String category) async {
     try {
@@ -69,7 +70,7 @@ class StorageService with ChangeNotifier {
       final response = await supabase
           .from('user_clothing_items')
           .select('*')
-          .eq('user_id', user.id)
+          .eq('uid', user.id)
           .eq('category', category)
           .order('created_at', ascending: false);
 
