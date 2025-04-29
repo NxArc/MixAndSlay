@@ -36,6 +36,7 @@ void showAddItemDialog(BuildContext context) {
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           fontFamily: 'Montserrat',
+                          color: Colors.black,
                         ),
                       ),
                       IconButton(
