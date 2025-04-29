@@ -53,13 +53,8 @@ class StorageService with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Error uploading clothing item: $e');
-      rethrow;
     }
   }
-
-
-
-
 
 
   // Retrieve Clothing Items by Category for the Authenticated User

@@ -1,0 +1,102 @@
+final Map<String, List<String>> categoryItems = {
+  'Headwear': [
+    'Balaclava', 'Bandana', 'Baseball cap', 'Beanie', 'Beret',
+    'Bike helmet', 'Boater hat', 'Bowler hat', 'Bucket hat', 'Cabbie hat',
+    'Cloche hat', 'Cowboy hat', 'Cycling cap', 'Deerstalker', 'Fedora',
+    'Fisherman hat', 'Flat cap', 'Garrison cap', 'Hard hat', 'Head scarf',
+    'Headband', 'Helmet', 'Homburg', 'Kepi', 'Knit cap',
+    'Military cap', 'Newsboy cap', 'Panama hat', 'Pith helmet', 'Riding helmet',
+    'Sailor cap', 'Santa hat', 'Shower cap', 'Ski helmet', 'Snapback',
+    'Sombrero', 'Sun hat', 'Swimming cap', 'Tam o\'shanter', 'Ten-gallon hat',
+    'Top hat', 'Trapper hat', 'Trilby', 'Turban', 'Ushanka',
+    'Visor', 'Western hat', 'Witch hat', 'Wool hat', 'Yarmulke'
+  ],
+  'Tops': [
+    'Baby tee', 'Base layer top', 'Blouse', 'Bodysuit', 'Button-down shirt',
+    'Camisole', 'Cardigan', 'Chambray shirt', 'Crop hoodie', 'Crop top',
+    'Denim shirt', 'Dress shirt', 'Graphic tee', 'Halterneck top', 'Henley shirt',
+    'Hoodie', 'Jersey top', 'Knit top', 'Lace top', 'Linen shirt',
+    'Long sleeve tee', 'Mock neck top', 'Muscle tee', 'Off-shoulder top', 'Peasant blouse',
+    'Peplum top', 'Polo shirt', 'Poncho', 'Raglan tee', 'Ruffled top',
+    'Satin blouse', 'Sheer top', 'Silk blouse', 'Sleeveless top', 'Smocked top',
+    'Sport tank', 'Sweatshirt', 'Tank top', 'Thermal top', 'Tie-front top',
+    'T-shirt', 'Tube top', 'Tunic', 'Turtleneck', 'V-neck shirt',
+    'Velvet top', 'Vest', 'Wrap top', 'Zip-up hoodie'
+  ],
+  'Bottoms': [
+    'Athletic shorts', 'Bell-bottom pants', 'Bermuda shorts', 'Bike shorts', 'Board shorts',
+    'Bootcut jeans', 'Boyfriend jeans', 'Capri pants', 'Cargo pants', 'Chinos',
+    'Cigarette pants', 'Cropped pants', 'Culottes', 'Cutoff shorts', 'Denim shorts',
+    'Dress pants', 'Flare jeans', 'Gaucho pants', 'Harem pants', 'High-rise jeans',
+    'Jeggings', 'Joggers', 'Khakis', 'Knit leggings', 'Leather pants',
+    'Linen pants', 'Low-rise jeans', 'Maxi skirt', 'Mini skirt', 'Mom jeans',
+    'Palazzo pants', 'Paperbag pants', 'Parachute pants', 'Pencil skirt', 'Pleated skirt',
+    'Relaxed jeans', 'Running shorts', 'Satin skirt', 'Silk pants', 'Skater skirt',
+    'Skort', 'Slacks', 'Straight-leg jeans', 'Sweatpants', 'Tailored shorts',
+    'Track pants', 'Trousers', 'Tulle skirt', 'Utility pants', 'Wide-leg pants'
+  ],
+  'Footwear': [
+    'Ankle boots', 'Athletic shoes', 'Ballet flats', 'Boat shoes', 'Brogues',
+    'Canvas sneakers', 'Chelsea boots', 'Chukka boots', 'Clogs', 'Combat boots',
+    'Court shoes', 'Cowboy boots', 'Derby shoes', 'Dress shoes', 'Espadrilles',
+    'Flip flops', 'Gladiator sandals', 'Hiking boots', 'High heels', 'High-top sneakers',
+    'House slippers', 'Knee-high boots', 'Lace-up boots', 'Loafers', 'Low-top sneakers',
+    'Mary Janes', 'Moccasins', 'Mules', 'Oxford shoes', 'Penny loafers',
+    'Platform heels', 'Platform sneakers', 'Rain boots', 'Running shoes', 'Sandals',
+    'Satin pumps', 'Shearling boots', 'Ski boots', 'Slide sandals', 'Slippers',
+    'Snow boots', 'Soccer cleats', 'Steel-toe boots', 'Stilettos', 'Tennis shoes',
+    'Thigh-high boots', 'Walking shoes', 'Wedge heels', 'Wellington boots', 'Work boots'
+  ],
+  'Accessories': [
+    'Anklet', 'Backpack', 'Bangle', 'Baseball cap', 'Beanie',
+    'Belt', 'Beret', 'Bracelet', 'Brooch', 'Bucket hat',
+    'Charm bracelet', 'Clutch bag', 'Crossbody bag', 'Cufflinks', 'Earrings',
+    'Fanny pack', 'Fingerless gloves', 'Fisherman hat', 'Gloves', 'Hair clip',
+    'Hair tie', 'Handbag', 'Hat', 'Headband', 'Hoop earrings',
+    'Keychain', 'Leg warmers', 'Locket', 'Messenger bag', 'Mittens',
+    'Necklace', 'Panama hat', 'Pendant', 'Purse', 'Ring',
+    'Sash', 'Scarf', 'Scrunchie', 'Shoulder bag', 'Socks',
+    'Statement necklace', 'Stud earrings', 'Sunglasses', 'Tote bag', 'Trilby hat',
+    'Umbrella', 'Visor', 'Wallet', 'Watch', 'Wristband'
+  ],
+  'Outerwear': [
+    'Anorak', 'Barn coat', 'Blazer', 'Bomber jacket', 'Cape',
+    'Car coat', 'Chesterfield coat', 'Cloak', 'Denim jacket', 'Duffle coat',
+    'Field jacket', 'Fishtail parka', 'Fleece jacket', 'Flight jacket', 'Fur coat',
+    'Harrington jacket', 'Heavy parka', 'Hooded coat', 'Jean jacket', 'Kimono jacket',
+    'Leather jacket', 'Light parka', 'Mac coat', 'Military jacket', 'Moto jacket',
+    'Oilskin coat', 'Overcoat', 'Parka', 'Pea coat', 'Puffer coat',
+    'Puffer vest', 'Quilted jacket', 'Raincoat', 'Shearling coat', 'Sherpa jacket',
+    'Sport coat', 'Suede jacket', 'Tailcoat', 'Teddy coat', 'Tench coat',
+    'Topcoat', 'Track jacket', 'Trench coat', 'Tuxedo jacket', 'Varsity jacket',
+    'Vest', 'Waxed cotton jacket', 'Windbreaker', 'Wool coat', 'Zip-up jacket'
+  ]
+};
+
+final List<String> colorList = [
+  'Beige', 'Black', 'Blue', 'Brown', 'Burgundy', 'Charcoal', 'Coral', 'Cream', 'Cyan', 'Fuchsia',
+  'Gold', 'Gray', 'Green', 'Indigo', 'Ivory', 'Lavender', 'Lime', 'Magenta', 'Maroon', 'Mint',
+  'Navy', 'Olive', 'Orange', 'Peach', 'Pink', 'Plum', 'Purple', 'Red', 'Rose', 'Royal blue',
+  'Rust', 'Salmon', 'Silver', 'Sky blue', 'Slate', 'Tan', 'Teal', 'Turquoise', 'Violet', 'White',
+  'Wine', 'Yellow'
+];
+
+final Map<String, List<String>> materialOptions = {
+  'Headwear': [
+    '100% Cotton', 'Wool Blend (Wool/Polyester)', 'Fleece (Polyester or Cotton Blend)', 'Acrylic Knit', 'Leather (Real)', 'Suede (Soft Leather)'
+  ],
+  'Tops': [
+    '100% Cotton', 'Organic Cotton', 'Polyester Blend (Poly/Cotton)', 'Linen Blend (Linen/Cotton)', 'Rayon (Synthetic Fiber)', 'Silk (100% Silk)', 'Wool Blend (Wool/Polyester)', 'Chambray (Light Cotton)', 'Modal (Soft Rayon)', 'Velvet (Cotton/Poly Blend)', 'Lace (Nylon/Cotton Blend)', 'Satin (Shiny Polyester or Silk)'
+  ],
+  'Bottoms': [
+    'Denim (Cotton or Stretch Blend)', '100% Cotton', 'Corduroy (Ribbed Cotton)', 'Ripstop (Durable Fabric for Pants/Jackets)', 'Linen Blend (Linen/Cotton)', 'Polyester Blend (Poly/Cotton)', 'Spandex (Elastane Stretch)', 'Leather (Real)', 'Suede (Soft Leather)', 'Gabardine (Wool or Polyester)'
+  ],
+  'Footwear': [
+    'Leather (Real)', 'Suede (Soft Leather)', 'Canvas (Cotton/Poly Blend)', 'Faux Leather (PU)', 'Rubber', 'Nylon (Lightweight Synthetic)', 'Wool Blend (Wool/Polyester)'
+  ],
+  'Outerwear': [
+    'Wool Blend (Wool/Polyester)', 'Leather (Real)', 'Faux Fur (Polyester)', 'Fleece (Polyester or Cotton Blend)', 'Down Fill (Jackets/Coats)', 'Polyester Blend (Poly/Cotton)', 'Nylon (Lightweight Synthetic)', 'Velvet (Cotton/Poly Blend)', 'Tweed (Wool Blend)', 'Denim (Cotton or Stretch Blend)'
+  ],
+};
+
+

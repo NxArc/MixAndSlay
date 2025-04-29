@@ -1,9 +1,10 @@
+import 'package:fasionrecommender/data/clothing_data.dart';
 import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:fasionrecommender/services/storage/storage.dart';
-import 'package:provider/provider.dart'; // Import your notifiers.dart file
+import 'package:provider/provider.dart';
 
 class ItemDetailsPage extends StatefulWidget {
   final File imageFile;
@@ -41,11 +42,11 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
   }
 
   Future<void> _saveItem() async {
-    final String name = _nameController.text;
-    final String category = selectedCategory ?? '';
     final String color = selectedColor ?? '';
     final String clothingType = selectedClothingType ?? '';
+    final String name = _nameController.text;
     final String material = selectedMaterial ?? '';
+    final String category = selectedCategory ?? '';
 
     final storageService = Provider.of<StorageService>(context, listen: false);
 
@@ -55,21 +56,17 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
         color,
         clothingType,
         name,
-        category,
         material,
+        category,
       );
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Item saved successfully!')));
       Navigator.pop(context);
     } catch (e) {
-      // Improved error handling and logging
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save item. Please try again.')),
-      );
-      print(
-        "Error during upload: ${e.toString()}",
-      ); // Print the full error message
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error $e')));
     }
   }
 
@@ -134,7 +131,6 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
               ),
             ),
           ),
-
           body: SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) {
@@ -164,246 +160,197 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                         child: Image.file(widget.imageFile, fit: BoxFit.cover),
                       ),
                       SizedBox(height: ResponsiveUtils.paddingV(context)),
-
-                      Column(
-                        children: [
-                          Text(
-                            'Information',
-                            style: TextStyle(
-                              fontSize: ResponsiveUtils.subtitleSize(
-                                context,
-                                isTablet: isTablet,
-                              ),
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Montserrat',
-                              color: isDarkMode ? Colors.white : Colors.black,
-                            ),
+                      TextField(
+                        controller: _nameController,
+                        style: TextStyle(
+                          fontSize: ResponsiveUtils.inputFontSize(context),
+                        ),
+                        decoration: InputDecoration(
+                          labelText: 'Outfit Name',
+                          labelStyle: TextStyle(
+                            fontSize: ResponsiveUtils.inputFontSize(context),
                           ),
-
-                          SizedBox(
-                            height: ResponsiveUtils.paddingV(context) * 0.5,
-                          ),
-
-                          TextField(
-                            controller: _nameController,
-                            style: TextStyle(
-                              fontSize: ResponsiveUtils.inputFontSize(context),
-                              color: isDarkMode ? Colors.white : Colors.black,
-                            ),
-                            decoration: InputDecoration(
-                              labelText: 'Name',
-                              labelStyle: TextStyle(
-                                fontSize: ResponsiveUtils.inputFontSize(
-                                  context,
-                                ),
-                                color: isDarkMode ? Colors.white : Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              filled: true,
-                              fillColor:
-                                  isDarkMode
-                                      ? Colors.grey[700]
-                                      : Colors.grey[200],
-                            ),
-                          ),
-
-                          SizedBox(height: ResponsiveUtils.paddingV(context)),
-
-                          DropdownButtonFormField<String>(
-                            isExpanded: true,
-                            style: TextStyle(
-                              fontSize: ResponsiveUtils.inputFontSize(context),
-                              color: isDarkMode ? Colors.white : Colors.black,
-                            ),
-                            decoration: InputDecoration(
-                              labelText: 'Category',
-                              labelStyle: TextStyle(
-                                fontSize: ResponsiveUtils.inputFontSize(
-                                  context,
-                                ),
-                                color: isDarkMode ? Colors.white : Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              filled: true,
-                              fillColor:
-                                  isDarkMode
-                                      ? Colors.grey[700]
-                                      : Colors.grey[200],
-                            ),
-                            items:
-                                ['Formal', 'Party', 'Swimming', 'Ewan'].map((
-                                  size,
-                                ) {
-                                  return DropdownMenuItem<String>(
-                                    value: size,
-                                    child: Text(
-                                      size,
-                                      style: TextStyle(
-                                        color:
-                                            isDarkMode
-                                                ? Colors.white
-                                                : Colors.black,
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                selectedCategory = value;
-                              });
-                            },
-                          ),
-
-                          SizedBox(height: ResponsiveUtils.paddingV(context)),
-
-                          DropdownButtonFormField<String>(
-                            isExpanded: true,
-                            style: TextStyle(
-                              fontSize: ResponsiveUtils.inputFontSize(context),
-                              color: isDarkMode ? Colors.white : Colors.black,
-                            ),
-                            decoration: InputDecoration(
-                              labelText: 'Color',
-                              labelStyle: TextStyle(
-                                fontSize: ResponsiveUtils.inputFontSize(
-                                  context,
-                                ),
-                                color: isDarkMode ? Colors.white : Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              filled: true,
-                              fillColor:
-                                  isDarkMode
-                                      ? Colors.grey[700]
-                                      : Colors.grey[200],
-                            ),
-                            items:
-                                ['Red', 'Yellow', 'Green', 'Blue'].map((color) {
-                                  return DropdownMenuItem<String>(
-                                    value: color,
-                                    child: Text(
-                                      color,
-                                      style: TextStyle(
-                                        color:
-                                            isDarkMode
-                                                ? Colors.white
-                                                : Colors.black,
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                selectedColor = value;
-                              });
-                            },
-                          ),
-
-                          SizedBox(height: ResponsiveUtils.paddingV(context)),
-
-                          DropdownButtonFormField<String>(
-                            isExpanded: true,
-                            style: TextStyle(
-                              fontSize: ResponsiveUtils.inputFontSize(context),
-                              color: isDarkMode ? Colors.white : Colors.black,
-                            ),
-                            decoration: InputDecoration(
-                              labelText: 'Materials',
-                              labelStyle: TextStyle(
-                                fontSize: ResponsiveUtils.inputFontSize(
-                                  context,
-                                ),
-                                color: isDarkMode ? Colors.white : Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              filled: true,
-                              fillColor:
-                                  isDarkMode
-                                      ? Colors.grey[700]
-                                      : Colors.grey[200],
-                            ),
-                            items:
-                                ['Cotton', 'Hemp', 'Idk'].map((size) {
-                                  return DropdownMenuItem<String>(
-                                    value: size,
-                                    child: Text(
-                                      size,
-                                      style: TextStyle(
-                                        color:
-                                            isDarkMode
-                                                ? Colors.white
-                                                : Colors.black,
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                selectedMaterial = value;
-                              });
-                            },
-                          ),
-
-                          SizedBox(height: ResponsiveUtils.paddingV(context)),
-
-                          DropdownButtonFormField<String>(
-                            isExpanded: true,
-                            style: TextStyle(
-                              fontSize: ResponsiveUtils.inputFontSize(context),
-                              color: isDarkMode ? Colors.white : Colors.black,
-                            ),
-                            decoration: InputDecoration(
-                              labelText: 'Clothing Type',
-                              labelStyle: TextStyle(
-                                fontSize: ResponsiveUtils.inputFontSize(
-                                  context,
-                                ),
-                                color: isDarkMode ? Colors.white : Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              filled: true,
-                              fillColor:
-                                  isDarkMode
-                                      ? Colors.grey[700]
-                                      : Colors.grey[200],
-                            ),
-                            items:
-                                ['T-shirt', 'Dress', 'Jeans', 'Shorts'].map((
-                                  color,
-                                ) {
-                                  return DropdownMenuItem<String>(
-                                    value: color,
-                                    child: Text(
-                                      color,
-                                      style: TextStyle(
-                                        color:
-                                            isDarkMode
-                                                ? Colors.white
-                                                : Colors.black,
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                selectedClothingType = value;
-                              });
-                            },
-                          ),
-
-                          SizedBox(height: ResponsiveUtils.paddingV(context)),
-                        ],
+                          border: OutlineInputBorder(),
+                        ),
                       ),
+                      SizedBox(height: ResponsiveUtils.paddingV(context)),
+                      DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        value: selectedCategory,
+                        decoration: InputDecoration(
+                          labelText: 'Category',
+                          labelStyle: TextStyle(
+                            fontSize: ResponsiveUtils.inputFontSize(context),
+                            color: isDarkMode ? Colors.white : Colors.black,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor:
+                              isDarkMode ? Colors.grey[700] : Colors.grey[200],
+                        ),
+                        style: TextStyle(
+                          fontSize: ResponsiveUtils.inputFontSize(context),
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
+                        items:
+                            categoryItems.keys.map((category) {
+                              return DropdownMenuItem<String>(
+                                value: category,
+                                child: Text(
+                                  category,
+                                  style: TextStyle(
+                                    color:
+                                        isDarkMode
+                                            ? Colors.white
+                                            : Colors.black,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedCategory = value;
+                            selectedClothingType = null;
+                            selectedMaterial = null;
+                          });
+                        },
+                      ),
+                      SizedBox(height: ResponsiveUtils.paddingV(context)),
+                      if (selectedCategory != null)
+                        DropdownButtonFormField<String>(
+                          isExpanded: true,
+                          value: selectedClothingType,
+                          decoration: InputDecoration(
+                            labelText: 'Clothing Type',
+                            labelStyle: TextStyle(
+                              fontSize: ResponsiveUtils.inputFontSize(context),
+                              color: isDarkMode ? Colors.white : Colors.black,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            filled: true,
+                            fillColor:
+                                isDarkMode
+                                    ? Colors.grey[700]
+                                    : Colors.grey[200],
+                          ),
+                          style: TextStyle(
+                            fontSize: ResponsiveUtils.inputFontSize(context),
+                            color: isDarkMode ? Colors.white : Colors.black,
+                          ),
+                          items:
+                              categoryItems[selectedCategory]!.map((type) {
+                                return DropdownMenuItem<String>(
+                                  value: type,
+                                  child: Text(
+                                    type,
+                                    style: TextStyle(
+                                      color:
+                                          isDarkMode
+                                              ? Colors.white
+                                              : Colors.black,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedClothingType = value;
+                            });
+                          },
+                        ),
+                      SizedBox(height: ResponsiveUtils.paddingV(context)),
+                      DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        value: selectedColor,
+                        decoration: InputDecoration(
+                          labelText: 'Color',
+                          labelStyle: TextStyle(
+                            fontSize: ResponsiveUtils.inputFontSize(context),
+                            color: isDarkMode ? Colors.white : Colors.black,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor:
+                              isDarkMode ? Colors.grey[700] : Colors.grey[200],
+                        ),
+                        style: TextStyle(
+                          fontSize: ResponsiveUtils.inputFontSize(context),
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
+                        items:
+                            colorList.map((color) {
+                              return DropdownMenuItem<String>(
+                                value: color,
+                                child: Text(
+                                  color,
+                                  style: TextStyle(
+                                    color:
+                                        isDarkMode
+                                            ? Colors.white
+                                            : Colors.black,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedColor = value;
+                          });
+                        },
+                      ),
+                      SizedBox(height: ResponsiveUtils.paddingV(context)),
+                      if (selectedCategory != 'Accessories')
+                        DropdownButtonFormField<String>(
+                          isExpanded: true,
+                          value: selectedMaterial,
+                          decoration: InputDecoration(
+                            labelText: 'Material',
+                            labelStyle: TextStyle(
+                              fontSize: ResponsiveUtils.inputFontSize(context),
+                              color: isDarkMode ? Colors.white : Colors.black,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            filled: true,
+                            fillColor:
+                                isDarkMode
+                                    ? Colors.grey[700]
+                                    : Colors.grey[200],
+                          ),
+                          style: TextStyle(
+                            fontSize: ResponsiveUtils.inputFontSize(context),
+                            color: isDarkMode ? Colors.white : Colors.black,
+                          ),
+                          items:
+                              (materialOptions[selectedCategory] ?? []).map((
+                                material,
+                              ) {
+                                return DropdownMenuItem<String>(
+                                  value: material,
+                                  child: Text(
+                                    material,
+                                    style: TextStyle(
+                                      color:
+                                          isDarkMode
+                                              ? Colors.white
+                                              : Colors.black,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedMaterial = value;
+                            });
+                          },
+                        ),
 
                       SizedBox(height: ResponsiveUtils.paddingV(context)),
 
