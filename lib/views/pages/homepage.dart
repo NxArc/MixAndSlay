@@ -132,7 +132,7 @@ class _HomeState extends State<Home> {
                           });
                           _pageController.jumpToPage(2); // Sync PageView
                         },
-                        icon: const Icon(Icons.question_mark_rounded),
+                        icon: const Icon(Icons.checkroom),
                       ),
                       IconButton(
                         onPressed: () {
