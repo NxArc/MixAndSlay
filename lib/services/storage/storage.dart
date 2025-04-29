@@ -15,8 +15,7 @@ class StorageService with ChangeNotifier {
     String clothingType,
     String name,
     String material,
-    String category
-
+    String category,
   ) async {
     try {
       // Upload image to Supabase Storage
@@ -27,7 +26,9 @@ class StorageService with ChangeNotifier {
           .upload(fileName, imageFile);
 
       //Get the public URL for the uploaded image
-      final imageUrl = supabase.storage.from('clothing-items').getPublicUrl(fileName);
+      final imageUrl = supabase.storage
+          .from('clothing-items')
+          .getPublicUrl(fileName);
 
       // Step 3: Insert clothing item metadata into the user_clothing_items table
       final user = supabase.auth.currentUser;
@@ -46,7 +47,9 @@ class StorageService with ChangeNotifier {
       });
 
       if (insertResponse.error != null) {
-        throw Exception('Failed to insert clothing item: ${insertResponse.error!.message}');
+        throw Exception(
+          'Failed to insert clothing item: ${insertResponse.error!.message}',
+        );
       }
 
       print('Clothing item uploaded successfully!');
@@ -56,10 +59,10 @@ class StorageService with ChangeNotifier {
     }
   }
 
-
-
   // Retrieve Clothing Items by Category for the Authenticated User
-  Future<List<Map<String, dynamic>>> getClothingItemsByCategory(String category) async {
+  Future<List<Map<String, dynamic>>> getClothingItemsByCategory(
+    String category,
+  ) async {
     try {
       final user = supabase.auth.currentUser;
       if (user == null) {
@@ -82,8 +85,6 @@ class StorageService with ChangeNotifier {
     }
   }
 
-
-
   // Delete Clothing Item from Supabase
   Future<void> deleteClothingItem(String itemId) async {
     try {
@@ -94,12 +95,13 @@ class StorageService with ChangeNotifier {
       }
 
       // Get the clothing item from the database
-      final itemResponse = await supabase
-          .from('user_clothing_items')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('id', itemId)
-          .single();
+      final itemResponse =
+          await supabase
+              .from('user_clothing_items')
+              .select('*')
+              .eq('user_id', user.id)
+              .eq('id', itemId)
+              .single();
 
       // SDelete the image from Supabase Storage
       final imageUrl = itemResponse['image_url'];
@@ -117,7 +119,9 @@ class StorageService with ChangeNotifier {
           .eq('id', itemId);
 
       if (deleteResponse.error != null) {
-        throw Exception('Failed to delete clothing item: ${deleteResponse.error!.message}');
+        throw Exception(
+          'Failed to delete clothing item: ${deleteResponse.error!.message}',
+        );
       }
 
       notifyListeners(); // Notify listeners to update UI
@@ -125,8 +129,6 @@ class StorageService with ChangeNotifier {
       rethrow; // Rethrow to allow caller to handle the error
     }
   }
-
-
 
   Future<List<Map<String, dynamic>>> getClothingItemsByType(
     String clothingType,
@@ -152,4 +154,47 @@ class StorageService with ChangeNotifier {
       return [];
     }
   }
+
+
+
+  Future<void> createCustomOutfit({
+    required String outfitName,
+    required String topId,
+    required String bottomId,
+    String? headwearId,
+    String? accessoriesId,
+    String? footwearId,
+    String? weatherFit,
+    String? outerwearId,
+    required String occasion,
+  }) async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+
+      final response = await supabase.from('user_outfits').insert({
+        'uuid': user.id,
+        'created_at': DateTime.now().toIso8601String(),
+        'outfit_name': outfitName,
+        'headwear': headwearId,
+        'top': topId,
+        'bottom': bottomId,
+        'accessories': accessoriesId,
+        'footwear': footwearId,
+        'outerwear': outerwearId,
+        'weatherFit': weatherFit,
+        'occasion': occasion,
+      });
+
+      if (response == null || response.isEmpty) {
+        throw Exception('Failed to create custom outfit');
+      }
+
+      notifyListeners();
+    } catch (e) {
+      print('Error creating custom outfit: $e');
+    }
+  }
+
+
 }
