@@ -4,7 +4,7 @@ import 'package:fasionrecommender/data/responsive_utils.dart';
 import 'package:fasionrecommender/views/widget/closetwidgets.dart/saved.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'package:fasionrecommender/services/storage/storage.dart';
+import 'package:fasionrecommender/services/storage/creation_and_deletions.dart';
 import 'package:provider/provider.dart';
 
 class ItemDetailsPage extends StatefulWidget {

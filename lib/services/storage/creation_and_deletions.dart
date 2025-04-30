@@ -51,7 +51,6 @@ class StorageService with ChangeNotifier {
           'Failed to insert clothing item: ${insertResponse.error!.message}',
         );
       }
-
       print('Clothing item uploaded successfully!');
       notifyListeners();
     } catch (e) {
@@ -59,7 +58,33 @@ class StorageService with ChangeNotifier {
     }
   }
 
-  // Retrieve Clothing Items by Category for the Authenticated User
+  Future<Map<String, dynamic>?> retrieveClothingItem(String itemId) async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) {
+        throw Exception('User is not authenticated');
+      }
+
+      final response =
+          await supabase
+              .from('user_clothing_items')
+              .select()
+              .eq('item_id', itemId)
+              .maybeSingle(); // Safely returns null if no record found
+
+      if (response == null) {
+        print('Clothing item not found.');
+        return null;
+      }
+
+      return response;
+    } catch (e) {
+      print('Error retrieving clothing item: $e');
+      return null;
+    }
+  }
+
+  // Retrieve Clothing Items by Category
   Future<List<Map<String, dynamic>>> getClothingItemsByCategory(
     String category,
   ) async {
@@ -76,7 +101,6 @@ class StorageService with ChangeNotifier {
           .eq('uid', user.id)
           .eq('category', category)
           .order('created_at', ascending: false);
-
       // Response is already a List<Map<String, dynamic>> if successful
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
@@ -99,8 +123,8 @@ class StorageService with ChangeNotifier {
           await supabase
               .from('user_clothing_items')
               .select('*')
-              .eq('user_id', user.id)
-              .eq('id', itemId)
+              .eq('uid', user.id)
+              .eq('item_id', itemId)
               .single();
 
       // SDelete the image from Supabase Storage
@@ -115,8 +139,8 @@ class StorageService with ChangeNotifier {
       final deleteResponse = await supabase
           .from('user_clothing_items')
           .delete()
-          .eq('user_id', user.id)
-          .eq('id', itemId);
+          .eq('uid', user.id)
+          .eq('item_id', itemId);
 
       if (deleteResponse.error != null) {
         throw Exception(
@@ -129,33 +153,6 @@ class StorageService with ChangeNotifier {
       rethrow; // Rethrow to allow caller to handle the error
     }
   }
-
-  Future<List<Map<String, dynamic>>> getClothingItemsByType(
-    String clothingType,
-  ) async {
-    try {
-      final user = supabase.auth.currentUser;
-      if (user == null) {
-        throw Exception('User is not authenticated');
-      }
-
-      // Query clothing items by clothing type for the current user
-      final response = await supabase
-          .from('user_clothing_items')
-          .select('*')
-          .eq('uid', user.id)
-          .eq('clothing_type', clothingType) // Filter by clothing type
-          .order('created_at', ascending: false);
-
-      // Response is already a List<Map<String, dynamic>> if successful
-      return List<Map<String, dynamic>>.from(response);
-    } catch (e) {
-      print('Error retrieving clothing items by clothing type: $e');
-      return [];
-    }
-  }
-
-
 
   Future<void> createCustomOutfit({
     required String outfitName,
@@ -196,5 +193,29 @@ class StorageService with ChangeNotifier {
     }
   }
 
+  //Delete Outfit From Database
+  Future<void> deleteOutfit(String outfitId) async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) {
+        throw Exception('User is not authenticated');
+      }
 
+      final response = await supabase
+          .from('user_outfits')
+          .delete()
+          .eq('uuid', user.id)
+          .eq('id', outfitId);
+
+      if (response == null || response.error != null) {
+        throw Exception('Failed to delete outfit: ${response.error?.message}');
+      }
+
+      notifyListeners();
+      print('Outfit deleted successfully.');
+    } catch (e) {
+      print('Error deleting outfit: $e');
+      rethrow;
+    }
+  }
 }
