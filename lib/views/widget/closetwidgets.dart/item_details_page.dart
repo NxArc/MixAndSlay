@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:fasionrecommender/services/storage/storage.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'saved_items_manager.dart';
+import 'view_saved_items_page.dart';
 
 
 class ItemDetailsPage extends StatefulWidget {
@@ -43,6 +46,8 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     super.dispose();
   }
 
+
+
   Future<void> _saveItem() async {
     final String color = selectedColor ?? '';
     final String clothingType = selectedClothingType ?? '';
@@ -61,9 +66,12 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
         material,
         category,
       );
-    await showSuccessDialog(context);
+
+      SavedItemsManager.addItem(widget.imageFile);
+      
+      showSuccessBottomSheet(context);
     } catch (e) {
-      await showFailureDialog(context, e.toString());
+      showFailureBottomSheet(context, e.toString());
     }
   }
 
@@ -104,6 +112,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
                     onTap: () {
+                      SavedItemsManager.clearItems();
                       Navigator.pop(context);
                     },
                     child: Container(
@@ -352,6 +361,7 @@ if (selectedCategory != 'Accessories')
                           ),
                         ),
                       ),
+                      const SizedBox(height: 12),
 
                       SizedBox(height: ResponsiveUtils.paddingV(context)),
                     ],

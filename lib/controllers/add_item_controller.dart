@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/items_details_page.dart';
+import 'package:fasionrecommender/views/widget/closetwidgets.dart/item_details_page.dart';
 
 class AddItemController {
   final ImagePicker _picker = ImagePicker();
