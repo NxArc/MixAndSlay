@@ -19,7 +19,37 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
     super.initState();
     _loadOutfit();
   }
-
+Future<void> showOutfitDialog(BuildContext context, String outfitId) {
+  return showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 40), // Leave space for X
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.8,
+                child: OutfitDisplayWidget(outfitID: outfitId),
+              ),
+            ),
+            Positioned(
+              right: 8,
+              top: 8,
+              child: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
   Future<void> _loadOutfit() async {
     final outfitService = Provider.of<OutfitService>(context, listen: false);
     final userOutfits = await outfitService.retrieveOutfitByOutfitID(
@@ -47,25 +77,24 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
           return ListTile(title: Text('$label: Loading...'));
         }
         final item = snapshot.data;
-        if (item == null) return ListTile(title: Text('$label: Not found'));
+        if (item == null) return ListTile(title: Text('$label: No $label'));
 
         return ListTile(
           contentPadding: const EdgeInsets.symmetric(
             vertical: 8.0,
             horizontal: 16.0,
           ),
-          leading:
-              item['image_url'] != null
-                  ? ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      item['image_url'],
-                      width: 60,
-                      height: 60,
-                      fit: BoxFit.cover,
-                    ),
-                  )
-                  : const Icon(Icons.image_not_supported, size: 60),
+          leading: item['image_url'] != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    item['image_url'],
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : const Icon(Icons.image_not_supported, size: 60),
           title: Text(
             '$label: ${item['name'] ?? 'Unnamed'}',
             style: const TextStyle(fontWeight: FontWeight.bold),
@@ -97,8 +126,6 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     if (outfit == null) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -128,41 +155,22 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
               _buildItemTile('Footwear', outfit!['footwear']),
               _buildItemTile('Accessories', outfit!['accessories']),
               const SizedBox(height: 24),
-              Divider(),
+              const Divider(),
               const SizedBox(height: 12),
-              screenWidth > 500
-                  ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'WeatherFit: ${outfit!['weatherFit'] ?? 'N/A'}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      Text(
-                        'Occasion: ${outfit!['occasion'] ?? 'N/A'}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  )
-                  : Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: Text(
-                          'WeatherFit: ${outfit!['weatherFit'] ?? 'N/A'}',
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: Text(
-                          'Occasion: ${outfit!['occasion'] ?? 'N/A'}',
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ],
+              Wrap(
+                spacing: 20,
+                runSpacing: 8,
+                children: [
+                  Text(
+                    'WeatherFit: ${outfit!['weatherFit'] ?? 'N/A'}',
+                    style: const TextStyle(fontSize: 16),
                   ),
+                  Text(
+                    'Occasion: ${outfit!['occasion'] ?? 'N/A'}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

@@ -5,7 +5,6 @@ import 'package:fasionrecommender/views/pages/closet.dart';
 import 'package:fasionrecommender/views/widget/homepage%20widgets/profile_setup_page.dart';
 import 'package:fasionrecommender/views/pages/searchpage.dart';
 import 'package:fasionrecommender/views/widget/homepage%20widgets/homepage_widget.dart';
-import 'package:fasionrecommender/views/widget/outfit_display.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -20,7 +19,7 @@ class _HomeState extends State<Home> {
     HomeWidget(),
     Searchpage(),
     VirtualClosetPage(),
-    OutfitDisplayWidget(outfitID: 'a9e3877c-e43a-4630-b8b5-6b49e0fe0ce1'),
+    Searchpage(),
   ];
   int _currentIndex = 0;
   final PageController _pageController = PageController();
