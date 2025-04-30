@@ -1,11 +1,12 @@
-import 'package:fasionrecommender/controllers/homepage_controller.dart';
+import 'package:fasionrecommender/controllers/profile_setup_controller.dart';
+import 'package:fasionrecommender/data/notifiers.dart';
+import 'package:fasionrecommender/data/responsive_utils.dart';
 import 'package:fasionrecommender/views/pages/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../controllers/profile_setup_controller.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -23,7 +24,9 @@ class _ProfilePageState extends State<ProfilePage> {
   final ProfileSetupController _controller = ProfileSetupController();
 
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
 
     if (pickedFile != null) {
       setState(() {
@@ -37,9 +40,9 @@ class _ProfilePageState extends State<ProfilePage> {
     final gender = _selectedGender;
 
     if (name.isEmpty || gender == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill all fields')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Please fill all fields')));
       return;
     }
 
@@ -54,14 +57,16 @@ class _ProfilePageState extends State<ProfilePage> {
 
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: User not signed in.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: User not signed in.')));
       return;
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(success ? 'Profile Saved!' : 'Profile Update Failed')),
+      SnackBar(
+        content: Text(success ? 'Profile Saved!' : 'Profile Update Failed'),
+      ),
     );
 
     Navigator.pushReplacement(
@@ -130,66 +135,89 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final padding = ResponsiveUtils.paddingH(context);
+    final vSpacing = ResponsiveUtils.paddingV(context);
+    final titleFontSize = ResponsiveUtils.titleSize(context);
+    final inputFontSize = ResponsiveUtils.inputFontSize(context);
+    final buttonWidth = ResponsiveUtils.buttonWidth(context);
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(24.0),
+          padding: EdgeInsets.symmetric(horizontal: padding),
           child: Column(
             children: [
               Align(
                 alignment: Alignment.topLeft,
                 child: IconButton(
                   icon: Icon(Icons.arrow_back),
-                  onPressed: () {
-                    signOut();
-                    Navigator.pop(context);
-                  },
+                  onPressed: () => Navigator.pop(context),
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: vSpacing),
               Text(
-                'Almost There!',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                'User Profile',
+                style: TextStyle(
+                  fontSize: titleFontSize,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: vSpacing),
               GestureDetector(
                 onTap: _pickImage,
                 child: CircleAvatar(
-                  radius: 50,
+                  radius: buttonWidth * 0.15,
                   backgroundImage:
                       _profileImage != null ? FileImage(_profileImage!) : null,
-                  child: _profileImage == null
-                      ? (_isLoadingAvatar
-                          ? CircularProgressIndicator()
-                          : Icon(Icons.camera_alt, size: 40))
-                      : null,
+                  child:
+                      _profileImage == null
+                          ? (_isLoadingAvatar
+                              ? CircularProgressIndicator()
+                              : Icon(Icons.camera_alt, size: 40))
+                          : null,
                 ),
               ),
-              SizedBox(height: 10),
-              Text('Choose'),
-              SizedBox(height: 30),
+              SizedBox(height: vSpacing * 0.8),
+              Text('Choose', style: TextStyle(fontSize: inputFontSize * 0.9)),
+              SizedBox(height: vSpacing * 1.5),
+
               TextField(
                 controller: _nameController,
+                style: TextStyle(fontSize: inputFontSize),
                 decoration: InputDecoration(
                   hintText: 'Enter your name',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
                   prefixIcon: Icon(Icons.person),
                 ),
               ),
-              SizedBox(height: 20),
+
+              SizedBox(height: vSpacing),
+
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(
                   hintText: 'Select Gender',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
                   prefixIcon: _getGenderIcon(_selectedGender),
                 ),
                 value: _selectedGender,
-                items: ['Male', 'Female', 'Other']
-                    .map((gender) => DropdownMenuItem(
-                          value: gender,
-                          child: Text(gender),
-                        ))
-                    .toList(),
+                style: TextStyle(
+                  color: isDarkModeNotifier.value ? Colors.white : Colors.black,
+                ),
+                dropdownColor:
+                    isDarkModeNotifier.value ? Colors.grey[900] : Colors.white,
+                items:
+                    ['Male', 'Female', 'Other']
+                        .map(
+                          (gender) => DropdownMenuItem(
+                            value: gender,
+                            child: Text(gender),
+                          ),
+                        )
+                        .toList(),
                 onChanged: (value) {
                   setState(() {
                     _selectedGender = value;
@@ -197,15 +225,24 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
               ),
               Spacer(),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                  backgroundColor: Colors.black,
+              SizedBox(
+                width: buttonWidth,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    backgroundColor: Colors.black,
+                  ),
+                  onPressed: _SetupProfile,
+                  child: Text(
+                    'Okay',
+                    style: TextStyle(fontSize: inputFontSize),
+                  ),
                 ),
-                onPressed: _SetupProfile,
-                child: Text('Okay'),
               ),
+              SizedBox(height: vSpacing),
             ],
           ),
         ),

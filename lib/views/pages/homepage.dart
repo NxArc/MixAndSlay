@@ -2,6 +2,7 @@ import 'package:fasionrecommender/controllers/homepage_controller.dart';
 import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:fasionrecommender/services/authenticate/login_page.dart';
 import 'package:fasionrecommender/views/pages/closet.dart';
+import 'package:fasionrecommender/views/widget/homepage%20widgets/profile_setup_page.dart';
 import 'package:fasionrecommender/views/pages/searchpage.dart';
 import 'package:fasionrecommender/views/widget/homepage%20widgets/homepage_widget.dart';
 import 'package:fasionrecommender/views/widget/outfit_display.dart';
@@ -87,6 +88,12 @@ class _HomeState extends State<Home> {
                   return Icon(isDarkmode ? Icons.dark_mode : Icons.light_mode);
                 },
               ),
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(),));
+              },
+              icon: Icon(Icons.person),
             ),
           ],
         ),
