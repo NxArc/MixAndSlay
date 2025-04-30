@@ -11,15 +11,15 @@ class ProfileSetupController {
       final fileName = 'profile_${DateTime.now().millisecondsSinceEpoch}.jpg';
 
       await supabase.storage
-          .from('profile_pictures')
+          .from('profile-pictures')
           .uploadBinary(
             fileName,
             imageBytes,
             fileOptions: FileOptions(contentType: 'image/jpeg'),
           );
 
-      final imageUrl = supabase.storage 
-          .from('profile_pictures')
+      final imageUrl = supabase.storage
+          .from('profile-pictures')
           .getPublicUrl(fileName);
 
       return imageUrl;
@@ -29,7 +29,11 @@ class ProfileSetupController {
     }
   }
 
-  Future<bool> saveProfile(String name, String gender, String? imageUrl) async {
+  Future<bool> updateProfile(
+    String name,
+    String gender,
+    String? imageUrl,
+  ) async {
     try {
       final user = supabase.auth.currentUser;
       if (user == null) {
@@ -37,16 +41,36 @@ class ProfileSetupController {
       }
 
       await supabase.from('profiles').upsert({
-        'id': user.id,
-        'name': name,
+        'username': name,
         'gender': gender,
-        'profile_picture_url': imageUrl,
+        'avatar_url': imageUrl,
       });
 
       return true;
     } catch (e) {
       debugPrint('Error saving profile: $e');
       return false;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getProfile() async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) {
+        throw Exception('No logged in user');
+      }
+
+      final response =
+          await supabase
+              .from('profiles')
+              .select()
+              .eq('id', user.id)
+              .single(); // Fetch only the single matching record
+
+      return response;
+    } catch (e) {
+      debugPrint('Error retrieving profile: $e');
+      return null;
     }
   }
 }

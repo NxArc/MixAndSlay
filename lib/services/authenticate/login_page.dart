@@ -3,7 +3,6 @@ import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart';
 import 'package:fasionrecommender/services/authenticate/signup_page.dart';
 import 'package:fasionrecommender/views/pages/homepage.dart';
-import 'package:fasionrecommender/views/pages/profile_setup_page.dart';
 import 'package:fasionrecommender/views/widget/appbar.dart';
 import 'package:flutter/material.dart';
 
@@ -168,7 +167,7 @@ class _LoginPageState extends State<LoginPage> {
                                           Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (_) => ProfileSetupPage(),
+                                              builder: (_) => Home(),
                                             ),
                                           );
                                         }

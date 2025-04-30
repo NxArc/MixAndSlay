@@ -3,6 +3,7 @@ import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:fasionrecommender/services/authenticate/login_page.dart';
 import 'package:fasionrecommender/views/pages/closet.dart';
 import 'package:fasionrecommender/views/pages/outfit_creation.dart';
+import 'package:fasionrecommender/views/pages/profile_setup_page.dart';
 import 'package:fasionrecommender/views/pages/searchpage.dart';
 import 'package:fasionrecommender/views/widget/homepage%20widgets/homepage_widget.dart';
 import 'package:flutter/material.dart';
@@ -41,24 +42,25 @@ class _HomeState extends State<Home> {
           leading: IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-              final confirmed = await showDialog<bool>( 
+              final confirmed = await showDialog<bool>(
                 context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Confirm Logout'),
-                  content: const Text('Are you sure you want to log out?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: const Text('Cancel'),
+                builder:
+                    (context) => AlertDialog(
+                      title: const Text('Confirm Logout'),
+                      content: const Text('Are you sure you want to log out?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context, true);
+                          },
+                          child: const Text('Logout'),
+                        ),
+                      ],
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context, true);
-                      },
-                      child: const Text('Logout'),
-                    ),
-                  ],
-                ),
               );
               if (confirmed == true) {
                 signOut();
@@ -70,6 +72,12 @@ class _HomeState extends State<Home> {
             },
           ),
           actions: [
+            IconButton(
+              onPressed:() => Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()) ),
+              icon: Icon(Icons.person),
+            ),
+
+
             IconButton(
               onPressed: () {
                 isDarkModeNotifier.value = !isDarkModeNotifier.value;
@@ -95,58 +103,59 @@ class _HomeState extends State<Home> {
           children: body,
         ),
 
-
-        bottomNavigationBar: _currentIndex == 3
-            ? null
-            : BottomAppBar(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8.0,
-                  ), // more consistent padding
-                  child: Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.spaceEvenly, // even spacing across the width
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _currentIndex = 0;
-                          });
-                          _pageController.jumpToPage(0); // Sync PageView
-                        },
-                        icon: const Icon(Icons.home),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _currentIndex = 1;
-                          });
-                          _pageController.jumpToPage(1); // Sync PageView
-                        },
-                        icon: const Icon(Icons.search),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _currentIndex = 2;
-                          });
-                          _pageController.jumpToPage(2); // Sync PageView
-                        },
-                        icon: const Icon(Icons.question_mark_rounded),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _currentIndex = 3;
-                          });
-                          _pageController.jumpToPage(3); // Sync PageView
-                        },
-                        icon: const Icon(Icons.question_mark_rounded),
-                      ),
-                    ],
+        bottomNavigationBar:
+            _currentIndex == 3
+                ? null
+                : BottomAppBar(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8.0,
+                    ), // more consistent padding
+                    child: Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment
+                              .spaceEvenly, // even spacing across the width
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _currentIndex = 0;
+                            });
+                            _pageController.jumpToPage(0); // Sync PageView
+                          },
+                          icon: const Icon(Icons.home),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _currentIndex = 1;
+                            });
+                            _pageController.jumpToPage(1); // Sync PageView
+                          },
+                          icon: const Icon(Icons.search),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _currentIndex = 2;
+                            });
+                            _pageController.jumpToPage(2); // Sync PageView
+                          },
+                          icon: const Icon(Icons.question_mark_rounded),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _currentIndex = 3;
+                            });
+                            _pageController.jumpToPage(3); // Sync PageView
+                          },
+                          icon: const Icon(Icons.question_mark_rounded),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
       ),
     );
   }
