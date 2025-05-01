@@ -57,11 +57,7 @@ class OutfitService with ChangeNotifier {
           .from('user_outfits')
           .delete()
           .eq('uuid', user.id)
-          .eq('id', outfitId);
-
-      if (response == null || response.error != null) {
-        throw Exception('Failed to delete outfit: ${response.error?.message}');
-      }
+          .eq('outfit_id', outfitId);
 
       notifyListeners();
       print('Outfit deleted successfully.');
