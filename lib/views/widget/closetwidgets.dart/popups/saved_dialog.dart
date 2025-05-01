@@ -3,8 +3,6 @@ import 'package:fasionrecommender/views/widget/closetwidgets.dart/view_saved_ite
 import 'package:flutter/material.dart';
 import '../item_details_page.dart';
 import 'package:image_picker/image_picker.dart';
-import '../view_saved_items_page.dart';
-import 'package:flutter/material.dart';
 
 class SuccessDialog extends StatelessWidget {
   const SuccessDialog({super.key});
@@ -232,28 +230,6 @@ void showSuccessBottomSheet(BuildContext context) {
                   ),
                 ),
                 const SizedBox(height: 12),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ViewSavedItemsPage()),
-                      );
-                    },
-                    child: const Text(
-                      'View Saved Items',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w600,
-                        decoration: TextDecoration.underline,
-                        color: Color(0xFF383737),
-                      ),
-                    ),
-                  ),
-                ),
               ],
             ),
           ],

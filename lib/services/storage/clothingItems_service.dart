@@ -126,25 +126,26 @@ class ClothingItemService with ChangeNotifier {
               .single();
 
       final imageUrl = itemResponse['image_url'];
-      final fileName = Uri.parse(imageUrl).pathSegments.last;
 
-      // Attempt to delete the database record
-      final deleteResponse = await supabase
+      // Extract relative storage path from image URL
+      final fullPath = Uri.parse(imageUrl).pathSegments
+          .skipWhile((s) => s != 'clothing-items') // Find bucket name
+          .skip(1) // Skip the bucket name itself
+          .join('/');
+
+      // Delete the database record
+      await supabase
           .from('user_clothing_items')
           .delete()
           .eq('uid', user.id)
           .eq('item_id', itemId);
 
-      if (deleteResponse.error != null) {
-        final errorMessage = deleteResponse.error!.message;
-
-        throw Exception('Failed to delete clothing item: $errorMessage');
-      }
-      
-      await supabase.storage.from('clothing-items').remove([fileName]);
+      // Delete the image from storage
+      await supabase.storage.from('clothing-items').remove([fullPath]);
 
       notifyListeners();
     } catch (e) {
+      debugPrint('Error deleting clothing item: $e');
       rethrow;
     }
   }

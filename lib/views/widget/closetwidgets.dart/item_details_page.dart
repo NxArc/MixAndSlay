@@ -1,12 +1,11 @@
 import 'package:fasionrecommender/data/clothing_data.dart';
 import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart';
-import 'package:fasionrecommender/services/storage/clothingItems_service.dart';
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/popups/saved.dart';
+import 'package:fasionrecommender/views/widget/closetwidgets.dart/popups/saved_dialog.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'package:fasionrecommender/services/storage/clothingItems_service.dart';
 import 'package:provider/provider.dart';
-import 'popups/saved_items_manager.dart';
 
 class ItemDetailsPage extends StatefulWidget {
   final File imageFile;
@@ -50,7 +49,10 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     final String material = selectedMaterial ?? '';
     final String category = selectedCategory ?? '';
 
-    final storageService = Provider.of<ClothingItemService>(context, listen: false);
+    final storageService = Provider.of<ClothingItemService>(
+      context,
+      listen: false,
+    );
 
     try {
       await storageService.uploadClothingItem(
@@ -61,12 +63,12 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
         material,
         category,
       );
-
-      SavedItemsManager.addItem(widget.imageFile);
-
-      showSuccessBottomSheet(context);
+      // ignore: use_build_context_synchronously
+      await showSuccessDialog(context);
+      // ignore: use_build_context_synchronously
     } catch (e) {
-      showFailureBottomSheet(context, e.toString());
+      // ignore: use_build_context_synchronously
+      await showFailureDialog(context, e.toString());
     }
   }
 
@@ -107,7 +109,6 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
                     onTap: () {
-                      SavedItemsManager.clearItems();
                       Navigator.pop(context);
                     },
                     child: Container(
@@ -151,7 +152,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                               isDarkMode ? Colors.grey[800] : Colors.grey[300],
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.15),
+                              color: Color.fromRGBO(0, 0, 0, 0.15),
                               offset: const Offset(0, 4),
                               blurRadius: 8,
                             ),
@@ -380,7 +381,6 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 12),
 
                       SizedBox(height: ResponsiveUtils.paddingV(context)),
                     ],

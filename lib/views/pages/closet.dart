@@ -1,6 +1,6 @@
 import 'package:fasionrecommender/data/responsive_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/outfit_creation.dart';
+import 'package:fasionrecommender/views/widget/outfit/outfit_creation.dart';
 import 'package:fasionrecommender/views/widget/closetwidgets.dart/sections/collection_section.dart';
 import 'package:fasionrecommender/views/widget/closetwidgets.dart/popups/outfit_display.dart';
 import 'package:fasionrecommender/views/widget/closetwidgets.dart/popups/add_item_bottom_sheet.dart';

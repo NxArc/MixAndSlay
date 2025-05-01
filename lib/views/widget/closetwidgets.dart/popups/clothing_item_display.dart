@@ -93,7 +93,6 @@ Future<void> showClothingItemDialog(BuildContext context, String itemId) async {
                           onPressed: () async {
                             try {
                               await storageService.deleteClothingItem(item['item_id']);
-
                               if (context.mounted) {
                                 await showDialog(
                                   context: context,

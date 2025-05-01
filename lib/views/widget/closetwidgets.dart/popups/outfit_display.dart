@@ -1,4 +1,5 @@
 import 'package:fasionrecommender/services/storage/outfits_service.dart';
+import 'package:fasionrecommender/views/widget/outfit/modify_outfit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fasionrecommender/services/storage/clothingItems_service.dart';
@@ -19,38 +20,41 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
     super.initState();
     _loadOutfit();
   }
-  
-Future<void> showOutfitDialog(BuildContext context, String outfitId) {
-  return showDialog(
-    context: context,
-    barrierDismissible: true,
-    builder: (context) {
-      return Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 40), // Leave space for X
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: MediaQuery.of(context).size.height * 0.8,
-                child: OutfitDisplayWidget(outfitID: outfitId),
+
+  Future<void> showOutfitDialog(BuildContext context, String outfitId) {
+    return showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 40), // Leave space for X
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  height: MediaQuery.of(context).size.height * 0.8,
+                  child: OutfitDisplayWidget(outfitID: outfitId),
+                ),
               ),
-            ),
-            Positioned(
-              right: 8,
-              top: 8,
-              child: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.of(context).pop(),
+              Positioned(
+                right: 8,
+                top: 8,
+                child: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
               ),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _loadOutfit() async {
     final outfitService = Provider.of<OutfitService>(context, listen: false);
     final userOutfits = await outfitService.retrieveOutfitByOutfitID(
@@ -66,7 +70,10 @@ Future<void> showOutfitDialog(BuildContext context, String outfitId) {
 
   Future<Map<String, dynamic>?> _fetchItem(String? itemId) async {
     if (itemId == null) return null;
-    final storageService = Provider.of<ClothingItemService>(context, listen: false);
+    final storageService = Provider.of<ClothingItemService>(
+      context,
+      listen: false,
+    );
     return await storageService.retrieveClothingItem(itemId);
   }
 
@@ -85,17 +92,18 @@ Future<void> showOutfitDialog(BuildContext context, String outfitId) {
             vertical: 8.0,
             horizontal: 16.0,
           ),
-          leading: item['image_url'] != null
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    item['image_url'],
-                    width: 60,
-                    height: 60,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              : const Icon(Icons.image_not_supported, size: 60),
+          leading:
+              item['image_url'] != null
+                  ? ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      item['image_url'],
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                  : const Icon(Icons.image_not_supported, size: 60),
           title: Text(
             '$label: ${item['name'] ?? 'Unnamed'}',
             style: const TextStyle(fontWeight: FontWeight.bold),
@@ -141,12 +149,33 @@ Future<void> showOutfitDialog(BuildContext context, String outfitId) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                outfit!['outfit_name'] ?? 'Unnamed Outfit',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      outfit!['outfit_name'] ?? 'Unnamed Outfit',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    tooltip: 'Edit Outfit',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) =>
+                                  EditOutfit(outfitId: widget.outfitID),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               _buildItemTile('Headwear', outfit!['headwear']),

@@ -32,28 +32,36 @@ class OutfitGrid extends StatelessWidget {
           ),
           itemCount: clothingItems.length,
           itemBuilder: (context, index) {
-            final imageUrl = clothingItems[index]['image_url'] as String? ?? '';
+            final item = clothingItems[index];
+            final imageUrl = item['image_url'] as String? ?? '';
+            final itemName = item['name'] as String? ?? 'Unnamed Item';
 
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 150,
-                      color: Colors.grey[300],
-                      child: const Center(
-                        child: Icon(
-                          Icons.broken_image,
-                          color: Colors.grey,
-                          size: 40,
+            return GestureDetector(
+              onTap: () {
+                debugPrint('Tapped on: $itemName');
+                // You can perform navigation or show a dialog here.
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 150,
+                        color: Colors.grey[300],
+                        child: const Center(
+                          child: Icon(
+                            Icons.broken_image,
+                            color: Colors.grey,
+                            size: 40,
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
             );

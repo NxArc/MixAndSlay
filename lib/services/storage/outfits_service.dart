@@ -141,4 +141,44 @@ class OutfitService with ChangeNotifier {
       return [];
     }
   }
+
+  Future<void> updateOutfit({
+    required String outfitId,
+    required String outfitName,
+    required String topId,
+    required String bottomId,
+    String? headwearId,
+    String? accessoriesId,
+    String? footwearId,
+    String? weatherFit,
+    String? outerwearId,
+    required String occasion,
+  }) async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+      await supabase
+          .from('user_outfits')
+          .update({
+            'outfit_name': outfitName,
+            'headwear': headwearId,
+            'top': topId,
+            'bottom': bottomId,
+            'accessories': accessoriesId,
+            'footwear': footwearId,
+            'outerwear': outerwearId,
+            'weatherFit': weatherFit,
+            'occasion': occasion,
+            'updated_at': DateTime.now().toIso8601String(),
+          })
+          .eq('uuid', user.id)
+          .eq('outfit_id', outfitId);
+
+      notifyListeners();
+      print('Outfit updated successfully.');
+    } catch (e) {
+      print('Error updating outfit: $e');
+      rethrow;
+    }
+  }
 }

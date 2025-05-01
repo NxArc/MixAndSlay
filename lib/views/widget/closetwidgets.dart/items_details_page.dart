@@ -1,7 +1,7 @@
 import 'package:fasionrecommender/data/clothing_data.dart';
 import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart';
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/popups/saved.dart';
+import 'package:fasionrecommender/views/widget/closetwidgets.dart/popups/saved_dialog.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:fasionrecommender/services/storage/clothingItems_service.dart';
