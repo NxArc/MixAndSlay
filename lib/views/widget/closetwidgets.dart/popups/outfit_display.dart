@@ -1,7 +1,7 @@
-import 'package:fasionrecommender/services/storage/outfits_retrieval.dart';
+import 'package:fasionrecommender/services/storage/outfits_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:fasionrecommender/services/storage/creation_and_deletions.dart';
+import 'package:fasionrecommender/services/storage/clothingItems_service.dart';
 
 class OutfitDisplayWidget extends StatefulWidget {
   final String outfitID;
@@ -19,6 +19,7 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
     super.initState();
     _loadOutfit();
   }
+  
 Future<void> showOutfitDialog(BuildContext context, String outfitId) {
   return showDialog(
     context: context,
@@ -65,7 +66,7 @@ Future<void> showOutfitDialog(BuildContext context, String outfitId) {
 
   Future<Map<String, dynamic>?> _fetchItem(String? itemId) async {
     if (itemId == null) return null;
-    final storageService = Provider.of<StorageService>(context, listen: false);
+    final storageService = Provider.of<ClothingItemService>(context, listen: false);
     return await storageService.retrieveClothingItem(itemId);
   }
 

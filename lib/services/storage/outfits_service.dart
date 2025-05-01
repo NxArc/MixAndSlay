@@ -6,6 +6,67 @@ class OutfitService with ChangeNotifier {
 
   OutfitService(this.supabase);
 
+  Future<void> createCustomOutfit({
+    required String outfitName,
+    required String topId,
+    required String bottomId,
+    String? headwearId,
+    String? accessoriesId,
+    String? footwearId,
+    String? weatherFit,
+    String? outerwearId,
+    required String occasion,
+  }) async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+
+      final response = await supabase.from('user_outfits').insert({
+        'uuid': user.id,
+        'created_at': DateTime.now().toIso8601String(),
+        'outfit_name': outfitName,
+        'headwear': headwearId,
+        'top': topId,
+        'bottom': bottomId,
+        'accessories': accessoriesId,
+        'footwear': footwearId,
+        'outerwear': outerwearId,
+        'weatherFit': weatherFit,
+        'occasion': occasion,
+      });
+
+      if (response == null || response.isEmpty) {
+        throw Exception('Failed to create custom outfit');
+      }
+
+      notifyListeners();
+    } catch (e) {
+      print('Error creating custom outfit: $e');
+    }
+  }
+
+  //Delete Outfit From Database
+  Future<void> deleteOutfit(String outfitId) async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) {
+        throw Exception('User is not authenticated');
+      }
+
+      final response = await supabase
+          .from('user_outfits')
+          .delete()
+          .eq('uuid', user.id)
+          .eq('outfit_id', outfitId);
+
+      notifyListeners();
+      print('Outfit deleted successfully.');
+    } catch (e) {
+      print('Error deleting outfit: $e');
+      rethrow;
+    }
+  }
+
   // Retrieve all outfits
   Future<List<Map<String, dynamic>>> retrieveOutfits() async {
     try {

@@ -1,10 +1,17 @@
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/outfit_creation.dart';
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/add_item_bottom_sheet.dart';
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/outfit_display.dart';
+import 'package:fasionrecommender/data/responsive_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:fasionrecommender/views/widget/closetwidgets.dart/outfit_creation.dart';
+import 'package:fasionrecommender/views/widget/closetwidgets.dart/sections/collection_section.dart';
+import 'package:fasionrecommender/views/widget/closetwidgets.dart/popups/outfit_display.dart';
+import 'package:fasionrecommender/views/widget/closetwidgets.dart/popups/add_item_bottom_sheet.dart';
+import 'package:fasionrecommender/views/widget/closetwidgets.dart/sections/generated_outfits_section.dart';
 
-class VirtualClosetPage extends StatelessWidget {
+class VirtualClosetPage extends StatefulWidget {
   const VirtualClosetPage({super.key});
+
+  @override
+  State<VirtualClosetPage> createState() => _VirtualClosetPageState();
+}
 
 Future<void> showOutfitDialog(BuildContext context, String outfitId) {
   return showDialog(
@@ -12,12 +19,11 @@ Future<void> showOutfitDialog(BuildContext context, String outfitId) {
     barrierDismissible: true,
     builder: (context) {
       return Dialog(
-
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 40), // Leave space for X
+              padding: const EdgeInsets.only(top: 40),
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
                 height: MediaQuery.of(context).size.height * 0.8,
@@ -39,87 +45,107 @@ Future<void> showOutfitDialog(BuildContext context, String outfitId) {
   );
 }
 
+class _VirtualClosetPageState extends State<VirtualClosetPage> {
+  int? expandedIndex; // 0 = Collection, 1 = Generated Outfits
+
+  void toggleExpand(int index) {
+    setState(() {
+      expandedIndex = expandedIndex == index ? null : index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final horizontalPadding = ResponsiveUtils.paddingH(context);
+    final verticalPadding = ResponsiveUtils.paddingV(context);
+    final titleFontSize = ResponsiveUtils.titleSize(context);
+    final buttonPadding = ResponsiveUtils.buttonPadding(context);
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text(
+        title: Text(
           'Closet',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22),
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: titleFontSize,
+          ),
         ),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            ElevatedButton.icon(
-              onPressed: () {
-                showAddItemDialog(context);
-              },
-              icon: const Icon(Icons.add, color: Colors.black),
-              label: const Text(
-                'New Item',
-                style: TextStyle(color: Colors.black),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF918E8E),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(11),
-                ),
-              ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: verticalPadding,
             ),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const OutfitCreationPage(),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.add, color: Colors.black),
-              label: const Text(
-                'Make Outfit',
-                style: TextStyle(color: Colors.black),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF918E8E),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 12,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                CollectionSection(
+                  isExpanded: expandedIndex == 0,
+                  onTap: () => toggleExpand(0),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(11),
+                SizedBox(height: verticalPadding * 0.75),
+                OutfitsSection(
+                  isExpanded: expandedIndex == 1,
+                  onTap: () => toggleExpand(1),
                 ),
-              ),
+                SizedBox(height: verticalPadding * 1.2),
+                Row(
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        showAddItemDialog(context);
+                      },
+                      icon: const Icon(Icons.add, color: Colors.black),
+                      label: const Text(
+                        'New Item',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF918E8E),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: buttonPadding,
+                          vertical: verticalPadding,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(11),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: horizontalPadding * 0.5),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const OutfitCreationPage(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.add, color: Colors.black),
+                      label: const Text(
+                        'Make Outfit',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF918E8E),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: buttonPadding,
+                          vertical: verticalPadding,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(11),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            ElevatedButton.icon(
-              onPressed: () {
-                showOutfitDialog(context, "a9e3877c-e43a-4630-b8b5-6b49e0fe0ce1");
-              },
-              icon: const Icon(Icons.add, color: Colors.black),
-              label: const Text(
-                'Show outfit test',
-                style: TextStyle(color: Colors.black),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF918E8E),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(11),
-                ),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

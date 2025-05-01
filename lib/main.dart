@@ -1,6 +1,6 @@
 import 'package:fasionrecommender/data/notifiers.dart';
-import 'package:fasionrecommender/services/storage/creation_and_deletions.dart';
-import 'package:fasionrecommender/services/storage/outfits_retrieval.dart';
+import 'package:fasionrecommender/services/storage/clothingItems_service.dart';
+import 'package:fasionrecommender/services/storage/outfits_service.dart';
 import 'package:fasionrecommender/views/pages/widget_tree.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +20,7 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => StorageService(supabaseClient),
+          create: (_) => ClothingItemService(supabaseClient),
         ),
         ChangeNotifierProvider(
           create: (_) => OutfitService(supabaseClient),

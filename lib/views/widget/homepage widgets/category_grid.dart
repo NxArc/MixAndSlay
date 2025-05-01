@@ -1,16 +1,15 @@
-import 'package:fasionrecommender/services/storage/creation_and_deletions.dart';
+import 'package:fasionrecommender/services/storage/clothingItems_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class OutfitGrid extends StatelessWidget {
   final String category;
-
   const OutfitGrid({super.key, required this.category});
 
   @override
   Widget build(BuildContext context) {
-    final storageService = StorageService(Supabase.instance.client);
+    final storageService = ClothingItemService(Supabase.instance.client);
 
     return FutureBuilder<List<Map<String, dynamic>>>(
       future: storageService.getClothingItemsByCategory(category),

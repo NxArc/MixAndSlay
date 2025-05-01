@@ -1,6 +1,7 @@
 import 'package:fasionrecommender/data/responsive_utils.dart';
-import 'package:fasionrecommender/services/storage/creation_and_deletions.dart';
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/saved.dart';
+import 'package:fasionrecommender/services/storage/clothingItems_service.dart';
+import 'package:fasionrecommender/services/storage/outfits_service.dart';
+import 'package:fasionrecommender/views/widget/closetwidgets.dart/popups/saved.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -47,12 +48,15 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
     'Accessory': null,
   };
 
-  late final StorageService storageService;
+  late final OutfitService outfitService;
+  late final ClothingItemService clothingItemService;
+
 
   @override
   void initState() {
     super.initState();
-    storageService = StorageService(Supabase.instance.client);
+    outfitService = OutfitService(Supabase.instance.client);
+    clothingItemService = ClothingItemService(Supabase.instance.client);
   }
 
   Future<void> _selectClothingItem(String displayLabel, String category) async {
@@ -60,7 +64,7 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
       context: context,
       builder: (context) {
         return FutureBuilder<List<Map<String, dynamic>>>(
-          future: storageService.getClothingItemsByCategory(category),
+          future: clothingItemService.getClothingItemsByCategory(category),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return AlertDialog(
@@ -309,7 +313,7 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
 
                       try {
                         // Make sure this function exists in your OutfitService, not StorageService
-                        await storageService.createCustomOutfit(
+                        await outfitService.createCustomOutfit(
                           outfitName: outfitName,
                           topId: selectedItemIds['Top']!,
                           bottomId: selectedItemIds['Bottom']!,

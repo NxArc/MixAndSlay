@@ -74,8 +74,6 @@ class _HomeState extends State<Home> {
             },
           ),
 
-
-
           actions: [
             IconButton(
               onPressed: () {
@@ -90,15 +88,15 @@ class _HomeState extends State<Home> {
             ),
             IconButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(),));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfilePage()),
+                );
               },
               icon: Icon(Icons.person),
             ),
           ],
         ),
-
-
-
 
         body: PageView(
           controller: _pageController,
@@ -110,85 +108,95 @@ class _HomeState extends State<Home> {
           children: body,
         ),
 
+        bottomNavigationBar:
+            _currentIndex == 3
+                ? null
+                : BottomAppBar(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8.0,
+                    ), // more consistent padding
+                    child: Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment
+                              .spaceEvenly, // even spacing across the width
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _currentIndex = 0;
+                            });
+                            _pageController.jumpToPage(0
+                            );
+                          },
+                          icon: Icon(
+                            Icons.home,
+                            color:
+                                _currentIndex == 1
+                                    ? activeColor
+                                    : inactiveColor,
+                          ),
+                        ),
 
 
-        bottomNavigationBar: BottomAppBar(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _currentIndex = 1;
+                            });
+                            _pageController.jumpToPage(1);
+                          },
+                          icon: Icon(
+                            Icons.search,
+                            color:
+                                _currentIndex == 1
+                                    ? activeColor
+                                    : inactiveColor,
+                          ),
+                        ),
 
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _currentIndex = 2;
+                            });
+                            _pageController.jumpToPage(2);
+                          },
+                          icon: Icon(
+                            Icons.checkroom,
+                            color:
+                                _currentIndex == 2
+                                    ? activeColor
+                                    : inactiveColor,
+                          ),
+                        ),
 
-
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _currentIndex = 0;
-                    });
-                    _pageController.jumpToPage(0);
-                  },
-                  icon: Icon(
-                    Icons.home,
-                    color: _currentIndex == 0 ? activeColor : inactiveColor,
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _currentIndex = 3;
+                            });
+                            _pageController.jumpToPage(3);
+                          },
+                          icon: ValueListenableBuilder<bool>(
+                            valueListenable: isDarkModeNotifier,
+                            builder: (context, isDarkMode, child) {
+                              return Image.asset(
+                                isDarkMode
+                                    ? 'assets/images/icons/wardrobe_darkmode_icon.png'
+                                    : 'assets/images/icons/wardrobe_icon.png',
+                                color:
+                                    _currentIndex == 3
+                                        ? activeColor
+                                        : inactiveColor,
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-
-
-
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _currentIndex = 1;
-                    });
-                    _pageController.jumpToPage(1);
-                  },
-                  icon: Icon(
-                    Icons.search,
-                    color: _currentIndex == 1 ? activeColor : inactiveColor,
-                  ),
-                ),
-
-
-
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _currentIndex = 2;
-                    });
-                    _pageController.jumpToPage(2);
-                  },
-                  icon: Icon(
-                    Icons.checkroom,
-                    color: _currentIndex == 2 ? activeColor : inactiveColor,
-                  ),
-                ),
-
-
-
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _currentIndex = 3;
-                    });
-                    _pageController.jumpToPage(3);
-                  },
-                  icon: ValueListenableBuilder<bool>(
-                    valueListenable: isDarkModeNotifier,
-                    builder: (context, isDarkMode, child) {
-                      return Image.asset(
-                        isDarkMode
-                            ? 'assets/images/icons/wardrobe_darkmode_icon.png'
-                            : 'assets/images/icons/wardrobe_icon.png',
-                        color: _currentIndex == 3 ? activeColor : inactiveColor,
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }

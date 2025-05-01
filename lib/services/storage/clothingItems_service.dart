@@ -3,11 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class StorageService with ChangeNotifier {
+class ClothingItemService with ChangeNotifier {
   final SupabaseClient supabase;
 
-  StorageService(this.supabase);
-
+  ClothingItemService(this.supabase);
   // Upload Image and Clothing Item to Supabase
   Future<void> uploadClothingItem(
     File imageFile,
@@ -112,13 +111,12 @@ class StorageService with ChangeNotifier {
   // Delete Clothing Item from Supabase
   Future<void> deleteClothingItem(String itemId) async {
     try {
-      // Step 1: Get the user and check if they are authenticated
       final user = supabase.auth.currentUser;
       if (user == null) {
         throw Exception('User is not authenticated');
       }
 
-      // Get the clothing item from the database
+      // Fetch the item data first
       final itemResponse =
           await supabase
               .from('user_clothing_items')
@@ -127,15 +125,10 @@ class StorageService with ChangeNotifier {
               .eq('item_id', itemId)
               .single();
 
-      // SDelete the image from Supabase Storage
       final imageUrl = itemResponse['image_url'];
       final fileName = Uri.parse(imageUrl).pathSegments.last;
 
-      final storageResponse = await supabase.storage
-          .from('clothing-items')
-          .remove([fileName]);
-
-      // Delete the clothing item metadata from the user_clothing_items table
+      // Attempt to delete the database record
       final deleteResponse = await supabase
           .from('user_clothing_items')
           .delete()
@@ -143,79 +136,38 @@ class StorageService with ChangeNotifier {
           .eq('item_id', itemId);
 
       if (deleteResponse.error != null) {
-        throw Exception(
-          'Failed to delete clothing item: ${deleteResponse.error!.message}',
-        );
+        final errorMessage = deleteResponse.error!.message;
+
+        throw Exception('Failed to delete clothing item: $errorMessage');
       }
-
-      notifyListeners(); // Notify listeners to update UI
-    } catch (e) {
-      rethrow; // Rethrow to allow caller to handle the error
-    }
-  }
-
-  Future<void> createCustomOutfit({
-    required String outfitName,
-    required String topId,
-    required String bottomId,
-    String? headwearId,
-    String? accessoriesId,
-    String? footwearId,
-    String? weatherFit,
-    String? outerwearId,
-    required String occasion,
-  }) async {
-    try {
-      final user = supabase.auth.currentUser;
-      if (user == null) throw Exception('User not authenticated');
-
-      final response = await supabase.from('user_outfits').insert({
-        'uuid': user.id,
-        'created_at': DateTime.now().toIso8601String(),
-        'outfit_name': outfitName,
-        'headwear': headwearId,
-        'top': topId,
-        'bottom': bottomId,
-        'accessories': accessoriesId,
-        'footwear': footwearId,
-        'outerwear': outerwearId,
-        'weatherFit': weatherFit,
-        'occasion': occasion,
-      });
-
-      if (response == null || response.isEmpty) {
-        throw Exception('Failed to create custom outfit');
-      }
+      
+      await supabase.storage.from('clothing-items').remove([fileName]);
 
       notifyListeners();
     } catch (e) {
-      print('Error creating custom outfit: $e');
+      rethrow;
     }
   }
 
-  //Delete Outfit From Database
-  Future<void> deleteOutfit(String outfitId) async {
+  Future<List<Map<String, dynamic>>> getAllClothingItems() async {
     try {
       final user = supabase.auth.currentUser;
       if (user == null) {
         throw Exception('User is not authenticated');
       }
 
+      // Query clothing items by clothing type for the current user
       final response = await supabase
-          .from('user_outfits')
-          .delete()
-          .eq('uuid', user.id)
-          .eq('id', outfitId);
+          .from('user_clothing_items')
+          .select('*')
+          .eq('uid', user.id)
+          .order('created_at', ascending: false);
 
-      if (response == null || response.error != null) {
-        throw Exception('Failed to delete outfit: ${response.error?.message}');
-      }
-
-      notifyListeners();
-      print('Outfit deleted successfully.');
+      // Response is already a List<Map<String, dynamic>> if successful
+      return List<Map<String, dynamic>>.from(response);
     } catch (e) {
-      print('Error deleting outfit: $e');
-      rethrow;
+      print('Error retrieving clothing items by clothing type: $e');
+      return [];
     }
   }
 }
