@@ -3,11 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class StorageService with ChangeNotifier {
+class ClothingItemService with ChangeNotifier {
   final SupabaseClient supabase;
 
-  StorageService(this.supabase);
-
+  ClothingItemService(this.supabase);
   // Upload Image and Clothing Item to Supabase
   Future<void> uploadClothingItem(
     File imageFile,
@@ -15,8 +14,7 @@ class StorageService with ChangeNotifier {
     String clothingType,
     String name,
     String material,
-    String category
-
+    String category,
   ) async {
     try {
       // Upload image to Supabase Storage
@@ -27,7 +25,9 @@ class StorageService with ChangeNotifier {
           .upload(fileName, imageFile);
 
       //Get the public URL for the uploaded image
-      final imageUrl = supabase.storage.from('clothing-items').getPublicUrl(fileName);
+      final imageUrl = supabase.storage
+          .from('clothing-items')
+          .getPublicUrl(fileName);
 
       // Step 3: Insert clothing item metadata into the user_clothing_items table
       final user = supabase.auth.currentUser;
@@ -46,9 +46,10 @@ class StorageService with ChangeNotifier {
       });
 
       if (insertResponse.error != null) {
-        throw Exception('Failed to insert clothing item: ${insertResponse.error!.message}');
+        throw Exception(
+          'Failed to insert clothing item: ${insertResponse.error!.message}',
+        );
       }
-
       print('Clothing item uploaded successfully!');
       notifyListeners();
     } catch (e) {
@@ -56,10 +57,36 @@ class StorageService with ChangeNotifier {
     }
   }
 
+  Future<Map<String, dynamic>?> retrieveClothingItem(String itemId) async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) {
+        throw Exception('User is not authenticated');
+      }
 
+      final response =
+          await supabase
+              .from('user_clothing_items')
+              .select()
+              .eq('item_id', itemId)
+              .maybeSingle(); // Safely returns null if no record found
 
-  // Retrieve Clothing Items by Category for the Authenticated User
-  Future<List<Map<String, dynamic>>> getClothingItemsByCategory(String category) async {
+      if (response == null) {
+        print('Clothing item not found.');
+        return null;
+      }
+
+      return response;
+    } catch (e) {
+      print('Error retrieving clothing item: $e');
+      return null;
+    }
+  }
+
+  // Retrieve Clothing Items by Category
+  Future<List<Map<String, dynamic>>> getClothingItemsByCategory(
+    String category,
+  ) async {
     try {
       final user = supabase.auth.currentUser;
       if (user == null) {
@@ -73,7 +100,6 @@ class StorageService with ChangeNotifier {
           .eq('uid', user.id)
           .eq('category', category)
           .order('created_at', ascending: false);
-
       // Response is already a List<Map<String, dynamic>> if successful
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
@@ -82,79 +108,48 @@ class StorageService with ChangeNotifier {
     }
   }
 
-
-
   // Delete Clothing Item from Supabase
   Future<void> deleteClothingItem(String itemId) async {
     try {
-      // Step 1: Get the user and check if they are authenticated
       final user = supabase.auth.currentUser;
       if (user == null) {
         throw Exception('User is not authenticated');
       }
 
-      // Get the clothing item from the database
-      final itemResponse = await supabase
-          .from('user_clothing_items')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('id', itemId)
-          .single();
+      // Fetch the item data first
+      final itemResponse =
+          await supabase
+              .from('user_clothing_items')
+              .select('*')
+              .eq('uid', user.id)
+              .eq('item_id', itemId)
+              .single();
 
-      // SDelete the image from Supabase Storage
       final imageUrl = itemResponse['image_url'];
       final fileName = Uri.parse(imageUrl).pathSegments.last;
 
-      final storageResponse = await supabase.storage
-          .from('clothing-items')
-          .remove([fileName]);
-
-      // Delete the clothing item metadata from the user_clothing_items table
+      // Attempt to delete the database record
       final deleteResponse = await supabase
           .from('user_clothing_items')
           .delete()
-          .eq('user_id', user.id)
-          .eq('id', itemId);
+          .eq('uid', user.id)
+          .eq('item_id', itemId);
 
       if (deleteResponse.error != null) {
-        throw Exception('Failed to delete clothing item: ${deleteResponse.error!.message}');
-      }
+        final errorMessage = deleteResponse.error!.message;
 
-      notifyListeners(); // Notify listeners to update UI
+        throw Exception('Failed to delete clothing item: $errorMessage');
+      }
+      
+      await supabase.storage.from('clothing-items').remove([fileName]);
+
+      notifyListeners();
     } catch (e) {
-      rethrow; // Rethrow to allow caller to handle the error
+      rethrow;
     }
   }
 
-
-
-  Future<List<Map<String, dynamic>>> getClothingItemsByType(
-    String clothingType,
-  ) async {
-    try {
-      final user = supabase.auth.currentUser;
-      if (user == null) {
-        throw Exception('User is not authenticated');
-      }
-
-      // Query clothing items by clothing type for the current user
-      final response = await supabase
-          .from('user_clothing_items')
-          .select('*')
-          .eq('uid', user.id)
-          .eq('clothing_type', clothingType) // Filter by clothing type
-          .order('created_at', ascending: false);
-
-      // Response is already a List<Map<String, dynamic>> if successful
-      return List<Map<String, dynamic>>.from(response);
-    } catch (e) {
-      print('Error retrieving clothing items by clothing type: $e');
-      return [];
-    }
-  }
-
-    Future<List<Map<String, dynamic>>> getAllClothingItems(
-  ) async {
+  Future<List<Map<String, dynamic>>> getAllClothingItems() async {
     try {
       final user = supabase.auth.currentUser;
       if (user == null) {

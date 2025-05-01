@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 // Controllers for signup email and password input fields
 final TextEditingController signup_emailController = TextEditingController();
 final TextEditingController signup_passwordController = TextEditingController();
