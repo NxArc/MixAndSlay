@@ -184,8 +184,6 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
   }
 
   @override
-
-  
   Widget build(BuildContext context) {
     final paddingH = ResponsiveUtils.paddingH(context);
     final paddingV = ResponsiveUtils.paddingV(context);

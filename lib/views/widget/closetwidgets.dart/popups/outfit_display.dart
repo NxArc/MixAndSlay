@@ -1,4 +1,5 @@
 import 'package:fasionrecommender/services/storage/outfits_service.dart';
+import 'package:fasionrecommender/views/widget/outfit/modify_outfit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fasionrecommender/services/storage/clothingItems_service.dart';
@@ -28,8 +29,9 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
 
   Future<void> _loadOutfit() async {
     final outfitService = Provider.of<OutfitService>(context, listen: false);
-    final userOutfits =
-        await outfitService.retrieveOutfitByOutfitID(widget.outfitID);
+    final userOutfits = await outfitService.retrieveOutfitByOutfitID(
+      widget.outfitID,
+    );
 
     if (userOutfits != null) {
       setState(() {
@@ -40,27 +42,37 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
   }
 
   Future<void> _loadClothingItems(Map<String, dynamic> outfitData) async {
-    final storageService =
-        Provider.of<ClothingItemService>(context, listen: false);
+    final storageService = Provider.of<ClothingItemService>(
+      context,
+      listen: false,
+    );
 
-    final headwearData = outfitData['headwear'] != null
-        ? await storageService.retrieveClothingItem(outfitData['headwear'])
-        : null;
-    final topData = outfitData['top'] != null
-        ? await storageService.retrieveClothingItem(outfitData['top'])
-        : null;
-    final bottomData = outfitData['bottom'] != null
-        ? await storageService.retrieveClothingItem(outfitData['bottom'])
-        : null;
-    final footwearData = outfitData['footwear'] != null
-        ? await storageService.retrieveClothingItem(outfitData['footwear'])
-        : null;
-    final accessoriesData = outfitData['accessories'] != null
-        ? await storageService.retrieveClothingItem(outfitData['accessories'])
-        : null;
-    final outerwearData = outfitData['outerwear'] != null
-        ? await storageService.retrieveClothingItem(outfitData['outerwear'])
-        : null;
+    final headwearData =
+        outfitData['headwear'] != null
+            ? await storageService.retrieveClothingItem(outfitData['headwear'])
+            : null;
+    final topData =
+        outfitData['top'] != null
+            ? await storageService.retrieveClothingItem(outfitData['top'])
+            : null;
+    final bottomData =
+        outfitData['bottom'] != null
+            ? await storageService.retrieveClothingItem(outfitData['bottom'])
+            : null;
+    final footwearData =
+        outfitData['footwear'] != null
+            ? await storageService.retrieveClothingItem(outfitData['footwear'])
+            : null;
+    final accessoriesData =
+        outfitData['accessories'] != null
+            ? await storageService.retrieveClothingItem(
+              outfitData['accessories'],
+            )
+            : null;
+    final outerwearData =
+        outfitData['outerwear'] != null
+            ? await storageService.retrieveClothingItem(outfitData['outerwear'])
+            : null;
 
     setState(() {
       headwear = headwearData;
@@ -80,19 +92,12 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 8,
-            offset: Offset(0, 4),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4)),
         ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: Image.network(
-          imageUrl,
-          fit: BoxFit.cover,
-        ),
+        child: Image.network(imageUrl, fit: BoxFit.cover),
       ),
     );
   }
@@ -117,77 +122,93 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
     List<Widget> items = [];
 
     if (accessories != null && accessories!['image_url'] != null) {
-      items.add(Column(
-        children: [
-          _buildShadowedImage(accessories!['image_url'], 120, 120),
-          const SizedBox(height: 8),
-          Text(
-            'Accessory',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ],
-      ));
+      items.add(
+        Column(
+          children: [
+            _buildShadowedImage(accessories!['image_url'], 120, 120),
+            const SizedBox(height: 8),
+            Text('Accessory', style: TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+      );
     }
 
     if (outerwear != null && outerwear!['image_url'] != null) {
-      items.add(Column(
-        children: [
-          _buildShadowedImage(outerwear!['image_url'], 120, 120),
-          const SizedBox(height: 8),
-          Text(
-            'Outerwear',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ],
-      ));
+      items.add(
+        Column(
+          children: [
+            _buildShadowedImage(outerwear!['image_url'], 120, 120),
+            const SizedBox(height: 8),
+            Text('Outerwear', style: TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+      );
     }
 
     return Row(
-      mainAxisAlignment: items.length == 1
-          ? MainAxisAlignment.center
-          : MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment:
+          items.length == 1
+              ? MainAxisAlignment.center
+              : MainAxisAlignment.spaceEvenly,
       children: items,
     );
   }
 
   Widget _buildItemDetails(String label, Map<String, dynamic>? item) {
-  if (item == null) {
-    return SizedBox.shrink();
-  }
+    if (item == null) {
+      return SizedBox.shrink();
+    }
 
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 6.0),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Fixed width title block
-        Container(
-          width: 140, // 👈 Set this width to align all titles
-          child: Text(
-            '${item['name'] ?? 'Unnamed'} ($label)',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Fixed width title block
+          Container(
+            width: 140, // 👈 Set this width to align all titles
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Text(
+                    outfit!['outfit_name'] ?? 'Unnamed Outfit',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.edit, size: 20),
+                  onPressed: () {
+                    EditOutfit(outfitId: widget.outfitID);
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(width: 12),
-        // Badges
-        Expanded(
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 4,
-            children: [
-              if (item['color'] != null)
-                _buildBadge('Color: ${item['color']}'),
-              if (item['clothing_type'] != null)
-                _buildBadge('Type: ${item['clothing_type']}'),
-              if (item['material'] != null)
-                _buildBadge('Material: ${item['material']}'),
-            ],
+          const SizedBox(width: 12),
+          // Badges
+          Expanded(
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                if (item['color'] != null)
+                  _buildBadge('Color: ${item['color']}'),
+                if (item['clothing_type'] != null)
+                  _buildBadge('Type: ${item['clothing_type']}'),
+                if (item['material'] != null)
+                  _buildBadge('Material: ${item['material']}'),
+              ],
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
   Widget _buildBadge(String text) {
     return Container(
@@ -217,10 +238,7 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
           // Outfit name
           Text(
             outfit!['outfit_name'] ?? 'Unnamed Outfit',
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
@@ -253,9 +271,13 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
             alignment: WrapAlignment.center,
             children: [
               _buildTag(
-                  'WeatherFit: ${outfit!['weatherFit'] ?? 'N/A'}', Colors.blue),
+                'WeatherFit: ${outfit!['weatherFit'] ?? 'N/A'}',
+                Colors.blue,
+              ),
               _buildTag(
-                  'Occasion: ${outfit!['occasion'] ?? 'N/A'}', Colors.green),
+                'Occasion: ${outfit!['occasion'] ?? 'N/A'}',
+                Colors.green,
+              ),
             ],
           ),
         ],
@@ -282,4 +304,3 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
     );
   }
 }
-
