@@ -152,4 +152,27 @@ class StorageService with ChangeNotifier {
       return [];
     }
   }
+
+    Future<List<Map<String, dynamic>>> getAllClothingItems(
+  ) async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) {
+        throw Exception('User is not authenticated');
+      }
+
+      // Query clothing items by clothing type for the current user
+      final response = await supabase
+          .from('user_clothing_items')
+          .select('*')
+          .eq('uid', user.id)
+          .order('created_at', ascending: false);
+
+      // Response is already a List<Map<String, dynamic>> if successful
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      print('Error retrieving clothing items by clothing type: $e');
+      return [];
+    }
+  }
 }

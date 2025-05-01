@@ -31,6 +31,8 @@ class CollectionSection extends StatelessWidget {
             ),
           ],
         ),
+
+        
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

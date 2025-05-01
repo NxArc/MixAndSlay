@@ -5,7 +5,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class OutfitGrid extends StatelessWidget {
   final String category;
-
   const OutfitGrid({super.key, required this.category});
 
   @override

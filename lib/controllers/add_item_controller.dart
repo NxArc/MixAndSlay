@@ -62,7 +62,6 @@ class AddItemController {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel'),
                       style: TextButton.styleFrom(
                         foregroundColor: const Color(0xFF383737),
                         textStyle: const TextStyle(
@@ -70,7 +69,8 @@ class AddItemController {
                           fontWeight: FontWeight.w600,
                           fontSize:15,
                         )
-                      )
+                      ),
+                      child: const Text('Cancel')
                     ),
                     ElevatedButton(
                       onPressed: () {

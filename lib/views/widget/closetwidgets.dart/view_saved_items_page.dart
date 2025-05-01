@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'saved_items_manager.dart';
 
 class ViewSavedItemsPage extends StatefulWidget {
-  const ViewSavedItemsPage({Key? key}) : super(key: key);
+  const ViewSavedItemsPage({super.key});
 
   @override
   State<ViewSavedItemsPage> createState() => _ViewSavedItemsPageState();
@@ -27,6 +27,7 @@ class _ViewSavedItemsPageState extends State<ViewSavedItemsPage> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         Navigator.pop(context, true);
@@ -119,6 +120,7 @@ class _ViewSavedItemsPageState extends State<ViewSavedItemsPage> {
                           onTap: () => _removeItem(index),
                           child: Container(
                             decoration: BoxDecoration(
+                              // ignore: deprecated_member_use
                               color: Colors.black.withOpacity(0.7),
                               shape: BoxShape.circle,
                               boxShadow: [

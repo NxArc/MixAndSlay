@@ -3,7 +3,6 @@ import 'package:fasionrecommender/views/widget/closetwidgets.dart/view_saved_ite
 import 'package:flutter/material.dart';
 import 'item_details_page.dart';
 import 'package:image_picker/image_picker.dart';
-import 'view_saved_items_page.dart';
 
 void showSuccessBottomSheet(BuildContext context) {
   showModalBottomSheet(
@@ -86,7 +85,9 @@ void showSuccessBottomSheet(BuildContext context) {
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 12),
+                
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -119,8 +120,8 @@ void showSuccessBottomSheet(BuildContext context) {
 }
 
 void _takeAnotherPhoto(BuildContext context) async {
-  final ImagePicker _picker = ImagePicker();
-  final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+  final ImagePicker picker = ImagePicker();
+  final XFile? image = await picker.pickImage(source: ImageSource.camera);
 
   if (image != null) {
     Navigator.pushReplacement(
@@ -204,6 +205,8 @@ void showFailureBottomSheet(BuildContext context, String errorMessage) {
     },
   );
 }
+
+
 void _showFilterModal(BuildContext context) {
   showModalBottomSheet(
     context: context,
@@ -278,7 +281,9 @@ void _showFilterModal(BuildContext context) {
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 10),
+
                 Wrap(
                   spacing: 10,
                   children: ['Wet Season', 'Dry Season'].map((season) {
