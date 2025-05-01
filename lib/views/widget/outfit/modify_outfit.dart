@@ -70,7 +70,7 @@ class _EditOutfitState extends State<EditOutfit> {
           selectedWeatherFit = data['weather_fit'];
 
           for (var entry in _categoryMap.entries) {
-            final idField = '${entry.key.toLowerCase()}';
+            final idField = entry.key.toLowerCase();
             final itemId = data[idField];
             if (itemId != null) {
               selectedItemIds[entry.key] = itemId;

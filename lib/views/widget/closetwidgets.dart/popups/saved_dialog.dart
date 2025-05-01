@@ -1,5 +1,4 @@
 import'dart:io';
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/view_saved_items_page.dart';
 import 'package:flutter/material.dart';
 import '../item_details_page.dart';
 import 'package:image_picker/image_picker.dart';

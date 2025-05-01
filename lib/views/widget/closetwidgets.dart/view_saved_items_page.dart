@@ -1,5 +1,4 @@
 import 'package:fasionrecommender/services/storage/clothingItems_service.dart';
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/popups/add_item_bottom_sheet.dart';
 import 'package:fasionrecommender/views/widget/closetwidgets.dart/popups/clothing_item_display.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
