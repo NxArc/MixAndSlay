@@ -37,6 +37,7 @@ class _CollectionSectionState extends State<CollectionSection> {
             .eq('id', userId)
             .single();
 
+    // ignore: unnecessary_null_comparison
     if (mounted && response != null && response['gender'] != null) {
       setState(() {
         gender =

@@ -25,10 +25,14 @@ Future<Position> getCurrentLocation() async {
     throw Exception('Location permissions are permanently denied.');
   }
 
+  // ignore: deprecated_member_use
   return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 }
 
 // Fetch temperature using OpenWeatherMap API
+
+
+
 Future<String> getTemperature(double latitude, double longitude) async {
   final String apiKey = '580980c95268fc1878fa6db4455c3d40'; // Replace with your real API key
   final String url =

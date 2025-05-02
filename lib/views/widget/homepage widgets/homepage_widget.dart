@@ -16,9 +16,6 @@ class _HomeWidgetState extends State<HomeWidget> {
     final screenSize = MediaQuery.of(context).size;
     final paddingH = ResponsiveUtils.paddingH(context);
     final paddingV = ResponsiveUtils.paddingV(context);
-    final titleSize = ResponsiveUtils.titleSize(context);
-    final tabTextSize = ResponsiveUtils.inputFontSize(context);
-    final buttonWidth = ResponsiveUtils.buttonWidth(context);
 
     // Make sizes more responsive using screen dimensions
     double textSizeCategory = screenSize.width * 0.06;

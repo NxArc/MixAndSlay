@@ -20,9 +20,7 @@ class ClothingItemService with ChangeNotifier {
       // Upload image to Supabase Storage
       final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-      final storageResponse = await supabase.storage
-          .from('clothing-items')
-          .upload(fileName, imageFile);
+      await supabase.storage.from('clothing-items').upload(fileName, imageFile);
 
       //Get the public URL for the uploaded image
       final imageUrl = supabase.storage

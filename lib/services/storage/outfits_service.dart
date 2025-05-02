@@ -1,4 +1,4 @@
-import 'package:fasionrecommender/data/outfit_data.dart';
+import 'package:fasionrecommender/data/outfit_data_compatibility_maps.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -54,7 +54,7 @@ class OutfitService with ChangeNotifier {
         throw Exception('User is not authenticated');
       }
 
-      final response = await supabase
+      await supabase
           .from('user_outfits')
           .delete()
           .eq('uuid', user.id)

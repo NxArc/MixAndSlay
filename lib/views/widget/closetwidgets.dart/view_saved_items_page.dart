@@ -28,7 +28,6 @@ class _ViewSavedItemsPageState extends State<ViewSavedItemsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     return Scaffold(
@@ -72,7 +71,6 @@ class _ViewSavedItemsPageState extends State<ViewSavedItemsPage> {
     List<Map<String, dynamic>> items,
   ) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     return LayoutBuilder(
