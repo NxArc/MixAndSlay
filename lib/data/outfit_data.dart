@@ -100,6 +100,7 @@ final Map<String, List<String>> occasionAccessoryMap = {
   ],
 };
 
+
 final Map<String, List<String>> topBottomCompatibilityMap = {
   'Baby Tee': [
     'High Rise Jeans',
@@ -202,6 +203,8 @@ final Map<String, List<String>> topBottomCompatibilityMap = {
   'Wrap Top': ['Pencil Skirt', 'Wide-Leg Pants', 'Pleated Skirt'],
   'Zip-Up Hoodie': ['Sweatpants', 'Joggers', 'Track Pants'],
 };
+
+
 final Map<String, Map<String, List<String>>> weatherFitCompatibilityMap = {
   'Cold': {
     'outerwear': [
