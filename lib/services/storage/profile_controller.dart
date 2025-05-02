@@ -7,6 +7,31 @@ class ProfileSetupController {
 
   Future<String?> uploadProfileImage(File imageFile) async {
     try {
+      final user = supabase.auth.currentUser;
+      if (user == null) {
+        throw Exception('No logged in user');
+      }
+
+      // Step 1: Retrieve current profile to get existing avatar_url
+      final profile = await getProfile();
+      final oldImageUrl = profile?['avatar_url'];
+
+      // Step 2: If there's an existing image, delete it
+      if (oldImageUrl != null &&
+          oldImageUrl is String &&
+          oldImageUrl.isNotEmpty) {
+        final uri = Uri.parse(oldImageUrl);
+        final segments = uri.pathSegments;
+        final index = segments.indexOf('profile-pictures');
+        if (index != -1 && index + 1 < segments.length) {
+          final fileNameToDelete = segments[index + 1];
+          await supabase.storage.from('profile-pictures').remove([
+            fileNameToDelete,
+          ]);
+        }
+      }
+
+      // Step 3: Upload new image
       final imageBytes = await imageFile.readAsBytes();
       final fileName = 'profile_${DateTime.now().millisecondsSinceEpoch}.jpg';
 
@@ -28,6 +53,23 @@ class ProfileSetupController {
       return null;
     }
   }
+
+Future<String?> loadGender() async {
+  final userId = supabase.auth.currentUser?.id;
+  if (userId == null) return null;
+
+  final response = await supabase
+      .from('profiles')
+      .select('gender')
+      .eq('id', userId)
+      .single();
+
+  if (response['gender'] != null) {
+    return response['gender'].toString().toLowerCase(); // e.g., 'male', 'female'
+  }
+
+  return null;
+}
 
   Future<bool> updateProfile(
     String name,

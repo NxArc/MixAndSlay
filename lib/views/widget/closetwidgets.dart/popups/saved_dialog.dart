@@ -15,7 +15,7 @@ class SuccessDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Image.asset(
-            'assets/images/saved_icon.png',
+            'assets/images/icons/saved_icon.png',
             height: 80,
             width: 80,
           ),
@@ -76,7 +76,7 @@ class FailureDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Image.asset(
-            'assets/images/error_icon.png',
+            'assets/images/icons/error_icon.png',
             height: 80,
             width: 80,
           ),
@@ -244,6 +244,7 @@ void _takeAnotherPhoto(BuildContext context) async {
 
   if (image != null) {
     Navigator.pushReplacement(
+      // ignore: use_build_context_synchronously
       context,
       MaterialPageRoute(
         builder: (context) => ItemDetailsPage(imageFile: File(image.path)),

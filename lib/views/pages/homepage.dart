@@ -107,7 +107,6 @@ class _HomeState extends State<Home> {
           },
           children: body,
         ),
-
         bottomNavigationBar:
             _currentIndex == 3
                 ? null
@@ -137,8 +136,6 @@ class _HomeState extends State<Home> {
                                     : inactiveColor,
                           ),
                         ),
-
-
                         IconButton(
                           onPressed: () {
                             setState(() {

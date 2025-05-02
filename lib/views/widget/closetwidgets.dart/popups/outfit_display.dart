@@ -154,6 +154,7 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
     );
   }
 
+
   Widget _buildItemDetails(String label, Map<String, dynamic>? item) {
     if (item == null) {
       return SizedBox.shrink();
@@ -161,49 +162,47 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
         children: [
-          // Fixed width title block
-          Container(
-            width: 140, // 👈 Set this width to align all titles
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
-                  child: Text(
-                    outfit!['outfit_name'] ?? 'Unnamed Outfit',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 140, // 👈 Set this width to align all titles
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        item['name'] ?? 'Unnamed Outfit',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  ],
                 ),
-                IconButton(
-                  icon: Icon(Icons.edit, size: 20),
-                  onPressed: () {
-                    EditOutfit(outfitId: widget.outfitID);
-                  },
+              ),
+          
+              const SizedBox(width: 12),
+              // Badges
+              Expanded(
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: [
+                    if (item['color'] != null)
+                      _buildBadge('Color: ${item['color']}'),
+                    if (item['clothing_type'] != null)
+                      _buildBadge('Type: ${item['clothing_type']}'),
+                    if (item['material'] != null)
+                      _buildBadge('Material: ${item['material']}'),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          // Badges
-          Expanded(
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              children: [
-                if (item['color'] != null)
-                  _buildBadge('Color: ${item['color']}'),
-                if (item['clothing_type'] != null)
-                  _buildBadge('Type: ${item['clothing_type']}'),
-                if (item['material'] != null)
-                  _buildBadge('Material: ${item['material']}'),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
@@ -236,11 +235,23 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Outfit name
-          Text(
-            outfit!['outfit_name'] ?? 'Unnamed Outfit',
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                outfit!['outfit_name'] ?? 'Unnamed Outfit',
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+                              IconButton(
+                  icon: Icon(Icons.edit, size: 20),
+                  onPressed: () {
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => EditOutfit(outfitId: widget.outfitID),));
+                  },
+                ),
+            ],
           ),
+          
           const SizedBox(height: 24),
 
           // Layer 1: Fit Image
@@ -250,10 +261,11 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
           // Layer 2: Accessory + Outerwear side by side (auto-center)
           _buildAccessoryOuterwearRow(),
           const SizedBox(height: 24),
-
+          Center(
+            child: Text('Outfit Information'),
+          ),
           Divider(thickness: 1),
           const SizedBox(height: 12),
-
           // Layer 3: All Item Details
           _buildItemDetails('Headwear', headwear),
           _buildItemDetails('Top', top),
@@ -263,7 +275,6 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
           _buildItemDetails('Outerwear', outerwear),
 
           const SizedBox(height: 24),
-
           // Tags
           Wrap(
             spacing: 12,
@@ -289,9 +300,9 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withAlpha((0.1 * 255).round()),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withAlpha((0.1 * 255).round())),
       ),
       child: Text(
         text,

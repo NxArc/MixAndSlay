@@ -238,7 +238,10 @@ class _EditOutfitState extends State<EditOutfit> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Update Outfit")),
+      appBar: AppBar(
+         automaticallyImplyLeading: true,
+        title: const Text("Update Outfit"),
+        ),
       body: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: ResponsiveUtils.paddingH(context),
@@ -254,7 +257,9 @@ class _EditOutfitState extends State<EditOutfit> {
                       controller: nameController,
                       decoration: const InputDecoration(labelText: 'Outfit Name'),
                     ),
+                    
                     SizedBox(height: screenHeight * 0.02),
+
                     Row(
                       children: [
                         Expanded(
@@ -342,8 +347,10 @@ class _EditOutfitState extends State<EditOutfit> {
                     outerwearId: selectedItemIds['Outerwear'],
                   );
 
+                  // ignore: use_build_context_synchronously
                   showSuccessDialog(context);
                 } catch (e) {
+                  // ignore: use_build_context_synchronously
                   showFailureDialog(context, e.toString());
                 }
               },

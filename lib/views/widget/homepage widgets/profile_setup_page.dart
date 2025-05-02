@@ -1,4 +1,4 @@
-import 'package:fasionrecommender/controllers/profile_setup_controller.dart';
+import 'package:fasionrecommender/services/storage/profile_controller.dart';
 import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart';
 import 'package:fasionrecommender/views/pages/homepage.dart';
@@ -12,6 +12,7 @@ class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ProfilePageState createState() => _ProfilePageState();
 }
 
@@ -35,7 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<void> _SetupProfile() async {
+  Future<void> _setupProfile() async {
     final name = _nameController.text.trim();
     final gender = _selectedGender;
 
@@ -235,7 +236,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     backgroundColor: Colors.black,
                   ),
-                  onPressed: _SetupProfile,
+                  onPressed: _setupProfile,
                   child: Text(
                     'Okay',
                     style: TextStyle(fontSize: inputFontSize),

@@ -322,9 +322,10 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                           footwearId: selectedItemIds['Footwear'],
                           outerwearId: selectedItemIds['Outerwear'],
                         );
-
+                        // ignore: use_build_context_synchronously
                         showSuccessDialog(context);
                       } catch (e) {
+                        // ignore: use_build_context_synchronously
                         showFailureDialog(context, e.toString());
                       }
                     },

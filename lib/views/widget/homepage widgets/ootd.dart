@@ -37,6 +37,7 @@ class _OotdState extends State<Ootd> {
         temp = fetchedTemp;
       });
     } catch (e) {
+      // ignore: avoid_print
       print('Error getting location or weather: $e');
     }
   }

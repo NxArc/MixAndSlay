@@ -1,4 +1,4 @@
-import 'package:fasionrecommender/views/widget/homepage%20widgets/category_grid.dart';
+import 'package:fasionrecommender/views/widget/homepage%20widgets/homepage_gridview.dart';
 import 'package:fasionrecommender/views/widget/homepage%20widgets/ootd.dart';
 import 'package:flutter/material.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart';
@@ -41,7 +41,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                     Padding(
                       padding: const EdgeInsets.only(left: 10, right: 10),
                       child: Text(
-                        'Category',
+                        'Suggested Outfits',
                         style: TextStyle(
                           fontSize: textSizeCategory,
                           fontWeight: FontWeight.bold,
@@ -53,48 +53,41 @@ class _HomeWidgetState extends State<HomeWidget> {
                 ),
               ),
             ),
+
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.only(left: 10, right: 10),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: TabBar(
-                    indicator: const BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color:
-                              Colors.blue, // Brighter color for the indicator
-                          width: 2.0, // Thicker border for visibility
-                        ),
+                child: TabBar(
+                  indicator: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Colors.blue, // Brighter color for the indicator
+                        width: 2.0, // Thicker border for visibility
                       ),
                     ),
-                    tabAlignment: TabAlignment.start,
-                    isScrollable: true,
-                    labelStyle: TextStyle(fontSize: tabFontSize),
-                    unselectedLabelStyle: TextStyle(
-                      fontSize: tabFontSize * 0.9,
-                    ),
-                    labelColor: Colors.blue, // Selected tab text color
-                    unselectedLabelColor: Colors.grey,
-                    tabs: const [
-                      Tab(text: 'Casual'),
-                      Tab(text: 'Formal'),
-                      Tab(text: 'Sporty'),
-                      Tab(text: 'Summer'),
-                      Tab(text: 'Winter'),
-                      Tab(text: 'Party'),
-                    ],
                   ),
+                  tabAlignment: TabAlignment.start,
+                  isScrollable: true,
+                  labelStyle: TextStyle(fontSize: tabFontSize),
+                  unselectedLabelStyle: TextStyle(fontSize: tabFontSize * 0.9),
+                  labelColor: Colors.blue, // Selected tab text color
+                  unselectedLabelColor: Colors.grey,
+                  tabs: const [
+                    Tab(text: 'Casual'),
+                    Tab(text: 'Formal'),
+                    Tab(text: 'Sporty'),
+                    Tab(text: 'Summer'),
+                    Tab(text: 'Winter'),
+                    Tab(text: 'Party'),
+                  ],
                 ),
               ),
             ),
           ],
+
       body: TabBarView(
         children: [
-          SingleChildScrollView(
-            child:
-            OutfitGrid(category: 'Tops'),
-          ),
+          SingleChildScrollView(child: OutfitGrid(category: 'Tops')),
 
           SingleChildScrollView(child: OutfitGrid(category: 'Bottoms')),
 
