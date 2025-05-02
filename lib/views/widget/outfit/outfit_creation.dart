@@ -5,6 +5,8 @@ import 'package:fasionrecommender/views/widget/closetwidgets.dart/popups/saved_d
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+// ... (imports remain unchanged)
+
 class OutfitCreationPage extends StatefulWidget {
   const OutfitCreationPage({super.key});
 
@@ -17,8 +19,6 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
   String? selectedWeatherFit;
   final TextEditingController nameController = TextEditingController();
 
-
-
   final Map<String, String> _categoryMap = {
     'Top': 'Tops',
     'Bottom': 'Bottoms',
@@ -27,8 +27,6 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
     'Outerwear': 'Outerwear',
     'Accessory': 'Accessories',
   };
-
-
 
   final Map<String, String?> selectedItemIds = {
     'Headwear': null,
@@ -50,7 +48,6 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
 
   late final OutfitService outfitService;
   late final ClothingItemService clothingItemService;
-
 
   @override
   void initState() {
@@ -223,9 +220,16 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                                   hint: const Text("Occasion"),
                                   value: selectedOccasion,
                                   items:
-                                      ['Casual', 'Formal', 'Indoors'].map((
-                                        String value,
-                                      ) {
+                                      [
+                                        'Formal',
+                                        'Casual',
+                                        'Sporty',
+                                        'Outdoor',
+                                        'Professional',
+                                        'Party',
+                                        'Beach',
+                                        'Cold Weather',
+                                      ].map((String value) {
                                         return DropdownMenuItem<String>(
                                           value: value,
                                           child: Text(value),
@@ -245,7 +249,7 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                                   hint: const Text("WeatherFit"),
                                   value: selectedWeatherFit,
                                   items:
-                                      ['Cold', 'Chilly', 'Hot', 'Rainy'].map((
+                                      ['Cold', 'Chilly', 'Hot', 'Rainy', 'Normal'].map((
                                         String value,
                                       ) {
                                         return DropdownMenuItem<String>(
@@ -310,7 +314,6 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                       }
 
                       try {
-                        // Make sure this function exists in your OutfitService, not StorageService
                         await outfitService.createCustomOutfit(
                           outfitName: outfitName,
                           topId: selectedItemIds['Top']!,
@@ -322,10 +325,8 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                           footwearId: selectedItemIds['Footwear'],
                           outerwearId: selectedItemIds['Outerwear'],
                         );
-                        // ignore: use_build_context_synchronously
                         showSuccessDialog(context);
                       } catch (e) {
-                        // ignore: use_build_context_synchronously
                         showFailureDialog(context, e.toString());
                       }
                     },
@@ -341,14 +342,73 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                 SizedBox(
                   width: ResponsiveUtils.buttonWidth(context) * 0.45,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Use selectedItemIds map
+                    onPressed: () async {
+                      final outfitName = nameController.text.trim();
+                      if (outfitName.isEmpty || selectedOccasion == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Please enter outfit name and select an Occasion',
+                            ),
+                          ),
+                        );
+                        return;
+                      }
+
+                      try {
+                        final generatedItems = await outfitService
+                            .generateSmartOutfit(
+                              outfitName: outfitName,
+                              occasion: selectedOccasion!,
+                              weatherFit: selectedWeatherFit,
+                            );
+
+                        if (generatedItems == null ||
+                            !generatedItems.containsKey('Top') ||
+                            !generatedItems.containsKey('Bottom')) {
+                          showFailureDialog(
+                            context,
+                            'Generated outfit is missing a Top or Bottom item.',
+                          );
+                          return;
+                        }
+
+                        // Extract and assign only valid IDs (defensive)
+                        final generatedTop = generatedItems['Top'];
+                        final generatedBottom = generatedItems['Bottom'];
+
+                        if (generatedTop?['id'] == null ||
+                            generatedBottom?['id'] == null) {
+                          showFailureDialog(
+                            context,
+                            'Missing Top or Bottom item ID.',
+                          );
+                          return;
+                        }
+
+                        setState(() {
+                          selectedItemIds['Top'] =
+                              generatedTop['id'].toString();
+                          selectedItemIds['Bottom'] =
+                              generatedBottom['id'].toString();
+                          selectedItemImages['Top'] = generatedTop['image_url'];
+                          selectedItemImages['Bottom'] =
+                              generatedBottom['image_url'];
+
+                          // Optional: loop through rest of the items
+                          for (final entry in generatedItems.entries) {
+                            final key = entry.key;
+                            final item = entry.value;
+                            if (item['id'] != null) {
+                              selectedItemIds[key] = item['id'].toString();
+                              selectedItemImages[key] = item['image_url'];
+                            }
+                          }
+                        });
+                      } catch (e) {
+                        showFailureDialog(context, e.toString());
+                      }
                     },
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                        vertical: screenHeight * 0.02,
-                      ),
-                    ),
                     child: const Text("Generate Outfit"),
                   ),
                 ),

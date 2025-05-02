@@ -1,4 +1,4 @@
-import 'package:fasionrecommender/views/widget/homepage%20widgets/homepage_gridview.dart';
+import 'package:fasionrecommender/views/widget/homepage%20widgets/homepage_outfitgrid.dart';
 import 'package:fasionrecommender/views/widget/homepage%20widgets/ootd.dart';
 import 'package:flutter/material.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart';
@@ -73,7 +73,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                   labelColor: Colors.blue, // Selected tab text color
                   unselectedLabelColor: Colors.grey,
                   tabs: const [
-                    Tab(text: 'Casual'),
+                    Tab(text: 'Formal'),
                     Tab(text: 'Formal'),
                     Tab(text: 'Sporty'),
                     Tab(text: 'Summer'),
@@ -93,12 +93,7 @@ class _HomeWidgetState extends State<HomeWidget> {
 
           SingleChildScrollView(child: Center(child: Text('INSERT IMAGES'))),
 
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              child: Center(child: Text('INSERT IMAGES')),
-            ),
-          ),
+          SingleChildScrollView(child: Center(child: Text('INSERT IMAGES'))),
 
           SingleChildScrollView(child: Center(child: Text('INSERT IMAGES'))),
 

@@ -1,3 +1,4 @@
+import 'package:fasionrecommender/data/outfit_data.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -180,5 +181,180 @@ class OutfitService with ChangeNotifier {
       print('Error updating outfit: $e');
       rethrow;
     }
+  }
+
+  //SMART OUTFIT GENERATION
+  Future<Map<String, dynamic>?> generateSmartOutfit({
+    required String outfitName,
+    required String occasion,
+    String? weatherFit,
+  }) async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+
+      // Required clothing categories
+      final List<Map<String, dynamic>> tops = await _getClothingItemsByCategory(
+        'Tops',
+      );
+      final List<Map<String, dynamic>> bottoms =
+          await _getClothingItemsByCategory('Bottoms');
+
+      // Optional clothing categories
+      final List<Map<String, dynamic>> accessories =
+          await _getClothingItemsByCategory('Accessories');
+      final List<Map<String, dynamic>> outerwears =
+          await _getClothingItemsByCategory('Outerwear');
+      final List<Map<String, dynamic>> footwears =
+          await _getClothingItemsByCategory('Footwear');
+      final List<Map<String, dynamic>> headwears =
+          await _getClothingItemsByCategory('Headwear');
+
+      if (tops.isEmpty) throw Exception('No tops available in database');
+      if (bottoms.isEmpty) throw Exception('No bottoms available in database');
+
+      Map<String, dynamic>? selectedTop;
+      Map<String, dynamic>? selectedBottom;
+
+      // Match compatible top and bottom
+      tops.shuffle();
+      for (var top in tops) {
+        final topType = (top['clothing_type'] as String?)?.trim().toLowerCase();
+        if (topType == null || topType.isEmpty) continue;
+
+        final compatibilityKey = topBottomCompatibilityMap.keys.firstWhere(
+          (k) => k.toLowerCase() == topType,
+          orElse: () => '',
+        );
+
+        if (compatibilityKey.isNotEmpty) {
+          final compatibleBottoms = topBottomCompatibilityMap[compatibilityKey];
+          if (compatibleBottoms != null) {
+            final match = bottoms.firstWhere((b) {
+              final bottomType =
+                  (b['clothing_type'] as String?)?.trim().toLowerCase();
+              return bottomType != null &&
+                  compatibleBottoms
+                      .map((e) => e.toLowerCase())
+                      .contains(bottomType);
+            }, orElse: () => {});
+
+            if (match.isNotEmpty) {
+              selectedTop = top;
+              selectedBottom = match;
+              break;
+            }
+          }
+        }
+      }
+
+      if (selectedTop == null || selectedBottom == null) {
+        print('DEBUG: Top types: ${tops.map((t) => t['clothing_type'])}');
+        print('DEBUG: Bottom types: ${bottoms.map((b) => b['clothing_type'])}');
+        throw Exception(
+          'No compatible top-bottom match found after checking all available items',
+        );
+      }
+
+      final outfit = {
+        'Top': {
+          'id': selectedTop['item_id'],
+          'image_url': selectedTop['image_url'],
+        },
+        'Bottom': {
+          'id': selectedBottom['item_id'],
+          'image_url': selectedBottom['image_url'],
+        },
+      };
+
+      // Optionally add accessory
+      if (occasionAccessoryMap.containsKey(occasion)) {
+        final accessoryNames = occasionAccessoryMap[occasion]!;
+        final match = accessories.firstWhere(
+          (a) => accessoryNames
+              .map((e) => e.toLowerCase())
+              .contains((a['name'] as String).toLowerCase()),
+          orElse: () => {},
+        );
+        if (match.isNotEmpty) {
+          outfit['Accessory'] = {
+            'id': match['item_id'],
+            'image_url': match['image_url'],
+          };
+        }
+      }
+
+      // Optionally add compatible outerwear
+      for (final outer in outerwears) {
+        final outerType = (outer['clothing_type'] as String?)?.toLowerCase();
+        final topType =
+            (selectedTop['clothing_type'] as String?)?.toLowerCase();
+        if (outerType != null &&
+            topType != null &&
+            outerwearTopCompatibilityMap[outerType]?.contains(topType) ==
+                true) {
+          outfit['Outerwear'] = {
+            'id': outer['item_id'],
+            'image_url': outer['image_url'],
+          };
+          break;
+        }
+      }
+
+      // Optionally add compatible footwear
+      for (final foot in footwears) {
+        final footType = (foot['clothing_type'] as String?)?.toLowerCase();
+        final bottomType =
+            (selectedBottom['clothing_type'] as String?)?.toLowerCase();
+        if (footType != null &&
+            bottomType != null &&
+            footwearBottomCompatibilityMap[bottomType]?.contains(footType) ==
+                true) {
+          outfit['Footwear'] = {
+            'id': foot['item_id'],
+            'image_url': foot['image_url'],
+          };
+          break;
+        }
+      }
+
+      // Optionally add compatible headwear
+      for (final head in headwears) {
+        final headType = (head['clothing_type'] as String?)?.toLowerCase();
+        final topType =
+            (selectedTop['clothing_type'] as String?)?.toLowerCase();
+        if (headType != null &&
+            topType != null &&
+            headwearTopCompatibilityMap[headType]?.contains(topType) == true) {
+          outfit['Headwear'] = {
+            'id': head['item_id'],
+            'image_url': head['image_url'],
+          };
+          break;
+        }
+      }
+
+      return outfit;
+    } catch (e, stack) {
+      print('Error generating smart outfit: $e');
+      print('Stack trace: $stack');
+      return null;
+    }
+  }
+
+  // Mocked helper method - replace with real DB queries
+  Future<List<Map<String, dynamic>>> _getClothingItemsByCategory(
+    String category,
+  ) async {
+    final user = supabase.auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    final response = await supabase
+        .from('user_clothing_items')
+        .select()
+        .eq('uid', user.id)
+        .eq('category', category);
+
+    return List<Map<String, dynamic>>.from(response);
   }
 }
