@@ -1,7 +1,7 @@
 import 'package:fasionrecommender/controllers/signup_page_controller.dart';
 import 'package:fasionrecommender/data/notifiers.dart';
-import 'package:fasionrecommender/services/authenticate/login_page.dart';
-import 'package:fasionrecommender/views/widget/appbar.dart';
+import 'package:fasionrecommender/views/pages/login_page.dart';
+import 'package:fasionrecommender/views/widgets/global%20widgets/appbar.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +18,12 @@ class _SignupPageState extends State<SignupPage> {
   String emailError = '';
   bool passwordMismatch = false;
   bool emailEmpty = false;
+  bool isEmailValid = true;
+
+  bool _isValidEmail(String email) {
+    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    return emailRegex.hasMatch(email);
+  }
 
   void _showResultDialog(String title, String message, {bool isSuccess = false}) {
     showDialog(
@@ -55,6 +61,11 @@ class _SignupPageState extends State<SignupPage> {
     double inputFontSize = ResponsiveUtils.inputFontSize(context);
     double buttonWidth = ResponsiveUtils.buttonWidth(context);
 
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    Color primaryColor = isDarkMode ? Colors.white : Colors.black;
+    Color errorColor = Colors.red;
+    Color textFieldBorderColor = Colors.grey;
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: CustomAppBar(),
@@ -78,13 +89,17 @@ class _SignupPageState extends State<SignupPage> {
                         style: TextStyle(
                           fontSize: titleSize,
                           fontWeight: FontWeight.bold,
+                          color: primaryColor,
                         ),
                       ),
                       SizedBox(height: paddingV * 0.5),
                       // Subtitle
                       Text(
                         'Lorem ipsum dolor sit amet',
-                        style: TextStyle(fontSize: subtitleSize),
+                        style: TextStyle(
+                          fontSize: subtitleSize,
+                          color: primaryColor,
+                        ),
                       ),
                       SizedBox(height: paddingV * 3),
 
@@ -92,18 +107,20 @@ class _SignupPageState extends State<SignupPage> {
                       TextField(
                         controller: signup_emailController,
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.mail),
+                          prefixIcon: Icon(Icons.mail, color: primaryColor),
                           labelText: 'Enter Your Email',
+                          labelStyle: TextStyle(color: primaryColor),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                             borderSide: BorderSide(
-                              color: emailEmpty ? Colors.red : Colors.grey,
+                              color: emailEmpty ? errorColor : textFieldBorderColor,
                             ),
                           ),
                         ),
                         onChanged: (value) {
                           setState(() {
                             emailEmpty = value.isEmpty;
+                            isEmailValid = _isValidEmail(value);
                           });
                         },
                       ),
@@ -111,9 +128,9 @@ class _SignupPageState extends State<SignupPage> {
                         height: paddingV,
                         child: Center(
                           child: Text(
-                            emailError,
+                            emailEmpty ? 'Email cannot be empty' : isEmailValid ? '' : 'Invalid email format',
                             style: TextStyle(
-                              color: Colors.red,
+                              color: errorColor,
                               fontSize: subtitleSize,
                             ),
                           ),
@@ -125,12 +142,13 @@ class _SignupPageState extends State<SignupPage> {
                         controller: signup_passwordController,
                         obscureText: true,
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock),
+                          prefixIcon: Icon(Icons.lock, color: primaryColor),
                           labelText: 'Enter Your Password',
+                          labelStyle: TextStyle(color: primaryColor),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                             borderSide: BorderSide(
-                              color: passwordMismatch ? Colors.red : Colors.grey,
+                              color: passwordMismatch ? errorColor : textFieldBorderColor,
                             ),
                           ),
                         ),
@@ -146,12 +164,13 @@ class _SignupPageState extends State<SignupPage> {
                         controller: confirmpasswordController,
                         obscureText: true,
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock),
+                          prefixIcon: Icon(Icons.lock, color: primaryColor),
                           labelText: 'Confirm Password',
+                          labelStyle: TextStyle(color: primaryColor),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                             borderSide: BorderSide(
-                              color: passwordMismatch ? Colors.red : Colors.grey,
+                              color: passwordMismatch ? errorColor : textFieldBorderColor,
                             ),
                           ),
                         ),
@@ -168,7 +187,7 @@ class _SignupPageState extends State<SignupPage> {
                           child: Text(
                             passwordError,
                             style: TextStyle(
-                              color: Colors.red,
+                              color: errorColor,
                               fontSize: subtitleSize,
                             ),
                           ),

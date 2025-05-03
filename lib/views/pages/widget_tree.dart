@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fasionrecommender/views/pages/homepage.dart';
-import 'package:fasionrecommender/services/authenticate/login_page.dart';
+import 'package:fasionrecommender/views/pages/login_page.dart';
 import 'package:fasionrecommender/views/pages/onboarding_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

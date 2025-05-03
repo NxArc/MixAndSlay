@@ -1,5 +1,5 @@
-import 'package:fasionrecommender/views/widget/homepage%20widgets/homepage_outfitgrid.dart';
-import 'package:fasionrecommender/views/widget/homepage%20widgets/ootd.dart';
+import 'package:fasionrecommender/views/widgets/homepage%20widgets/homepage_outfitgrid.dart';
+import 'package:fasionrecommender/views/widgets/homepage%20widgets/ootd.dart';
 import 'package:flutter/material.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart';
 

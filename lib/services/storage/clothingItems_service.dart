@@ -169,4 +169,62 @@ class ClothingItemService with ChangeNotifier {
       return [];
     }
   }
+
+
+Future<String?> retrieveAndSavePreMadeClothingItemByName(String name) async {
+  try {
+    final user = supabase.auth.currentUser;
+    if (user == null) {
+      throw Exception('User is not authenticated');
+    }
+
+    final response = await supabase
+        .from('system_clothing_items')
+        .select('*')
+        .eq('name', name)
+        .order('created_at', ascending: false)
+        .limit(1);
+
+    final items = List<Map<String, dynamic>>.from(response);
+
+    if (items.isEmpty) {
+      print('No system item found with name: $name');
+      return null;
+    }
+
+    final item = items.first;
+
+
+    final insertResponse = await supabase
+        .from('user_clothing_items')
+        .insert({
+          'image_url': item['image_url'],
+          'color': item['color'],
+          'clothing_type': item['clothing_type'],
+          'name': item['name'],
+          'material': item['material'],
+          'category': item['category'],
+          'created_at': DateTime.now().toIso8601String(),
+        })
+        .select()
+        .single();
+
+    final itemId = insertResponse['clothing_id'] as String;
+    print('Clothing item "${item['name']}" saved successfully with ID $itemId!');
+    notifyListeners();
+    return itemId;
+  } catch (e) {
+    print('Error retrieving and saving clothing item: $e');
+    return null;
+  }
+}
+
+// final itemId = await clothingItemService.retrieveAndSavePreMadeClothingItemByName('Classic T-Shirt');
+// // if (itemId != null) {
+// //   print('Item saved with ID: $itemId');
+// //   // You can now use itemId for navigation, displaying item details, etc.
+// // } else {
+// //   print('Failed to save item.');
+// // }
+
 }

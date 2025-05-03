@@ -1,5 +1,5 @@
 import 'package:fasionrecommender/services/storage/clothingItems_service.dart';
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/popups/clothing_item_display.dart';
+import 'package:fasionrecommender/views/widgets/closetwidgets.dart/popups/clothing_item_display.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -28,11 +28,16 @@ class _ViewSavedItemsPageState extends State<ViewSavedItemsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(),
+      backgroundColor: colorScheme.onSurface,
+      appBar: AppBar(
+        backgroundColor: colorScheme.onSurface,
+        iconTheme: IconThemeData(color: colorScheme.onSurface),
+        elevation: 0,
+      ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _itemsFuture,
         builder: (context, snapshot) {
@@ -44,7 +49,8 @@ class _ViewSavedItemsPageState extends State<ViewSavedItemsPage> {
               child: Text(
                 'Error loading items.',
                 style: textTheme.bodyMedium?.copyWith(
-                  color: theme.dividerColor.withAlpha((0.6 * 255).round()),
+                  // ignore: deprecated_member_use
+                  color: colorScheme.onSurface.withOpacity(0.6),
                 ),
               ),
             );
@@ -55,11 +61,13 @@ class _ViewSavedItemsPageState extends State<ViewSavedItemsPage> {
               child: Text(
                 'No saved items yet.',
                 style: textTheme.bodyMedium?.copyWith(
-                  color: theme.dividerColor.withAlpha((0.6 * 255).round()),
+                  // ignore: deprecated_member_use
+                  color: colorScheme.onSurface.withOpacity(0.6),
                 ),
               ),
             );
           }
+
           return _buildItemsGrid(context, snapshot.data!);
         },
       ),
@@ -71,6 +79,7 @@ class _ViewSavedItemsPageState extends State<ViewSavedItemsPage> {
     List<Map<String, dynamic>> items,
   ) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     return LayoutBuilder(
@@ -106,20 +115,17 @@ class _ViewSavedItemsPageState extends State<ViewSavedItemsPage> {
                         imageUrl,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        errorBuilder:
-                            (_, __, ___) => Container(
-                              color: theme.scaffoldBackgroundColor,
-                              child: Icon(
-                                Icons.broken_image,
-                                color: theme.dividerColor.withAlpha(
-                                  (0.5 * 255).round(),
-                                ),
-                              ),
-                            ),
+                        errorBuilder: (_, __, ___) => Container(
+                          color: colorScheme.surface,
+                          child: Icon(
+                            Icons.broken_image,
+                            // ignore: deprecated_member_use
+                            color: colorScheme.onSurface.withOpacity(0.5),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 6),
                   Center(
                     child: Text(
@@ -128,6 +134,7 @@ class _ViewSavedItemsPageState extends State<ViewSavedItemsPage> {
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w600,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                   ),

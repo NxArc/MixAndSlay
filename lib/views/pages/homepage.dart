@@ -1,10 +1,12 @@
 import 'package:fasionrecommender/controllers/homepage_controller.dart';
 import 'package:fasionrecommender/data/notifiers.dart';
-import 'package:fasionrecommender/services/authenticate/login_page.dart';
+import 'package:fasionrecommender/views/pages/login_page.dart';
 import 'package:fasionrecommender/views/pages/closet.dart';
-import 'package:fasionrecommender/views/widget/homepage%20widgets/profile_setup_page.dart';
+import 'package:fasionrecommender/views/widgets/global%20widgets/theme_button.dart';
+import 'package:fasionrecommender/views/widgets/homepage%20widgets/profile_setup_page.dart';
 import 'package:fasionrecommender/views/pages/searchpage.dart';
-import 'package:fasionrecommender/views/widget/homepage%20widgets/homepage_widget.dart';
+import 'package:fasionrecommender/views/widgets/homepage%20widgets/homepage_widget.dart';
+import 'package:fasionrecommender/views/widgets/object%20widgets/outfit_creationpage.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -19,7 +21,7 @@ class _HomeState extends State<Home> {
     HomeWidget(),
     Searchpage(),
     VirtualClosetPage(),
-    Searchpage(),
+    OutfitCreationPage(),
   ];
   int _currentIndex = 0;
   final PageController _pageController = PageController();
@@ -30,36 +32,38 @@ class _HomeState extends State<Home> {
     final theme = Theme.of(context);
     final activeColor = theme.colorScheme.primary;
     final inactiveColor = theme.iconTheme.color;
+    final appBarTextColor = theme.colorScheme.onSurface;
+    final appBarBackgroundColor = theme.colorScheme.surface;
 
     return DefaultTabController(
       length: 6,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: appBarBackgroundColor,
           centerTitle: true,
           title: Image(
             image: const AssetImage('assets/images/app_logo.png'),
             height: screenSize.height * 0.07,
           ),
           leading: IconButton(
-            icon: const Icon(Icons.logout),
+            icon: Icon(Icons.logout, color: appBarTextColor),
             onPressed: () async {
               final confirmed = await showDialog<bool>(
                 context: context,
                 builder:
                     (context) => AlertDialog(
-                      title: const Text('Confirm Logout'),
-                      content: const Text('Are you sure you want to log out?'),
+                      title: Text('Confirm Logout', style: TextStyle(color: appBarTextColor)),
+                      content: Text('Are you sure you want to log out?', style: TextStyle(color: appBarTextColor)),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context, false),
-                          child: const Text('Cancel'),
+                          child: Text('Cancel', style: TextStyle(color: appBarTextColor)),
                         ),
                         TextButton(
                           onPressed: () {
                             Navigator.pop(context, true);
                           },
-                          child: const Text('Logout'),
+                          child: Text('Logout', style: TextStyle(color: appBarTextColor)),
                         ),
                       ],
                     ),
@@ -73,19 +77,8 @@ class _HomeState extends State<Home> {
               }
             },
           ),
-
           actions: [
-            IconButton(
-              onPressed: () {
-                isDarkModeNotifier.value = !isDarkModeNotifier.value;
-              },
-              icon: ValueListenableBuilder(
-                valueListenable: isDarkModeNotifier,
-                builder: (context, isDarkmode, child) {
-                  return Icon(isDarkmode ? Icons.dark_mode : Icons.light_mode);
-                },
-              ),
-            ),
+            themeButton(),
             IconButton(
               onPressed: () {
                 Navigator.push(
@@ -93,7 +86,7 @@ class _HomeState extends State<Home> {
                   MaterialPageRoute(builder: (context) => ProfilePage()),
                 );
               },
-              icon: Icon(Icons.person),
+              icon: Icon(Icons.person, color: appBarTextColor),
             ),
           ],
         ),
@@ -107,93 +100,75 @@ class _HomeState extends State<Home> {
           },
           children: body,
         ),
-        bottomNavigationBar:
-            _currentIndex == 3
-                ? null
-                : BottomAppBar(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8.0,
-                    ), // more consistent padding
-                    child: Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment
-                              .spaceEvenly, // even spacing across the width
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _currentIndex = 0;
-                            });
-                            _pageController.jumpToPage(0
-                            );
-                          },
-                          icon: Icon(
-                            Icons.home,
-                            color:
-                                _currentIndex == 1
-                                    ? activeColor
-                                    : inactiveColor,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _currentIndex = 1;
-                            });
-                            _pageController.jumpToPage(1);
-                          },
-                          icon: Icon(
-                            Icons.search,
-                            color:
-                                _currentIndex == 1
-                                    ? activeColor
-                                    : inactiveColor,
-                          ),
-                        ),
-
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _currentIndex = 2;
-                            });
-                            _pageController.jumpToPage(2);
-                          },
-                          icon: Icon(
-                            Icons.checkroom,
-                            color:
-                                _currentIndex == 2
-                                    ? activeColor
-                                    : inactiveColor,
-                          ),
-                        ),
-
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _currentIndex = 3;
-                            });
-                            _pageController.jumpToPage(3);
-                          },
-                          icon: ValueListenableBuilder<bool>(
-                            valueListenable: isDarkModeNotifier,
-                            builder: (context, isDarkMode, child) {
-                              return Image.asset(
-                                isDarkMode
-                                    ? 'assets/images/icons/wardrobe_darkmode_icon.png'
-                                    : 'assets/images/icons/wardrobe_icon.png',
-                                color:
-                                    _currentIndex == 3
-                                        ? activeColor
-                                        : inactiveColor,
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
+        bottomNavigationBar: BottomAppBar(
+          color: theme.colorScheme.background,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 8.0,
+            ), // more consistent padding
+            child: Row(
+              mainAxisAlignment:
+                  MainAxisAlignment.spaceEvenly, // even spacing across the width
+              children: [
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _currentIndex = 0;
+                    });
+                    _pageController.jumpToPage(0);
+                  },
+                  icon: Icon(
+                    Icons.home,
+                    color: _currentIndex == 0 ? activeColor : inactiveColor,
                   ),
                 ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _currentIndex = 1;
+                    });
+                    _pageController.jumpToPage(1);
+                  },
+                  icon: Icon(
+                    Icons.search,
+                    color: _currentIndex == 1 ? activeColor : inactiveColor,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _currentIndex = 2;
+                    });
+                    _pageController.jumpToPage(2);
+                  },
+                  icon: Icon(
+                    Icons.checkroom,
+                    color: _currentIndex == 2 ? activeColor : inactiveColor,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _currentIndex = 3;
+                    });
+                    _pageController.jumpToPage(3);
+                  },
+                  icon: ValueListenableBuilder<bool>(
+                    valueListenable: isDarkModeNotifier,
+                    builder: (context, isDarkMode, child) {
+                      return Image.asset(
+                        isDarkMode
+                            ? 'assets/images/icons/wardrobe_darkmode_icon.png'
+                            : 'assets/images/icons/wardrobe_icon.png',
+                        color: _currentIndex == 3 ? activeColor : inactiveColor,
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

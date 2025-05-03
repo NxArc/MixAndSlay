@@ -1,5 +1,5 @@
 import 'package:fasionrecommender/services/storage/outfits_service.dart';
-import 'package:fasionrecommender/views/widget/outfit/modify_outfit.dart';
+import 'package:fasionrecommender/views/widgets/object%20widgets/modify_outfitpage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fasionrecommender/services/storage/clothingItems_service.dart';
@@ -102,32 +102,60 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
     );
   }
 
-  Widget _buildFitImage() {
+  Widget _buildFitImage(BuildContext context) {
+    double imageWidth = MediaQuery.of(context).size.width * 0.4;
+    double imageHeight = MediaQuery.of(context).size.height * 0.25;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (headwear != null && headwear!['image_url'] != null)
-          _buildShadowedImage(headwear!['image_url'], 150, 150),
+          _buildShadowedImage(headwear!['image_url'], imageWidth, imageHeight),
         if (top != null && top!['image_url'] != null)
-          _buildShadowedImage(top!['image_url'], 180, 200),
+          _buildShadowedImage(
+            top!['image_url'],
+            imageWidth * 1.2,
+            imageHeight * 1.2,
+          ),
         if (bottom != null && bottom!['image_url'] != null)
-          _buildShadowedImage(bottom!['image_url'], 180, 200),
+          _buildShadowedImage(
+            bottom!['image_url'],
+            imageWidth * 1.2,
+            imageHeight * 1.2,
+          ),
         if (footwear != null && footwear!['image_url'] != null)
-          _buildShadowedImage(footwear!['image_url'], 150, 120),
+          _buildShadowedImage(
+            footwear!['image_url'],
+            imageWidth,
+            imageHeight * 0.8,
+          ),
       ],
     );
   }
 
-  Widget _buildAccessoryOuterwearRow() {
+  Widget _buildAccessoryOuterwearRow(BuildContext context) {
     List<Widget> items = [];
+    double itemWidth = MediaQuery.of(context).size.width * 0.3;
 
     if (accessories != null && accessories!['image_url'] != null) {
       items.add(
         Column(
           children: [
-            _buildShadowedImage(accessories!['image_url'], 120, 120),
+            _buildShadowedImage(
+              accessories!['image_url'],
+              itemWidth,
+              itemWidth,
+            ),
             const SizedBox(height: 8),
-            Text('Accessory', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              'Accessory',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
+              ),
+            ),
           ],
         ),
       );
@@ -137,9 +165,17 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
       items.add(
         Column(
           children: [
-            _buildShadowedImage(outerwear!['image_url'], 120, 120),
+            _buildShadowedImage(outerwear!['image_url'], itemWidth, itemWidth),
             const SizedBox(height: 8),
-            Text('Outerwear', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              'Outerwear',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
+              ),
+            ),
           ],
         ),
       );
@@ -153,7 +189,6 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
       children: items,
     );
   }
-
 
   Widget _buildItemDetails(String label, Map<String, dynamic>? item) {
     if (item == null) {
@@ -174,10 +209,13 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
                   children: [
                     Flexible(
                       child: Text(
-                        item['name'] ?? 'Unnamed Outfit',
-                        style: const TextStyle(
-                          fontSize: 12,
+                        item['name'] ?? 'Unnamed',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.bold,
+                          color:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.black
+                                  : Colors.white,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -185,9 +223,7 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
                   ],
                 ),
               ),
-          
               const SizedBox(width: 12),
-              // Badges
               Expanded(
                 child: Wrap(
                   spacing: 8,
@@ -211,15 +247,12 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
 
   Widget _buildBadge(String text) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(
-        text,
-        style: TextStyle(fontSize: 12, color: Colors.grey[800]),
-      ),
+      child: Text(text, style: TextStyle(fontSize: 12, color: Colors.black)),
     );
   }
 
@@ -229,69 +262,96 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Outfit name
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                outfit!['outfit_name'] ?? 'Unnamed Outfit',
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-                              IconButton(
-                  icon: Icon(Icons.edit, size: 20),
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    return Container(
+      color: Theme.of(context).colorScheme.onSurface,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Outfit name
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  outfit!['outfit_name'] ?? 'Unnamed Outfit',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: screenWidth > 400 ? 22 : 18, // Adaptive font size
+                    color:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black
+                            : Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                IconButton(
+                  icon: Icon(Icons.edit, size: screenWidth > 400 ? 24 : 20),
                   onPressed: () {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => EditOutfit(outfitId: widget.outfitID),));
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => EditOutfit(outfitId: widget.outfitID),
+                      ),
+                    );
                   },
                 ),
-            ],
-          ),
-          
-          const SizedBox(height: 24),
-
-          // Layer 1: Fit Image
-          _buildFitImage(),
-          const SizedBox(height: 24),
-
-          // Layer 2: Accessory + Outerwear side by side (auto-center)
-          _buildAccessoryOuterwearRow(),
-          const SizedBox(height: 24),
-          Center(
-            child: Text('Outfit Information'),
-          ),
-          Divider(thickness: 1),
-          const SizedBox(height: 12),
-          // Layer 3: All Item Details
-          _buildItemDetails('Headwear', headwear),
-          _buildItemDetails('Top', top),
-          _buildItemDetails('Bottom', bottom),
-          _buildItemDetails('Footwear', footwear),
-          _buildItemDetails('Accessory', accessories),
-          _buildItemDetails('Outerwear', outerwear),
-
-          const SizedBox(height: 24),
-          // Tags
-          Wrap(
-            spacing: 12,
-            runSpacing: 8,
-            alignment: WrapAlignment.center,
-            children: [
-              _buildTag(
-                'WeatherFit: ${outfit!['weatherFit'] ?? 'N/A'}',
-                Colors.blue,
+              ],
+            ),
+            const SizedBox(height: 24),
+      
+            // Layer 1: Fit Image
+            _buildFitImage(context),
+            const SizedBox(height: 24),
+      
+            // Layer 2: Accessory + Outerwear side by side (auto-center)
+            _buildAccessoryOuterwearRow(context),
+            const SizedBox(height: 24),
+            Center(
+              child: Text(
+                'Outfit Information',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Colors.black
+                          : Colors.white,
+                ),
               ),
-              _buildTag(
-                'Occasion: ${outfit!['occasion'] ?? 'N/A'}',
-                Colors.green,
-              ),
-            ],
-          ),
-        ],
+            ),
+            Divider(thickness: 1),
+            const SizedBox(height: 12),
+      
+            // Layer 3: All Item Details
+            _buildItemDetails('Headwear', headwear),
+            _buildItemDetails('Top', top),
+            _buildItemDetails('Bottom', bottom),
+            _buildItemDetails('Footwear', footwear),
+            _buildItemDetails('Accessory', accessories),
+            _buildItemDetails('Outerwear', outerwear),
+      
+            const SizedBox(height: 24),
+            // Tags
+            Wrap(
+              spacing: 12,
+              runSpacing: 8,
+              alignment: WrapAlignment.center,
+              children: [
+                _buildTag(
+                  'WeatherFit: ${outfit!['weatherFit'] ?? 'N/A'}',
+                  Colors.blue,
+                ),
+                _buildTag(
+                  'Occasion: ${outfit!['occasion'] ?? 'N/A'}',
+                  Colors.green,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

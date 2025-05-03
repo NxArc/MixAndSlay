@@ -1,10 +1,9 @@
 import 'package:fasionrecommender/data/responsive_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:fasionrecommender/views/widget/outfit/outfit_creation.dart';
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/sections/collection_section.dart';
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/popups/outfit_display.dart';
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/popups/add_item_bottom_sheet.dart';
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/sections/generated_outfits_section.dart';
+import 'package:fasionrecommender/views/widgets/closetwidgets.dart/sections/collection_section.dart';
+import 'package:fasionrecommender/views/widgets/closetwidgets.dart/popups/outfit_display.dart';
+import 'package:fasionrecommender/views/widgets/closetwidgets.dart/popups/add_item_bottom_sheet.dart';
+import 'package:fasionrecommender/views/widgets/closetwidgets.dart/sections/generated_outfits_section.dart';
 
 class VirtualClosetPage extends StatefulWidget {
   const VirtualClosetPage({super.key});
@@ -20,6 +19,9 @@ Future<void> showOutfitDialog(BuildContext context, String outfitId) {
     builder: (context) {
       return Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: Theme.of(context).colorScheme.onSurface
+        
+        ,
         child: Stack(
           children: [
             Padding(
@@ -34,7 +36,7 @@ Future<void> showOutfitDialog(BuildContext context, String outfitId) {
               right: 8,
               top: 8,
               child: IconButton(
-                icon: const Icon(Icons.close),
+                icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface),
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ),
@@ -62,14 +64,17 @@ class _VirtualClosetPageState extends State<VirtualClosetPage> {
     final buttonPadding = ResponsiveUtils.buttonPadding(context);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         title: Text(
           'Closet',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: titleFontSize,
-          ),
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: titleFontSize,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
         ),
       ),
       body: LayoutBuilder(
@@ -92,55 +97,25 @@ class _VirtualClosetPageState extends State<VirtualClosetPage> {
                   onTap: () => toggleExpand(1),
                 ),
                 SizedBox(height: verticalPadding * 1.2),
-                Row(
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        showAddItemDialog(context);
-                      },
-                      icon: const Icon(Icons.add, color: Colors.black),
-                      label: const Text(
-                        'New Item',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF918E8E),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: buttonPadding,
-                          vertical: verticalPadding,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(11),
-                        ),
-                      ),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    showAddItemDialog(context);
+                  },
+                  icon: Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimary),
+                  label: Text(
+                    'New Item',
+                    style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: buttonPadding,
+                      vertical: verticalPadding,
                     ),
-                    SizedBox(width: horizontalPadding * 0.5),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const OutfitCreationPage(),
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.add, color: Colors.black),
-                      label: const Text(
-                        'Make Outfit',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF918E8E),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: buttonPadding,
-                          vertical: verticalPadding,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(11),
-                        ),
-                      ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(11),
                     ),
-                  ],
+                  ),
                 ),
               ],
             ),

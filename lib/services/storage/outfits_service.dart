@@ -8,7 +8,6 @@ class OutfitService with ChangeNotifier {
   OutfitService(this.supabase);
 
   Future<void> createCustomOutfit({
-    required String outfitName,
     required String topId,
     required String bottomId,
     String? headwearId,
@@ -16,10 +15,14 @@ class OutfitService with ChangeNotifier {
     String? footwearId,
     String? weatherFit,
     String? outerwearId,
+    String? outfitName,
     required String occasion,
   }) async {
     try {
       final user = supabase.auth.currentUser;
+      if (outfitName == null){
+        outfitName = 'Unnamed Outfit';
+      }
       if (user == null) throw Exception('User not authenticated');
 
       final response = await supabase.from('user_outfits').insert({
@@ -290,8 +293,8 @@ class OutfitService with ChangeNotifier {
 
     // Add compatible outerwear
     for (final outer in outerwears) {
-      final outerType = (outer['clothing_type'] as String?)?.toLowerCase();
-      final topType = (selectedTop['clothing_type'] as String?)?.toLowerCase();
+      final outerType = (outer['clothing_type'] as String?);
+      final topType = (selectedTop['clothing_type'] as String?);
       if (outerType != null &&
           topType != null &&
           outerwearTopCompatibilityMap[outerType]?.contains(topType) == true) {
@@ -305,9 +308,9 @@ class OutfitService with ChangeNotifier {
 
     // Add compatible footwear
     for (final foot in footwears) {
-      final footType = (foot['clothing_type'] as String?)?.toLowerCase();
+      final footType = (foot['clothing_type'] as String?);
       final bottomType =
-          (selectedBottom['clothing_type'] as String?)?.toLowerCase();
+          (selectedBottom['clothing_type'] as String?);
       if (footType != null &&
           bottomType != null &&
           footwearBottomCompatibilityMap[bottomType]?.contains(footType) ==
@@ -322,8 +325,8 @@ class OutfitService with ChangeNotifier {
 
     // Add compatible headwear
     for (final head in headwears) {
-      final headType = (head['clothing_type'] as String?)?.toLowerCase();
-      final topType = (selectedTop['clothing_type'] as String?)?.toLowerCase();
+      final headType = (head['clothing_type'] as String?);
+      final topType = (selectedTop['clothing_type'] as String?);
       if (headType != null &&
           topType != null &&
           headwearTopCompatibilityMap[headType]?.contains(topType) == true) {

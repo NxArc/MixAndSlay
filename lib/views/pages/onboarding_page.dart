@@ -1,4 +1,4 @@
-import 'package:fasionrecommender/services/authenticate/login_page.dart';
+import 'package:fasionrecommender/views/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fasionrecommender/controllers/onboarding_page_controller.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart'; // Import the utility file

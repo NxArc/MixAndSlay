@@ -1,6 +1,6 @@
 import'dart:io';
 import 'package:flutter/material.dart';
-import '../item_details_page.dart';
+import '../../object widgets/clothing_item_upload_page.dart';
 import 'package:image_picker/image_picker.dart';
 
 class SuccessDialog extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:fasionrecommender/data/clothing_data.dart';
 import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart';
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/popups/saved_dialog.dart';
+import 'package:fasionrecommender/views/widgets/closetwidgets.dart/popups/saved_dialog.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:fasionrecommender/services/storage/clothingItems_service.dart';
@@ -168,7 +168,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                           fontSize: ResponsiveUtils.inputFontSize(context),
                         ),
                         decoration: InputDecoration(
-                          labelText: 'Outfit Name',
+                          labelText: 'Item Name',
                           labelStyle: TextStyle(
                             fontSize: ResponsiveUtils.inputFontSize(context),
                           ),
@@ -264,7 +264,9 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                             });
                           },
                         ),
+                        
                       SizedBox(height: ResponsiveUtils.paddingV(context)),
+
                       DropdownButtonFormField<String>(
                         isExpanded: true,
                         value: selectedColor,

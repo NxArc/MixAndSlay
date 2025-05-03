@@ -224,7 +224,7 @@ final Map<String, List<String>> topBottomCompatibilityMap = {
 
 final Map<String, Map<String, List<String>>> weatherFitCompatibilityMap = {
   'Cold': {
-    'outerwear': [
+    'Outerwear': [
       'Puffer Coat',
       'Wool Coat',
       'Shearling Coat',
@@ -239,7 +239,7 @@ final Map<String, Map<String, List<String>>> weatherFitCompatibilityMap = {
       'Topcoat',
       'Parka',
     ],
-    ' tops': [
+    'Tops': [
       'Turtleneck',
       'Thermal Top',
       'Sweatshirt',
@@ -251,7 +251,7 @@ final Map<String, Map<String, List<String>>> weatherFitCompatibilityMap = {
     ],
   },
   'Mild': {
-    'outerwear': [
+    'Outerwear': [
       'Bomber Jacket',
       'Denim Jacket',
       'Jean Jacket',
@@ -271,7 +271,7 @@ final Map<String, Map<String, List<String>>> weatherFitCompatibilityMap = {
       'Raincoat',
       'Quilted Jacket',
     ],
-    'tops': [
+    'Tops': [
       'Blouse',
       'Button-Down Shirt',
       'Chambray Shirt',
@@ -294,7 +294,7 @@ final Map<String, Map<String, List<String>>> weatherFitCompatibilityMap = {
       'Tailcoat',
       'Waxed Cotton Jacket',
     ],
-    'tops': [
+    'Tops': [
       'Tank Top',
       'Tube Top',
       'Sleeveless Top',
@@ -463,22 +463,22 @@ final Map<String, List<String>> occasionAccessoryMap = {
   ],
 };
 final Map<String, String> materialTemperatureMap = {
-  'wool': 'cold',
-  'fleece': 'cold',
-  'leather': 'cold',
-  'fur': 'cold',
-  'denim': 'moderate',
-  'cotton': 'moderate',
-  'polyester': 'moderate',
-  'linen': 'warm',
-  'silk': 'warm',
-  'rayon': 'warm',
-  'lace': 'warm',
-  'nylon': 'moderate',
+  'Wool': 'Cold',
+  'Fleece': 'Cold',
+  'Leather': 'Cold',
+  'Fur': 'Cold',
+  'Denim': 'Mild',
+  'Cotton': 'Mild',
+  'Polyester': 'Mild',
+  'Linen': 'Warm',
+  'Silk': 'Warm',
+  'Rayon': 'Warm',
+  'Lace': 'Warm',
+  'Nylon': 'Mild',
 };
 
 String getRecommendedMaterialCategory(double temperatureCelsius) {
-  if (temperatureCelsius <= 20) return 'cold';
-  if (temperatureCelsius >= 35) return 'warm';
-  return 'moderate';
+  if (temperatureCelsius <= 20) return 'Cold';
+  if (temperatureCelsius >= 35) return 'Warm';
+  return 'Mild';
 }

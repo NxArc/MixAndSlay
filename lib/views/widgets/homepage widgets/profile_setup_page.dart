@@ -1,4 +1,4 @@
-import 'package:fasionrecommender/services/storage/profile_controller.dart';
+import 'package:fasionrecommender/controllers/profile_controller.dart';
 import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart';
 import 'package:fasionrecommender/views/pages/homepage.dart';
@@ -12,7 +12,6 @@ class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _ProfilePageState createState() => _ProfilePageState();
 }
 
@@ -28,7 +27,6 @@ class _ProfilePageState extends State<ProfilePage> {
     final pickedFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
     );
-
     if (pickedFile != null) {
       setState(() {
         _profileImage = File(pickedFile.path);
@@ -94,20 +92,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
       if (profile['avatar_url'] != null) {
         try {
-          setState(() {
-            _isLoadingAvatar = true;
-          });
-
+          setState(() => _isLoadingAvatar = true);
           final file = await _urlToFile(profile['avatar_url']);
-          setState(() {
-            _profileImage = file;
-          });
+          setState(() => _profileImage = file);
         } catch (e) {
           debugPrint('Failed to load avatar image: $e');
         } finally {
-          setState(() {
-            _isLoadingAvatar = false;
-          });
+          setState(() => _isLoadingAvatar = false);
         }
       }
     }
@@ -117,8 +108,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final response = await HttpClient().getUrl(Uri.parse(imageUrl));
     final imageData = await response.close();
     final bytes = await consolidateHttpClientResponseBytes(imageData);
-    final tempDir = Directory.systemTemp;
-    final file = File('${tempDir.path}/profile_temp.jpg');
+    final file = File('${Directory.systemTemp.path}/profile_temp.jpg');
     return await file.writeAsBytes(bytes);
   }
 
@@ -136,6 +126,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the theme and media query values
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final themeColor = themeColorNotifier.value;
+    final screenSize = MediaQuery.of(context).size;
+
+    // Use responsive utilities for layout
     final padding = ResponsiveUtils.paddingH(context);
     final vSpacing = ResponsiveUtils.paddingV(context);
     final titleFontSize = ResponsiveUtils.titleSize(context);
@@ -143,6 +140,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final buttonWidth = ResponsiveUtils.buttonWidth(context);
 
     return Scaffold(
+      backgroundColor: isDark ? Colors.black : Colors.white,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: padding),
@@ -151,7 +149,10 @@ class _ProfilePageState extends State<ProfilePage> {
               Align(
                 alignment: Alignment.topLeft,
                 child: IconButton(
-                  icon: Icon(Icons.arrow_back),
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
                   onPressed: () => Navigator.pop(context),
                 ),
               ),
@@ -161,6 +162,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 style: TextStyle(
                   fontSize: titleFontSize,
                   fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black,
                 ),
               ),
               SizedBox(height: vSpacing),
@@ -168,37 +170,63 @@ class _ProfilePageState extends State<ProfilePage> {
                 onTap: _pickImage,
                 child: CircleAvatar(
                   radius: buttonWidth * 0.15,
+                  backgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
                   backgroundImage:
                       _profileImage != null ? FileImage(_profileImage!) : null,
                   child:
                       _profileImage == null
                           ? (_isLoadingAvatar
-                              ? CircularProgressIndicator()
-                              : Icon(Icons.camera_alt, size: 40))
+                              ? CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  themeColor,
+                                ),
+                              )
+                              : Icon(
+                                Icons.camera_alt,
+                                size: 40,
+                                color: isDark ? Colors.white70 : Colors.black54,
+                              ))
                           : null,
                 ),
               ),
               SizedBox(height: vSpacing * 0.8),
-              Text('Choose', style: TextStyle(fontSize: inputFontSize * 0.9)),
+              Text(
+                'Choose',
+                style: TextStyle(
+                  fontSize: inputFontSize * 0.9,
+                  color: isDark ? Colors.white70 : Colors.black87,
+                ),
+              ),
               SizedBox(height: vSpacing * 1.5),
-
               TextField(
                 controller: _nameController,
-                style: TextStyle(fontSize: inputFontSize),
+                style: TextStyle(
+                  fontSize: inputFontSize,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
                 decoration: InputDecoration(
+                  filled: true,
+                  fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
                   hintText: 'Enter your name',
+                  hintStyle: TextStyle(
+                    color: isDark ? Colors.white54 : Colors.black45,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  prefixIcon: Icon(Icons.person),
+                  prefixIcon: Icon(Icons.person, 
+                  color: themeColor.withOpacity(0.8)),
                 ),
               ),
-
               SizedBox(height: vSpacing),
-
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(
+                  filled: true,
+                  fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
                   hintText: 'Select Gender',
+                  hintStyle: TextStyle(
+                    color: isDark ? Colors.white54 : Colors.black45,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -206,19 +234,17 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 value: _selectedGender,
                 style: TextStyle(
-                  color: isDarkModeNotifier.value ? Colors.white : Colors.black,
+                  fontSize: inputFontSize,
+                  color: isDark ? Colors.white : Colors.black,
                 ),
-                dropdownColor:
-                    isDarkModeNotifier.value ? Colors.grey[900] : Colors.white,
+                dropdownColor: isDark ? Colors.grey[900] : Colors.white,
                 items:
-                    ['Male', 'Female', 'Other']
-                        .map(
-                          (gender) => DropdownMenuItem(
-                            value: gender,
-                            child: Text(gender),
-                          ),
-                        )
-                        .toList(),
+                    ['Male', 'Female', 'Other'].map((gender) {
+                      return DropdownMenuItem(
+                        value: gender,
+                        child: Text(gender),
+                      );
+                    }).toList(),
                 onChanged: (value) {
                   setState(() {
                     _selectedGender = value;
@@ -228,19 +254,25 @@ class _ProfilePageState extends State<ProfilePage> {
               Spacer(),
               SizedBox(
                 width: buttonWidth,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    backgroundColor: Colors.black,
-                  ),
-                  onPressed: _setupProfile,
-                  child: Text(
-                    'Okay',
-                    style: TextStyle(fontSize: inputFontSize),
-                  ),
+                child: ValueListenableBuilder(
+                  valueListenable: themeColorNotifier,
+                  builder: (context, themeColor, _) {
+                    return ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: themeColor.withOpacity(0.8),
+                        foregroundColor: isDark ? Colors.black : Colors.white,
+                        minimumSize: Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      onPressed: _setupProfile,
+                      child: Text(
+                        'Okay',
+                        style: TextStyle(fontSize: inputFontSize),
+                      ),
+                    );
+                  },
                 ),
               ),
               SizedBox(height: vSpacing),

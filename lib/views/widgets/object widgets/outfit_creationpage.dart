@@ -1,7 +1,7 @@
 import 'package:fasionrecommender/data/responsive_utils.dart';
 import 'package:fasionrecommender/services/storage/clothingItems_service.dart';
 import 'package:fasionrecommender/services/storage/outfits_service.dart';
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/popups/saved_dialog.dart';
+import 'package:fasionrecommender/views/widgets/closetwidgets.dart/popups/saved_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -188,7 +188,6 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: AppBar(),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: paddingH, vertical: paddingV),
         child: Column(
@@ -249,7 +248,7 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                                   hint: const Text("WeatherFit"),
                                   value: selectedWeatherFit,
                                   items:
-                                      ['Cold', 'Chilly', 'Hot', 'Rainy', 'Normal'].map((
+                                      ['Cold', 'Mild', 'Warm'].map((
                                         String value,
                                       ) {
                                         return DropdownMenuItem<String>(
@@ -299,8 +298,7 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                     onPressed: () async {
                       final outfitName = nameController.text.trim();
 
-                      if (outfitName.isEmpty ||
-                          selectedItemIds['Top']!.isEmpty ||
+                      if (selectedItemIds['Top']!.isEmpty ||
                           selectedItemIds['Bottom']!.isEmpty ||
                           selectedOccasion == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -344,7 +342,7 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                   child: ElevatedButton(
                     onPressed: () async {
                       final outfitName = nameController.text.trim();
-                      if (outfitName.isEmpty || selectedOccasion == null) {
+                      if (selectedOccasion == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text(
@@ -414,7 +412,6 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                 ),
               ],
             ),
-            SizedBox(height: screenHeight * 0.05),
           ],
         ),
       ),

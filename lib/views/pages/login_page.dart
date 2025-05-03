@@ -1,9 +1,9 @@
 import 'package:fasionrecommender/controllers/login_page_controller.dart';
 import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart';
-import 'package:fasionrecommender/services/authenticate/signup_page.dart';
+import 'package:fasionrecommender/views/pages/signup_page.dart';
 import 'package:fasionrecommender/views/pages/homepage.dart';
-import 'package:fasionrecommender/views/widget/appbar.dart';
+import 'package:fasionrecommender/views/widgets/global%20widgets/appbar.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -54,6 +54,8 @@ class _LoginPageState extends State<LoginPage> {
     double subtitleSize = ResponsiveUtils.subtitleSize(context);
     double inputFontSize = ResponsiveUtils.inputFontSize(context);
     double buttonWidth = ResponsiveUtils.buttonWidth(context);
+    final theme = Theme.of(context);
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: CustomAppBar(),
@@ -77,35 +79,69 @@ class _LoginPageState extends State<LoginPage> {
                         style: TextStyle(
                           fontSize: titleSize,
                           fontWeight: FontWeight.bold,
+                          color:
+                              theme.textTheme.headlineSmall?.color ??
+                              theme.primaryColor,
                         ),
                       ),
                       SizedBox(height: paddingV * 0.5),
                       Text(
                         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor',
-                        style: TextStyle(fontSize: subtitleSize),
+                        style: TextStyle(
+                          fontSize: subtitleSize,
+                          color:
+                              theme.textTheme.bodyMedium?.color ??
+                              theme.primaryColor,
+                        ),
                       ),
                       SizedBox(height: paddingV * 3),
                       TextField(
                         controller: emailController,
-                        style: TextStyle(fontSize: inputFontSize),
+                        style: TextStyle(
+                          fontSize: inputFontSize,
+                          color:
+                              theme.textTheme.bodyMedium?.color ??
+                              theme.primaryColor,
+                        ),
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.mail),
+                          prefixIcon: Icon(
+                            Icons.mail,
+                            color: theme.iconTheme.color,
+                          ),
                           labelText: 'Enter Your Email',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
+                          ),
+                          labelStyle: TextStyle(
+                            color:
+                                theme.textTheme.bodyMedium?.color ??
+                                theme.primaryColor,
                           ),
                         ),
                       ),
                       SizedBox(height: paddingV * 1.5),
                       TextField(
                         controller: passwordController,
-                        style: TextStyle(fontSize: inputFontSize),
+                        style: TextStyle(
+                          fontSize: inputFontSize,
+                          color:
+                              theme.textTheme.bodyMedium?.color ??
+                              theme.primaryColor,
+                        ),
                         obscureText: true,
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock),
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            color: theme.iconTheme.color,
+                          ),
                           labelText: 'Enter Your Password',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
+                          ),
+                          labelStyle: TextStyle(
+                            color:
+                                theme.textTheme.bodyMedium?.color ??
+                                theme.primaryColor,
                           ),
                         ),
                       ),
@@ -131,7 +167,13 @@ class _LoginPageState extends State<LoginPage> {
                                     style: TextStyle(
                                       decoration: TextDecoration.underline,
                                       color:
-                                          value ? Colors.white : Colors.black,
+                                          value
+                                              ? Colors.white
+                                              : theme
+                                                      .textTheme
+                                                      .bodyMedium
+                                                      ?.color ??
+                                                  theme.primaryColor,
                                       fontSize: subtitleSize,
                                     ),
                                   ),
@@ -202,14 +244,12 @@ class _LoginPageState extends State<LoginPage> {
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(20),
                                       ),
-                                      backgroundColor:
-                                          value ? Colors.black : Colors.white,
+                                      backgroundColor: Colors.black,
                                     ),
                                     child: Text(
                                       'Sign In',
                                       style: TextStyle(
-                                        color:
-                                            value ? Colors.white : Colors.black,
+                                        color: Colors.white,
                                         fontSize: inputFontSize,
                                       ),
                                     ),
@@ -221,7 +261,14 @@ class _LoginPageState extends State<LoginPage> {
                                 child: Text(
                                   "Don't Have An Account?",
                                   style: TextStyle(
-                                    color: value ? Colors.white : Colors.black,
+                                    color:
+                                        value
+                                            ? Colors.white
+                                            : theme
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.color ??
+                                                theme.primaryColor,
                                     fontSize: subtitleSize,
                                   ),
                                 ),
@@ -252,7 +299,11 @@ class _LoginPageState extends State<LoginPage> {
                                           color:
                                               value
                                                   ? Colors.white
-                                                  : Colors.black,
+                                                  : theme
+                                                          .textTheme
+                                                          .bodyMedium
+                                                          ?.color ??
+                                                      theme.primaryColor,
                                           fontSize: subtitleSize,
                                         ),
                                       ),

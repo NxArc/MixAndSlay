@@ -8,10 +8,17 @@ void showAddItemDialog(BuildContext context) {
   final parentContext = context;
   _selectedOption = null;
 
+  bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+  Color primaryTextColor = isDarkMode ? Colors.white : Colors.black;
+  Color buttonColor = isDarkMode ? Colors.white : Colors.black;
+  Color buttonDisabledColor =
+      isDarkMode ? Color(0xFF918E8E) : Color(0xFF918E8E);
+  Color radioButtonColor = isDarkMode ? Colors.white : Colors.black;
+
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.white,
+    backgroundColor: isDarkMode ? Color(0xFF1C1C1C) : Colors.white,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
     ),
@@ -28,17 +35,17 @@ void showAddItemDialog(BuildContext context) {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'Add an Item',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           fontFamily: 'Montserrat',
-                          color: Colors.black,
+                          color: primaryTextColor,
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close),
+                        icon: Icon(Icons.close, color: primaryTextColor),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ],
@@ -47,7 +54,8 @@ void showAddItemDialog(BuildContext context) {
                   GestureDetector(
                     onTap: () {
                       setModalState(() {
-                        _selectedOption = _selectedOption == 'photo' ? null : 'photo';
+                        _selectedOption =
+                            _selectedOption == 'photo' ? null : 'photo';
                       });
                     },
                     child: Row(
@@ -57,18 +65,19 @@ void showAddItemDialog(BuildContext context) {
                           groupValue: _selectedOption,
                           onChanged: (value) {
                             setModalState(() {
-                              _selectedOption = _selectedOption == value ? null : value;
+                              _selectedOption =
+                                  _selectedOption == value ? null : value;
                             });
                           },
-                          activeColor: Colors.black,
+                          activeColor: radioButtonColor,
                         ),
-                        const Text(
+                        Text(
                           'Take Photo',
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontWeight: FontWeight.w500,
                             fontSize: 14,
-                            color: Colors.black,
+                            color: primaryTextColor,
                           ),
                         ),
                       ],
@@ -78,7 +87,8 @@ void showAddItemDialog(BuildContext context) {
                   GestureDetector(
                     onTap: () {
                       setModalState(() {
-                        _selectedOption = _selectedOption == 'gallery' ? null : 'gallery';
+                        _selectedOption =
+                            _selectedOption == 'gallery' ? null : 'gallery';
                       });
                     },
                     child: Row(
@@ -88,45 +98,58 @@ void showAddItemDialog(BuildContext context) {
                           groupValue: _selectedOption,
                           onChanged: (value) {
                             setModalState(() {
-                              _selectedOption = _selectedOption == value ? null : value;
+                              _selectedOption =
+                                  _selectedOption == value ? null : value;
                             });
                           },
-                          activeColor: Colors.black,
+                          activeColor: radioButtonColor,
                         ),
-                        const Text(
+                        Text(
                           'Upload via Gallery',
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontWeight: FontWeight.w500,
                             fontSize: 14,
-                            color: Colors.black,
+                            color: primaryTextColor,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _selectedOption != null
-                          ? () async {
-                              Navigator.pop(context); // Close bottom sheet
-                              await _controller.handleContinue(parentContext, _selectedOption);
-                            }
-                          : null,
+                      onPressed:
+                          _selectedOption != null
+                              ? () async {
+                                Navigator.pop(context); // Close bottom sheet
+                                await _controller.handleContinue(
+                                  parentContext,
+                                  _selectedOption,
+                                );
+                              }
+                              : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:Color(0xFF383737),
+                        backgroundColor:
+                            _selectedOption != null
+                                ? (isDarkMode
+                                    ? Colors.black
+                                    : Colors
+                                        .black) // Set color based on selection
+                                : (isDarkMode
+                                    ? Color(0xFF918E8E)
+                                    : Color(0xFF918E8E)), // Disabled state
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(11),
                         ),
-                        disabledBackgroundColor: const Color(0xFF918E8E),
+                        disabledBackgroundColor: Color(
+                          0xFF918E8E,
+                        ), // Disabled color
                       ),
                       child: const Text(
                         'Continue',
-                        style: 
-                        TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontWeight: FontWeight.w600,
                           fontSize: 18,

@@ -1,4 +1,4 @@
-import 'package:fasionrecommender/views/widget/closetwidgets.dart/view_saved_items_page.dart';
+import 'package:fasionrecommender/views/widgets/object%20widgets/view_saved_items_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
