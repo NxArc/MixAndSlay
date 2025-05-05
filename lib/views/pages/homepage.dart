@@ -2,11 +2,11 @@ import 'package:fasionrecommender/controllers/homepage_controller.dart';
 import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:fasionrecommender/views/pages/login_page.dart';
 import 'package:fasionrecommender/views/pages/closet.dart';
+import 'package:fasionrecommender/views/pages/outfit_creation_page.dart';
 import 'package:fasionrecommender/views/widgets/global%20widgets/theme_button.dart';
+import 'package:fasionrecommender/views/widgets/homepage%20widgets/homepage_widget.dart';
 import 'package:fasionrecommender/views/widgets/homepage%20widgets/profile_setup_page.dart';
 import 'package:fasionrecommender/views/pages/searchpage.dart';
-import 'package:fasionrecommender/views/widgets/homepage%20widgets/homepage_widget.dart';
-import 'package:fasionrecommender/views/widgets/object%20widgets/outfit_creationpage.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -100,6 +100,7 @@ class _HomeState extends State<Home> {
           },
           children: body,
         ),
+
         bottomNavigationBar: BottomAppBar(
           color: theme.colorScheme.background,
           child: Padding(

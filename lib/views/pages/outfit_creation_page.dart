@@ -186,8 +186,21 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
     final paddingV = ResponsiveUtils.paddingV(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+    final titleFontSize = ResponsiveUtils.titleSize(context);
 
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        title: Text(
+          'Create an Outfit',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            fontSize: titleFontSize,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+      ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: paddingH, vertical: paddingV),
         child: Column(

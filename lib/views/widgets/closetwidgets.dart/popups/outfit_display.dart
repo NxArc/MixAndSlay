@@ -1,5 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fasionrecommender/services/storage/outfits_service.dart';
-import 'package:fasionrecommender/views/widgets/object%20widgets/modify_outfitpage.dart';
+import 'package:fasionrecommender/views/widgets/object%20creation/modify_outfitpage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fasionrecommender/services/storage/clothingItems_service.dart';
@@ -97,7 +98,13 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: Image.network(imageUrl, fit: BoxFit.cover),
+        child: CachedNetworkImage(
+          imageUrl: imageUrl,
+          fit: BoxFit.cover,
+          placeholder: (context, url) =>
+              Center(child: CircularProgressIndicator()),
+          errorWidget: (context, url, error) => Icon(Icons.error),
+        ),
       ),
     );
   }
@@ -203,7 +210,7 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 140, // 👈 Set this width to align all titles
+                width: 140,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -247,7 +254,7 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
 
   Widget _buildBadge(String text) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(20),
@@ -268,11 +275,9 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
       color: Theme.of(context).colorScheme.onSurface,
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Outfit name
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -280,7 +285,7 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
                   outfit!['outfit_name'] ?? 'Unnamed Outfit',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: screenWidth > 400 ? 22 : 18, // Adaptive font size
+                    fontSize: screenWidth > 400 ? 22 : 18,
                     color:
                         Theme.of(context).brightness == Brightness.dark
                             ? Colors.black
@@ -303,12 +308,8 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
               ],
             ),
             const SizedBox(height: 24),
-      
-            // Layer 1: Fit Image
             _buildFitImage(context),
             const SizedBox(height: 24),
-      
-            // Layer 2: Accessory + Outerwear side by side (auto-center)
             _buildAccessoryOuterwearRow(context),
             const SizedBox(height: 24),
             Center(
@@ -324,17 +325,13 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
             ),
             Divider(thickness: 1),
             const SizedBox(height: 12),
-      
-            // Layer 3: All Item Details
             _buildItemDetails('Headwear', headwear),
             _buildItemDetails('Top', top),
             _buildItemDetails('Bottom', bottom),
             _buildItemDetails('Footwear', footwear),
             _buildItemDetails('Accessory', accessories),
             _buildItemDetails('Outerwear', outerwear),
-      
             const SizedBox(height: 24),
-            // Tags
             Wrap(
               spacing: 12,
               runSpacing: 8,
@@ -349,6 +346,31 @@ class _OutfitDisplayWidgetState extends State<OutfitDisplayWidget> {
                   Colors.green,
                 ),
               ],
+            ),
+            SizedBox(height: 12),
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.close,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+                label: Text(
+                  'Close',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                ),
+              ),
             ),
           ],
         ),

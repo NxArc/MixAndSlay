@@ -7,7 +7,6 @@ class ClothingItemService with ChangeNotifier {
   final SupabaseClient supabase;
 
   ClothingItemService(this.supabase);
-  // Upload Image and Clothing Item to Supabase
   Future<void> uploadClothingItem(
     File imageFile,
     String color,
@@ -170,61 +169,52 @@ class ClothingItemService with ChangeNotifier {
     }
   }
 
+  Future<String?> retrieveAndSavePreMadeClothingItemByName(String name) async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) {
+        throw Exception('User is not authenticated');
+      }
 
-Future<String?> retrieveAndSavePreMadeClothingItemByName(String name) async {
-  try {
-    final user = supabase.auth.currentUser;
-    if (user == null) {
-      throw Exception('User is not authenticated');
-    }
+      print('🔍 Looking for system item: "$name"');
+      final response = await supabase
+          .from('system_clothing_items')
+          .select('*')
+          .eq('name', name.trim())
+          .limit(1);
 
-    final response = await supabase
-        .from('system_clothing_items')
-        .select('*')
-        .eq('name', name)
-        .order('created_at', ascending: false)
-        .limit(1);
+      final items = List<Map<String, dynamic>>.from(response);
+      if (items.isEmpty) {
+        print('❌ No system item found with name: "$name"');
+        return null;
+      }
 
-    final items = List<Map<String, dynamic>>.from(response);
+      final item = items.first;
+      print('✅ Found system item: ${item['name']}');
 
-    if (items.isEmpty) {
-      print('No system item found with name: $name');
+      final insertResponse =
+          await supabase
+              .from('user_clothing_items')
+              .insert({
+                'uid': user.id,
+                'image_url': item['image_url'],
+                'color': item['color'],
+                'clothing_type': item['clothing_type'],
+                'name': item['name'],
+                'material': item['material'],
+                'category': item['category'],
+                'created_at': DateTime.now().toIso8601String(),
+              })
+              .select('item_id')
+              .single(); // This will return the inserted row with clothing_id
+
+      final clothingId = insertResponse['item_id'];
+      print('🎉 Clothing item saved with ID: $clothingId');
+
+      return clothingId;
+    } catch (e) {
+      print('❌ Error retrieving/saving clothing item "$name": $e');
       return null;
     }
-
-    final item = items.first;
-
-
-    final insertResponse = await supabase
-        .from('user_clothing_items')
-        .insert({
-          'image_url': item['image_url'],
-          'color': item['color'],
-          'clothing_type': item['clothing_type'],
-          'name': item['name'],
-          'material': item['material'],
-          'category': item['category'],
-          'created_at': DateTime.now().toIso8601String(),
-        })
-        .select()
-        .single();
-
-    final itemId = insertResponse['clothing_id'] as String;
-    print('Clothing item "${item['name']}" saved successfully with ID $itemId!');
-    notifyListeners();
-    return itemId;
-  } catch (e) {
-    print('Error retrieving and saving clothing item: $e');
-    return null;
   }
-}
-
-// final itemId = await clothingItemService.retrieveAndSavePreMadeClothingItemByName('Classic T-Shirt');
-// // if (itemId != null) {
-// //   print('Item saved with ID: $itemId');
-// //   // You can now use itemId for navigation, displaying item details, etc.
-// // } else {
-// //   print('Failed to save item.');
-// // }
-
 }

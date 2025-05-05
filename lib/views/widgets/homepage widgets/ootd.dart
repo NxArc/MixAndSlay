@@ -1,10 +1,14 @@
+import 'dart:async';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fasionrecommender/services/api/openweathermap.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Ootd extends StatefulWidget {
   const Ootd({super.key});
+
   @override
   State<Ootd> createState() => _OotdState();
 }
@@ -12,21 +16,51 @@ class Ootd extends StatefulWidget {
 class _OotdState extends State<Ootd> {
   String location = 'Loading...';
   String temp = '--';
-  String imageDirect = 'assets/images/onboard-bg.jpg';
   DateTime now = DateTime.now();
+
+  List<String> imageUrls = [];
+  int currentIndex = 0;
+  Timer? timer;
+
+  final SupabaseClient supabase = Supabase.instance.client;
 
   @override
   void initState() {
     super.initState();
     _fetchWeatherAndLocation();
+    _loadOutfitImages();
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  Icon _getTemperatureIcon(double temp) {
+    if (temp >= 30) {
+      return const Icon(Icons.wb_sunny, color: Colors.orange); // Hot
+    } else if (temp >= 20) {
+      return const Icon(Icons.wb_cloudy, color: Colors.lightBlue); // Warm
+    } else if (temp >= 10) {
+      return const Icon(Icons.ac_unit, color: Colors.blue); // Cool
+    } else {
+      return const Icon(Icons.cloud, color: Colors.grey); // Cold
+    }
   }
 
   Future<void> _fetchWeatherAndLocation() async {
     try {
       final position = await getCurrentLocation();
-      final fetchedTemp = await getTemperature(position.latitude, position.longitude);
+      final fetchedTemp = await getTemperature(
+        position.latitude,
+        position.longitude,
+      );
 
-      final placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
       final place = placemarks.first;
       final loc = '${place.locality}, ${place.country}';
 
@@ -39,12 +73,39 @@ class _OotdState extends State<Ootd> {
     }
   }
 
+  Future<void> _loadOutfitImages() async {
+    try {
+      final response = await supabase
+          .from('system_outfits')
+          .select('image_url');
+
+      imageUrls =
+          (response as List)
+              .map((item) => item['image_url'] as String)
+              .where((url) => url.isNotEmpty)
+              .toList();
+
+      if (imageUrls.isNotEmpty) {
+        setState(() {}); // to show first image
+        timer = Timer.periodic(const Duration(seconds: 5), (Timer t) {
+          setState(() {
+            currentIndex = (currentIndex + 1) % imageUrls.length;
+          });
+        });
+      }
+    } catch (e) {
+      print('Error loading outfit images: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
     final screenSize = MediaQuery.of(context).size;
+
+    final imageUrl = imageUrls.isNotEmpty ? imageUrls[currentIndex] : null;
 
     return Padding(
       padding: const EdgeInsets.all(5),
@@ -54,10 +115,9 @@ class _OotdState extends State<Ootd> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              // ignore: deprecated_member_use
               color: colorScheme.shadow.withOpacity(0.1),
               blurRadius: 8,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -89,10 +149,9 @@ class _OotdState extends State<Ootd> {
                           Icon(
                             Icons.location_on,
                             size: screenSize.width * 0.04,
-                            // ignore: deprecated_member_use
                             color: colorScheme.primary.withOpacity(0.8),
                           ),
-                          SizedBox(width: 4),
+                          const SizedBox(width: 4),
                           Expanded(
                             child: Text(
                               location,
@@ -109,7 +168,6 @@ class _OotdState extends State<Ootd> {
                       Text(
                         'Weather',
                         style: textTheme.labelMedium?.copyWith(
-                          // ignore: deprecated_member_use
                           color: colorScheme.onSurface.withOpacity(0.6),
                           fontSize: screenSize.width * 0.035,
                         ),
@@ -124,12 +182,9 @@ class _OotdState extends State<Ootd> {
                               color: colorScheme.onSurface,
                             ),
                           ),
-                          SizedBox(width: 8),
-                          Icon(
-                            Icons.wb_sunny,
-                            color: Colors.orange,
-                            size: screenSize.width * 0.06,
-                          ),
+                          const SizedBox(width: 8),
+                          if (double.tryParse(temp) != null)
+                            _getTemperatureIcon(double.parse(temp)),
                         ],
                       ),
                     ],
@@ -144,14 +199,38 @@ class _OotdState extends State<Ootd> {
                     right: screenSize.width * 0.05,
                     bottom: screenSize.height * 0.02,
                   ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      image: DecorationImage(
-                        image: AssetImage(imageDirect),
-                        fit: BoxFit.contain,
-                      ),
-                    ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child:
+                        imageUrl != null
+                            ? CachedNetworkImage(
+                              imageUrl: imageUrl,
+                              fit: BoxFit.cover,
+                              placeholder:
+                                  (context, url) => Container(
+                                    color: Colors.grey[200],
+                                    child: const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  ),
+                              errorWidget:
+                                  (context, url, error) => Container(
+                                    color: Colors.grey[300],
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.broken_image,
+                                        size: 40,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                            )
+                            : Container(
+                              color: Colors.grey[200],
+                              child: const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
                   ),
                 ),
               ),

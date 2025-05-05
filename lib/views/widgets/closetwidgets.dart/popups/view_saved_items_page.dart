@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fasionrecommender/services/storage/clothingItems_service.dart';
 import 'package:fasionrecommender/views/widgets/closetwidgets.dart/popups/clothing_item_display.dart';
 import 'package:flutter/material.dart';
@@ -111,18 +112,27 @@ class _ViewSavedItemsPageState extends State<ViewSavedItemsPage> {
                   Expanded(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        imageUrl,
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        errorBuilder: (_, __, ___) => Container(
-                          color: colorScheme.surface,
-                          child: Icon(
-                            Icons.broken_image,
-                            // ignore: deprecated_member_use
-                            color: colorScheme.onSurface.withOpacity(0.5),
-                          ),
-                        ),
+                        placeholder:
+                            (context, url) => Container(
+                              color: colorScheme.surfaceVariant,
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            ),
+                        errorWidget:
+                            (context, url, error) => Container(
+                              color: colorScheme.surface,
+                              child: Icon(
+                                Icons.broken_image,
+                                color: colorScheme.onSurface.withOpacity(0.5),
+                              ),
+                            ),
                       ),
                     ),
                   ),

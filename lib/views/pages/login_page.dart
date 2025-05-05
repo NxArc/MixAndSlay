@@ -14,7 +14,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // Popup dialog method
+  bool obscurePassword = true;
   void _showResultDialog(
     String title,
     String message, {
@@ -128,11 +128,24 @@ class _LoginPageState extends State<LoginPage> {
                               theme.textTheme.bodyMedium?.color ??
                               theme.primaryColor,
                         ),
-                        obscureText: true,
+                        obscureText: obscurePassword,
                         decoration: InputDecoration(
                           prefixIcon: Icon(
                             Icons.lock,
                             color: theme.iconTheme.color,
+                          ),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              obscurePassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: theme.iconTheme.color,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                obscurePassword = !obscurePassword;
+                              });
+                            },
                           ),
                           labelText: 'Enter Your Password',
                           border: OutlineInputBorder(

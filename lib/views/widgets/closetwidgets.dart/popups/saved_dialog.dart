@@ -21,7 +21,7 @@ class SuccessDialog extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           const Text(
-            'Saved Successfully!',
+            'Success!',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 20,
@@ -82,7 +82,7 @@ class FailureDialog extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           const Text(
-            'Failed to Save',
+            'Action Failed',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 20,
@@ -168,7 +168,7 @@ void showSuccessBottomSheet(BuildContext context) {
             ),
             const SizedBox(height: 12),
             const Text(
-              'Saved Successfully!',
+              'Success!',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20,
@@ -274,7 +274,7 @@ void showFailureBottomSheet(BuildContext context, String errorMessage) {
             ),
             const SizedBox(height: 12),
             const Text(
-              'Failed to Save',
+              'Action Failed',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20,
