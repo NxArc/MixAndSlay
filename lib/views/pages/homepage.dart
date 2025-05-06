@@ -38,57 +38,89 @@ class _HomeState extends State<Home> {
     return DefaultTabController(
       length: 6,
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: appBarBackgroundColor,
-          centerTitle: true,
-          title: Image(
-            image: const AssetImage('assets/images/app_logo.png'),
-            height: screenSize.height * 0.07,
-          ),
-          leading: IconButton(
-            icon: Icon(Icons.logout, color: appBarTextColor),
-            onPressed: () async {
-              final confirmed = await showDialog<bool>(
-                context: context,
-                builder:
-                    (context) => AlertDialog(
-                      title: Text('Confirm Logout', style: TextStyle(color: appBarTextColor)),
-                      content: Text('Are you sure you want to log out?', style: TextStyle(color: appBarTextColor)),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, false),
-                          child: Text('Cancel', style: TextStyle(color: appBarTextColor)),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(kToolbarHeight),
+          child: ValueListenableBuilder<ThemeMode>(
+            valueListenable: themeModeNotifier,
+            builder: (context, themeMode, _) {
+              final brightness = MediaQuery.of(context).platformBrightness;
+              final isDark =
+                  themeMode == ThemeMode.dark ||
+                  (themeMode == ThemeMode.system &&
+                      brightness == Brightness.dark);
+
+              final appBarTextColor = Theme.of(context).colorScheme.onSurface;
+              final appBarBackgroundColor =
+                  Theme.of(context).colorScheme.surface;
+
+              return AppBar(
+                backgroundColor: appBarBackgroundColor,
+                centerTitle: true,
+                title: Image.asset(
+                  isDark
+                      ? 'assets/images/logoDark.png'
+                      : 'assets/images/logoLight.png',
+                  height: MediaQuery.of(context).size.height * 0.07,
+                ),
+                leading: IconButton(
+                  icon: Icon(Icons.logout, color: appBarTextColor),
+                  onPressed: () async {
+                    final confirmed = await showDialog<bool>(
+                      context: context,
+                      builder:
+                          (context) => AlertDialog(
+                            title: Text(
+                              'Confirm Logout',
+                              style: TextStyle(color: appBarTextColor),
+                            ),
+                            content: Text(
+                              'Are you sure you want to log out?',
+                              style: TextStyle(color: appBarTextColor),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, false),
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(color: appBarTextColor),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, true),
+                                child: Text(
+                                  'Logout',
+                                  style: TextStyle(color: appBarTextColor),
+                                ),
+                              ),
+                            ],
+                          ),
+                    );
+                    if (confirmed == true) {
+                      signOut();
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
                         ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context, true);
-                          },
-                          child: Text('Logout', style: TextStyle(color: appBarTextColor)),
-                        ),
-                      ],
-                    ),
+                      );
+                    }
+                  },
+                ),
+                actions: [
+                  const themeButton(),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ProfilePage()),
+                      );
+                    },
+                    icon: Icon(Icons.person, color: appBarTextColor),
+                  ),
+                ],
               );
-              if (confirmed == true) {
-                signOut();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
-              }
             },
           ),
-          actions: [
-            themeButton(),
-            IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfilePage()),
-                );
-              },
-              icon: Icon(Icons.person, color: appBarTextColor),
-            ),
-          ],
         ),
 
         body: PageView(
@@ -109,7 +141,8 @@ class _HomeState extends State<Home> {
             ), // more consistent padding
             child: Row(
               mainAxisAlignment:
-                  MainAxisAlignment.spaceEvenly, // even spacing across the width
+                  MainAxisAlignment
+                      .spaceEvenly, // even spacing across the width
               children: [
                 IconButton(
                   onPressed: () {

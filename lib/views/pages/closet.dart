@@ -20,18 +20,15 @@ Future<void> showOutfitDialog(BuildContext context, String outfitId) {
       return Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         backgroundColor: Theme.of(context).colorScheme.onSurface
-        
+
         ,
         child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 40),
-              child: SizedBox(
+              SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
                 height: MediaQuery.of(context).size.height * 0.8,
                 child: OutfitDisplayWidget(outfitID: outfitId),
               ),
-            ),
             Positioned(
               right: 8,
               top: 8,

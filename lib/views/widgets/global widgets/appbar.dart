@@ -1,3 +1,4 @@
+import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:fasionrecommender/views/widgets/global%20widgets/theme_button.dart';
 import 'package:flutter/material.dart';
 
@@ -6,13 +7,28 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      centerTitle: true,
-      title: Image.asset('assets/images/app_logo.png', height: 55),
-      actions: [
-        themeButton(),
-      ],
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeModeNotifier,
+      builder: (context, themeMode, _) {
+        final platformBrightness = MediaQuery.of(context).platformBrightness;
+        final isDark = themeMode == ThemeMode.dark ||
+            (themeMode == ThemeMode.system &&
+                platformBrightness == Brightness.dark);
+
+        return AppBar(
+          backgroundColor: Colors.transparent,
+          centerTitle: true,
+          title: Image.asset(
+            isDark
+                ? 'assets/images/logoDark.png'
+                : 'assets/images/logoLight.png',
+            height: 55,
+          ),
+          actions: [
+            themeButton(),
+          ],
+        );
+      },
     );
   }
 

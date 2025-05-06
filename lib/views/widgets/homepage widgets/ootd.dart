@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fasionrecommender/services/api/openweathermap.dart';
+import 'package:fasionrecommender/views/widgets/closetwidgets.dart/popups/system_outfit_display.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:geocoding/geocoding.dart';
@@ -18,7 +19,7 @@ class _OotdState extends State<Ootd> {
   String temp = '--';
   DateTime now = DateTime.now();
 
-  List<String> imageUrls = [];
+  List<Map<String, String>> outfits = [];
   int currentIndex = 0;
   Timer? timer;
 
@@ -39,13 +40,13 @@ class _OotdState extends State<Ootd> {
 
   Icon _getTemperatureIcon(double temp) {
     if (temp >= 30) {
-      return const Icon(Icons.wb_sunny, color: Colors.orange); // Hot
+      return const Icon(Icons.wb_sunny, color: Colors.orange);
     } else if (temp >= 20) {
-      return const Icon(Icons.wb_cloudy, color: Colors.lightBlue); // Warm
+      return const Icon(Icons.wb_cloudy, color: Colors.lightBlue);
     } else if (temp >= 10) {
-      return const Icon(Icons.ac_unit, color: Colors.blue); // Cool
+      return const Icon(Icons.ac_unit, color: Colors.blue);
     } else {
-      return const Icon(Icons.cloud, color: Colors.grey); // Cold
+      return const Icon(Icons.cloud, color: Colors.grey);
     }
   }
 
@@ -77,19 +78,21 @@ class _OotdState extends State<Ootd> {
     try {
       final response = await supabase
           .from('system_outfits')
-          .select('image_url');
+          .select('name, image_url');
 
-      imageUrls =
-          (response as List)
-              .map((item) => item['image_url'] as String)
-              .where((url) => url.isNotEmpty)
-              .toList();
+      outfits = (response as List)
+          .map((item) => {
+                'name': item['name'] as String,
+                'image_url': item['image_url'] as String,
+              })
+          .where((item) => item['image_url']!.isNotEmpty)
+          .toList();
 
-      if (imageUrls.isNotEmpty) {
-        setState(() {}); // to show first image
+      if (outfits.isNotEmpty) {
+        setState(() {});
         timer = Timer.periodic(const Duration(seconds: 5), (Timer t) {
           setState(() {
-            currentIndex = (currentIndex + 1) % imageUrls.length;
+            currentIndex = (currentIndex + 1) % outfits.length;
           });
         });
       }
@@ -105,7 +108,7 @@ class _OotdState extends State<Ootd> {
     final textTheme = theme.textTheme;
     final screenSize = MediaQuery.of(context).size;
 
-    final imageUrl = imageUrls.isNotEmpty ? imageUrls[currentIndex] : null;
+    final currentOutfit = outfits.isNotEmpty ? outfits[currentIndex] : null;
 
     return Padding(
       padding: const EdgeInsets.all(5),
@@ -122,7 +125,7 @@ class _OotdState extends State<Ootd> {
           ],
         ),
         child: SizedBox(
-          height: screenSize.height * 0.3,
+          height: screenSize.height * 0.25,
           child: Row(
             children: [
               Expanded(
@@ -195,42 +198,36 @@ class _OotdState extends State<Ootd> {
                 flex: 2,
                 child: Padding(
                   padding: EdgeInsets.only(
-                    top: screenSize.height * 0.02,
-                    right: screenSize.width * 0.05,
-                    bottom: screenSize.height * 0.02,
+                    top: screenSize.height * 0.01,
+                    right: screenSize.width * 0.02,
+                    bottom: screenSize.height * 0.01,
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child:
-                        imageUrl != null
-                            ? CachedNetworkImage(
-                              imageUrl: imageUrl,
+                  child: GestureDetector(
+                    onTap: () {
+                     showSystemOutfitDialog(context, currentOutfit!['name']!);
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: currentOutfit != null
+                          ? CachedNetworkImage(
+                              imageUrl: currentOutfit['image_url']!,
                               fit: BoxFit.cover,
-                              placeholder:
-                                  (context, url) => Container(
-                                    color: Colors.grey[200],
-                                    child: const Center(
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                  ),
-                              errorWidget:
-                                  (context, url, error) => Container(
-                                    color: Colors.grey[300],
-                                    child: const Center(
-                                      child: Icon(
-                                        Icons.broken_image,
-                                        size: 40,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                            )
-                            : Container(
-                              color: Colors.grey[200],
-                              child: const Center(
-                                child: CircularProgressIndicator(),
+                              placeholder: (context, url) => Container(
+                                color: Colors.grey[200],
+                                child: const Center(child: CircularProgressIndicator()),
                               ),
+                              errorWidget: (context, url, error) => Container(
+                                color: Colors.grey[300],
+                                child: const Center(
+                                  child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                                ),
+                              ),
+                            )
+                          : Container(
+                              color: Colors.grey[200],
+                              child: const Center(child: CircularProgressIndicator()),
                             ),
+                    ),
                   ),
                 ),
               ),
