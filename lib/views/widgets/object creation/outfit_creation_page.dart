@@ -186,8 +186,21 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
     final paddingV = ResponsiveUtils.paddingV(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+    final titleFontSize = ResponsiveUtils.titleSize(context);
 
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        title: Text(
+          'Create an Outfit',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            fontSize: titleFontSize,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+      ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: paddingH, vertical: paddingV),
         child: Column(
@@ -329,11 +342,19 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
+                      backgroundColor:Theme.of(context).colorScheme.primary,
                       padding: EdgeInsets.symmetric(
                         vertical: screenHeight * 0.02,
                       ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(11),
+                      ),
                     ),
-                    child: const Text("Create Outfit"),
+                    child: Text(
+                      "Create Outfit",
+                      style: TextStyle(color:Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
                   ),
                 ),
                 SizedBox(width: screenWidth * 0.15),
@@ -407,7 +428,21 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                         showFailureDialog(context, e.toString());
                       }
                     },
-                    child: const Text("Generate Outfit"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      padding: EdgeInsets.symmetric(
+                        vertical: screenHeight * 0.02,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(11),
+                      ),
+                    ),
+                    child:Text(
+                      "Generate Outfit",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
                   ),
                 ),
               ],
