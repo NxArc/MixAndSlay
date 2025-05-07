@@ -69,12 +69,12 @@ class _CollectionSectionState extends State<CollectionSection> {
       {'imagePath': 'assets/images/stock_images/femaleDisplay/female_accessories.jpg', 'title': 'Accessories'},
     ];
     final List<Map<String, String>> othersDisplay = [
-      {'imagePath': 'assets/female/tops.jpg', 'title': 'Tops'},
-      {'imagePath': 'assets/female/headwear.jpg', 'title': 'Headwear'},
-      {'imagePath': 'assets/female/bottoms.jpg', 'title': 'Bottoms'},
-      {'imagePath': 'assets/female/outerwear.jpg', 'title': 'Outerwear'},
-      {'imagePath': 'assets/female/footwear.jpg', 'title': 'Footwear'},
-      {'imagePath': 'assets/female/accessories.jpg', 'title': 'Accessories'},
+      {'imagePath': 'assets/images/stock_images/maleDisplay/male_tops.jpg', 'title': 'Tops'},
+      {'imagePath': 'assets/images/stock_images/femaleDisplay/female_headwear.jpg', 'title': 'Headwear'},
+      {'imagePath': 'assets/images/stock_images/femaleDisplay/female_bottom.jpg', 'title': 'Bottoms'},
+      {'imagePath': 'assets/images/stock_images/maleDisplay/male_outerwear.jpg', 'title': 'Outerwear'},
+      {'imagePath': 'assets/images/stock_images/femaleDisplay/female_footwear.jpg', 'title': 'Footwear'},
+      {'imagePath': 'assets/images/stock_images/femaleDisplay/female_accessories.jpg', 'title': 'Accessories'},
     ];
     final items =
         gender == 'female'

@@ -10,9 +10,6 @@ void showAddItemDialog(BuildContext context) {
 
   bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
   Color primaryTextColor = isDarkMode ? Colors.white : Colors.black;
-  Color buttonColor = isDarkMode ? Colors.white : Colors.black;
-  Color buttonDisabledColor =
-      isDarkMode ? Color(0xFF918E8E) : Color(0xFF918E8E);
   Color radioButtonColor = isDarkMode ? Colors.white : Colors.black;
 
   showModalBottomSheet(
