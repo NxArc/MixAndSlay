@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fasionrecommender/services/api/openweathermap.dart';
-import 'package:fasionrecommender/services/notification/calendar.dart';
 import 'package:fasionrecommender/views/widgets/closetwidgets.dart/popups/system_outfit_display.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -51,21 +50,6 @@ class _OotdState extends State<Ootd> {
     }
   }
 
-  void _openCalendar(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return CalendarDialog(
-          selectedDay: DateTime.now(),
-          onDaySelected: (selectedDate) {
-            // Do something with the selected date
-            print("Selected: $selectedDate");
-          },
-        );
-      },
-    );
-  }
-
   Future<void> _fetchWeatherAndLocation() async {
     try {
       final position = await getCurrentLocation();
@@ -96,16 +80,13 @@ class _OotdState extends State<Ootd> {
           .from('system_outfits')
           .select('name, image_url');
 
-      outfits =
-          (response as List)
-              .map(
-                (item) => {
-                  'name': item['name'] as String,
-                  'image_url': item['image_url'] as String,
-                },
-              )
-              .where((item) => item['image_url']!.isNotEmpty)
-              .toList();
+      outfits = (response as List)
+          .map((item) => {
+                'name': item['name'] as String,
+                'image_url': item['image_url'] as String,
+              })
+          .where((item) => item['image_url']!.isNotEmpty)
+          .toList();
 
       if (outfits.isNotEmpty) {
         setState(() {});
@@ -209,31 +190,6 @@ class _OotdState extends State<Ootd> {
                             _getTemperatureIcon(double.parse(temp)),
                         ],
                       ),
-                      SizedBox(height: screenSize.height * 0.015),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent, // Transparent background
-    shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              4,
-                            ), // Rectangular with slight rounding
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 5,
-                            vertical: 12,
-                          ),
-                        ),
-                        onPressed: () => _openCalendar(context),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Icon(Icons.calendar_today),
-                            SizedBox(width: 8),
-                            Text("Schedule your OOTD!"),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -248,40 +204,29 @@ class _OotdState extends State<Ootd> {
                   ),
                   child: GestureDetector(
                     onTap: () {
-                      showSystemOutfitDialog(context, currentOutfit!['name']!);
+                     showSystemOutfitDialog(context, currentOutfit!['name']!);
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child:
-                          currentOutfit != null
-                              ? CachedNetworkImage(
-                                imageUrl: currentOutfit['image_url']!,
-                                fit: BoxFit.cover,
-                                placeholder:
-                                    (context, url) => Container(
-                                      color: Colors.grey[200],
-                                      child: const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    ),
-                                errorWidget:
-                                    (context, url, error) => Container(
-                                      color: Colors.grey[300],
-                                      child: const Center(
-                                        child: Icon(
-                                          Icons.broken_image,
-                                          size: 40,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    ),
-                              )
-                              : Container(
+                      child: currentOutfit != null
+                          ? CachedNetworkImage(
+                              imageUrl: currentOutfit['image_url']!,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Container(
                                 color: Colors.grey[200],
+                                child: const Center(child: CircularProgressIndicator()),
+                              ),
+                              errorWidget: (context, url, error) => Container(
+                                color: Colors.grey[300],
                                 child: const Center(
-                                  child: CircularProgressIndicator(),
+                                  child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
                                 ),
                               ),
+                            )
+                          : Container(
+                              color: Colors.grey[200],
+                              child: const Center(child: CircularProgressIndicator()),
+                            ),
                     ),
                   ),
                 ),

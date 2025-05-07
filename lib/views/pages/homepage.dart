@@ -2,7 +2,7 @@ import 'package:fasionrecommender/controllers/homepage_controller.dart';
 import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:fasionrecommender/views/pages/login_page.dart';
 import 'package:fasionrecommender/views/pages/closet.dart';
-import 'package:fasionrecommender/views/widgets/object%20creation/outfit_creation_page.dart';
+import 'package:fasionrecommender/views/pages/outfit_creation_page.dart';
 import 'package:fasionrecommender/views/widgets/global%20widgets/theme_button.dart';
 import 'package:fasionrecommender/views/widgets/homepage%20widgets/homepage_widget.dart';
 import 'package:fasionrecommender/views/widgets/homepage%20widgets/profile_setup_page.dart';
@@ -187,10 +187,16 @@ class _HomeState extends State<Home> {
                     });
                     _pageController.jumpToPage(3);
                   },
-                  icon: Icon(
-                    Icons.edit,
-                    color: _currentIndex == 3 ? activeColor : inactiveColor,
-                    
+                  icon: ValueListenableBuilder<bool>(
+                    valueListenable: isDarkModeNotifier,
+                    builder: (context, isDarkMode, child) {
+                      return Image.asset(
+                        isDarkMode
+                            ? 'assets/images/icons/wardrobe_darkmode_icon.png'
+                            : 'assets/images/icons/wardrobe_icon.png',
+                        color: _currentIndex == 3 ? activeColor : inactiveColor,
+                      );
+                    },
                   ),
                 ),
               ],
