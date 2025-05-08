@@ -2,10 +2,12 @@ import 'package:fasionrecommender/controllers/profile_controller.dart';
 import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:fasionrecommender/data/responsive_utils.dart';
 import 'package:fasionrecommender/views/pages/homepage.dart';
+import 'package:fasionrecommender/views/pages/onboarding_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -124,14 +126,19 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Function to reset SharedPreferences
+  Future<void> resetSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Clears all stored data in SharedPreferences
+    print('SharedPreferences reset!');
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Get the theme and media query values
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final themeColor = themeColorNotifier.value;
 
-    // Use responsive utilities for layout
     final padding = ResponsiveUtils.paddingH(context);
     final vSpacing = ResponsiveUtils.paddingV(context);
     final titleFontSize = ResponsiveUtils.titleSize(context);
@@ -213,8 +220,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  prefixIcon: Icon(Icons.person, 
-                  color: themeColor.withOpacity(0.8)),
+                  prefixIcon: Icon(
+                    Icons.person,
+                    color: themeColor.withOpacity(0.8),
+                  ),
                 ),
               ),
               SizedBox(height: vSpacing),
@@ -250,7 +259,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   });
                 },
               ),
-              Spacer(),
+              SizedBox(height: vSpacing),
               SizedBox(
                 width: buttonWidth,
                 child: ValueListenableBuilder(
@@ -278,6 +287,54 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
         ),
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          bool? confirmed = await showDialog<bool>(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Confirm Reset'),
+                content: Text(
+                  'Are you sure you want to reset your profile data?',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                    child: Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    child: Text('Yes'),
+                  ),
+                ],
+              );
+            },
+          );
+
+          if (confirmed == true) {
+            await resetSharedPreferences();
+   
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder:
+                    (context) => OnboardingPage(
+                      onFinish: () {
+                        // Your finish onboarding logic
+                      },
+                    ),
+              ),
+            );
+          }
+        },
+        child: const Icon(Icons.refresh),
+        tooltip: 'Reset Profile Data',
       ),
     );
   }

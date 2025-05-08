@@ -56,9 +56,7 @@ class _OotdState extends State<Ootd> {
     showDialog(
       context: context,
       builder: (context) {
-        return CalendarDialog(
-          selectedDay: DateTime.now(),
-        );
+        return CalendarDialog(selectedDay: DateTime.now());
       },
     );
   }
@@ -161,6 +159,9 @@ class _OotdState extends State<Ootd> {
                           color: colorScheme.onSurface,
                           fontSize: screenSize.width * 0.045,
                         ),
+                        overflow:
+                            TextOverflow
+                                .ellipsis, // Added overflow for long text
                       ),
                       SizedBox(height: screenSize.height * 0.01),
                       Row(
@@ -174,7 +175,7 @@ class _OotdState extends State<Ootd> {
                           Expanded(
                             child: Text(
                               location,
-                              overflow: TextOverflow.ellipsis,
+                              overflow: TextOverflow.ellipsis, // Already added
                               style: textTheme.bodyMedium?.copyWith(
                                 color: colorScheme.onSurface,
                                 fontSize: screenSize.width * 0.045,
@@ -190,6 +191,9 @@ class _OotdState extends State<Ootd> {
                           color: colorScheme.onSurface.withOpacity(0.6),
                           fontSize: screenSize.width * 0.035,
                         ),
+                        overflow:
+                            TextOverflow
+                                .ellipsis, // Added overflow for long text
                       ),
                       Row(
                         children: [
@@ -200,6 +204,9 @@ class _OotdState extends State<Ootd> {
                               fontSize: screenSize.width * 0.06,
                               color: colorScheme.onSurface,
                             ),
+                            overflow:
+                                TextOverflow
+                                    .ellipsis, // Added overflow for long text
                           ),
                           const SizedBox(width: 8),
                           if (double.tryParse(temp) != null)
@@ -209,8 +216,9 @@ class _OotdState extends State<Ootd> {
                       SizedBox(height: screenSize.height * 0.015),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent, // Transparent background
-    shadowColor: Colors.transparent,
+                          backgroundColor:
+                              Colors.transparent, // Transparent background
+                          shadowColor: Colors.transparent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
                               4,
@@ -235,6 +243,7 @@ class _OotdState extends State<Ootd> {
                   ),
                 ),
               ),
+
               Expanded(
                 flex: 2,
                 child: Padding(
