@@ -92,6 +92,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Adjust title size for different screen sizes
                       Text(
                         titles[_currentIndex],
                         textAlign: TextAlign.center,
@@ -102,6 +103,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         ),
                       ),
                       const SizedBox(height: 16),
+                      // Adjust subtitle size for different screen sizes
                       Text(
                         subtitles[_currentIndex],
                         textAlign: TextAlign.center,

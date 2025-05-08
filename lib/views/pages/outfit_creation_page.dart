@@ -58,7 +58,7 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return FutureBuilder<List<Map<String, dynamic>>>(
+        return FutureBuilder<List<Map<String, dynamic>>>( 
           future: clothingItemService.getClothingItemsByCategory(category),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -236,7 +236,7 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                                     'Beach',
                                     'Cold Weather',
                                   ].map((String value) {
-                                    return DropdownMenuItem<String>(
+                                    return DropdownMenuItem<String>( 
                                       value: value,
                                       child: Text(value),
                                     );
@@ -348,7 +348,7 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                     ),
                   ),
                 ),
-                SizedBox(width: screenWidth * 0.15),
+                SizedBox(width: screenWidth * 0.10),
                 SizedBox(
                   width: ResponsiveUtils.buttonWidth(context) * 0.45,
                   child: ElevatedButton(
@@ -364,7 +364,6 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                         );
                         return;
                       }
-
                       try {
                         final generatedItems = await outfitService.generateSmartOutfit(
                           outfitName: outfitName,
@@ -379,7 +378,6 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                               'Generated outfit is missing a Top or Bottom item.');
                           return;
                         }
-
                         final generatedTop = generatedItems['Top'];
                         final generatedBottom = generatedItems['Bottom'];
 
@@ -389,7 +387,6 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                               context, 'Missing Top or Bottom item ID.');
                           return;
                         }
-
                         setState(() {
                           selectedItemIds['Top'] = generatedTop['id'].toString();
                           selectedItemIds['Bottom'] = generatedBottom['id'].toString();

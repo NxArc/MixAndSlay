@@ -150,141 +150,142 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: padding),
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ),
+                SizedBox(height: vSpacing),
+                Text(
+                  'User Profile',
+                  style: TextStyle(
+                    fontSize: titleFontSize,
+                    fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black,
                   ),
-                  onPressed: () => Navigator.pop(context),
                 ),
-              ),
-              SizedBox(height: vSpacing),
-              Text(
-                'User Profile',
-                style: TextStyle(
-                  fontSize: titleFontSize,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-              ),
-              SizedBox(height: vSpacing),
-              GestureDetector(
-                onTap: _pickImage,
-                child: CircleAvatar(
-                  radius: buttonWidth * 0.15,
-                  backgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
-                  backgroundImage:
-                      _profileImage != null ? FileImage(_profileImage!) : null,
-                  child:
-                      _profileImage == null
-                          ? (_isLoadingAvatar
-                              ? CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  themeColor,
-                                ),
-                              )
-                              : Icon(
-                                Icons.camera_alt,
-                                size: 40,
-                                color: isDark ? Colors.white70 : Colors.black54,
-                              ))
-                          : null,
-                ),
-              ),
-              SizedBox(height: vSpacing * 0.8),
-              Text(
-                'Choose',
-                style: TextStyle(
-                  fontSize: inputFontSize * 0.9,
-                  color: isDark ? Colors.white70 : Colors.black87,
-                ),
-              ),
-              SizedBox(height: vSpacing * 1.5),
-              TextField(
-                controller: _nameController,
-                style: TextStyle(
-                  fontSize: inputFontSize,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
-                  hintText: 'Enter your name',
-                  hintStyle: TextStyle(
-                    color: isDark ? Colors.white54 : Colors.black45,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  prefixIcon: Icon(
-                    Icons.person,
-                    color: themeColor.withOpacity(0.8),
+                SizedBox(height: vSpacing),
+                GestureDetector(
+                  onTap: _pickImage,
+                  child: CircleAvatar(
+                    radius: buttonWidth * 0.25, // Adjust for responsiveness
+                    backgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
+                    backgroundImage:
+                        _profileImage != null ? FileImage(_profileImage!) : null,
+                    child:
+                        _profileImage == null
+                            ? (_isLoadingAvatar
+                                ? CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    themeColor,
+                                  ),
+                                )
+                                : Icon(
+                                  Icons.camera_alt,
+                                  size: 40,
+                                  color: isDark ? Colors.white70 : Colors.black54,
+                                ))
+                            : null,
                   ),
                 ),
-              ),
-              SizedBox(height: vSpacing),
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
-                  hintText: 'Select Gender',
-                  hintStyle: TextStyle(
-                    color: isDark ? Colors.white54 : Colors.black45,
+                SizedBox(height: vSpacing * 0.8),
+                Text(
+                  'Choose',
+                  style: TextStyle(
+                    fontSize: inputFontSize * 0.9,
+                    color: isDark ? Colors.white70 : Colors.black87,
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
+                ),
+                SizedBox(height: vSpacing * 1.5),
+                TextField(
+                  controller: _nameController,
+                  style: TextStyle(
+                    fontSize: inputFontSize,
+                    color: isDark ? Colors.white : Colors.black,
                   ),
-                  prefixIcon: _getGenderIcon(_selectedGender),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
+                    hintText: 'Enter your name',
+                    hintStyle: TextStyle(
+                      color: isDark ? Colors.white54 : Colors.black45,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    prefixIcon: Icon(
+                      Icons.person,
+                      color: themeColor.withOpacity(0.8),
+                    ),
+                  ),
                 ),
-                value: _selectedGender,
-                style: TextStyle(
-                  fontSize: inputFontSize,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-                dropdownColor: isDark ? Colors.grey[900] : Colors.white,
-                items:
-                    ['Male', 'Female', 'Other'].map((gender) {
-                      return DropdownMenuItem(
-                        value: gender,
-                        child: Text(gender),
-                      );
-                    }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedGender = value;
-                  });
-                },
-              ),
-              SizedBox(height: vSpacing),
-              SizedBox(
-                width: buttonWidth,
-                child: ValueListenableBuilder(
-                  valueListenable: themeColorNotifier,
-                  builder: (context, themeColor, _) {
-                    return ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: themeColor.withOpacity(0.8),
-                        foregroundColor: isDark ? Colors.black : Colors.white,
-                        minimumSize: Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      onPressed: _setupProfile,
-                      child: Text(
-                        'Okay',
-                        style: TextStyle(fontSize: inputFontSize),
-                      ),
+                SizedBox(height: vSpacing),
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: isDark ? Colors.grey[900] : Colors.grey[100],
+                    hintText: 'Select Gender',
+                    hintStyle: TextStyle(
+                      color: isDark ? Colors.white54 : Colors.black45,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    prefixIcon: _getGenderIcon(_selectedGender),
+                  ),
+                  value: _selectedGender,
+                  style: TextStyle(
+                    fontSize: inputFontSize,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                  dropdownColor: isDark ? Colors.grey[900] : Colors.white,
+                  items: ['Male', 'Female', 'Other'].map((gender) {
+                    return DropdownMenuItem(
+                      value: gender,
+                      child: Text(gender),
                     );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedGender = value;
+                    });
                   },
                 ),
-              ),
-              SizedBox(height: vSpacing),
-            ],
+                SizedBox(height: vSpacing),
+                SizedBox(
+                  width: buttonWidth,
+                  child: ValueListenableBuilder(
+                    valueListenable: themeColorNotifier,
+                    builder: (context, themeColor, _) {
+                      return ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: themeColor.withOpacity(0.8),
+                          foregroundColor: isDark ? Colors.black : Colors.white,
+                          minimumSize: Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        onPressed: _setupProfile,
+                        child: Text(
+                          'Okay',
+                          style: TextStyle(fontSize: inputFontSize),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: vSpacing),
+              ],
+            ),
           ),
         ),
       ),
@@ -319,16 +320,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
           if (confirmed == true) {
             await resetSharedPreferences();
-   
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder:
-                    (context) => OnboardingPage(
-                      onFinish: () {
-                        // Your finish onboarding logic
-                      },
-                    ),
+                builder: (context) => OnboardingPage(
+                  onFinish: () {
+                    // Your finish onboarding logic
+                  },
+                ),
               ),
             );
           }
