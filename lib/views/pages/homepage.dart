@@ -1,4 +1,4 @@
-import 'package:fasionrecommender/controllers/homepage_controller.dart';
+import 'package:fasionrecommender/controllers/homepage_controller.dart'; 
 import 'package:fasionrecommender/data/notifiers.dart';
 import 'package:fasionrecommender/views/pages/login_page.dart';
 import 'package:fasionrecommender/views/pages/closet.dart';
