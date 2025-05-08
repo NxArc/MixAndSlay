@@ -65,7 +65,7 @@ Future<String?> loadGender() async {
       .single();
 
   if (response['gender'] != null) {
-    return response['gender'].toString().toLowerCase(); // e.g., 'male', 'female'
+    return response['gender'].toString(); // e.g., 'male', 'female'
   }
 
   return null;

@@ -115,21 +115,32 @@ class OutfitService with ChangeNotifier {
   }
 
   //Retrieve System Outfit by Category
-  Future<List<Map<String, dynamic>>> retrieveSystemOutfitsByCategory({
-    required String category,
-  }) async {
-    try {
-      final response = await supabase
-          .from('system_outfits')
-          .select('*')
-          .eq('category', category);
+Future<List<Map<String, dynamic>>> retrieveSystemOutfitsByCategory({
+  required String category,
+  String? gender,
+}) async {
+  try {
+    var query = supabase
+        .from('system_outfits')
+        .select('*')
+        .eq('category', category);
 
-      return List<Map<String, dynamic>>.from(response);
-    } catch (e) {
-      print('Error retrieving outfits by category: $e');
-      return [];
+    if (gender != null &&
+        gender.isNotEmpty &&
+        gender != 'other') {
+      query = query.eq('gender', gender);
     }
+
+    final response = await query;
+
+    return List<Map<String, dynamic>>.from(response);
+  } catch (e) {
+    print('Error retrieving outfits by category: $e');
+    return [];
   }
+}
+
+
 
   //Retrieve System Outfit By Name
   Future<Map<String, dynamic>?> retrieveSystemOutfitByName(String name) async {
