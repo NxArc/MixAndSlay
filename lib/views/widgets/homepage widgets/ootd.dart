@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fasionrecommender/services/api/openweathermap.dart';
-
 import 'package:fasionrecommender/views/widgets/closetwidgets.dart/popups/system_outfit_display.dart';
 import 'package:fasionrecommender/views/widgets/homepage%20widgets/calendar.dart';
 import 'package:flutter/material.dart';
@@ -91,16 +90,13 @@ class _OotdState extends State<Ootd> {
           .from('system_outfits')
           .select('name, image_url');
 
-      outfits =
-          (response as List)
-              .map(
-                (item) => {
-                  'name': item['name'] as String,
-                  'image_url': item['image_url'] as String,
-                },
-              )
-              .where((item) => item['image_url']!.isNotEmpty)
-              .toList();
+      outfits = (response as List)
+          .map((item) => {
+                'name': item['name'] as String,
+                'image_url': item['image_url'] as String,
+              })
+          .where((item) => item['image_url']!.isNotEmpty)
+          .toList();
 
       if (outfits.isNotEmpty) {
         setState(() {});
@@ -138,163 +134,141 @@ class _OotdState extends State<Ootd> {
             ),
           ],
         ),
-        child: SizedBox(
-          height: screenSize.height * 0.25,
-          child: Row(
-            children: [
-              Expanded(
-                flex: 3,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: screenSize.width * 0.05,
-                    vertical: screenSize.height * 0.03,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Today, ${DateFormat('MMM').format(now)} ${now.day}',
-                        style: textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.onSurface,
-                          fontSize: screenSize.width * 0.045,
-                        ),
-                        overflow:
-                            TextOverflow
-                                .ellipsis, // Added overflow for long text
-                      ),
-                      SizedBox(height: screenSize.height * 0.01),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            size: screenSize.width * 0.04,
-                            color: colorScheme.primary.withOpacity(0.8),
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              location,
-                              overflow: TextOverflow.ellipsis, // Already added
-                              style: textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurface,
-                                fontSize: screenSize.width * 0.045,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: screenSize.height * 0.01),
-                      Text(
-                        'Weather',
-                        style: textTheme.labelMedium?.copyWith(
-                          color: colorScheme.onSurface.withOpacity(0.6),
-                          fontSize: screenSize.width * 0.035,
-                        ),
-                        overflow:
-                            TextOverflow
-                                .ellipsis, // Added overflow for long text
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            '$temp°C',
-                            style: textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: screenSize.width * 0.06,
-                              color: colorScheme.onSurface,
-                            ),
-                            overflow:
-                                TextOverflow
-                                    .ellipsis, // Added overflow for long text
-                          ),
-                          const SizedBox(width: 8),
-                          if (double.tryParse(temp) != null)
-                            _getTemperatureIcon(double.parse(temp)),
-                        ],
-                      ),
-                      SizedBox(height: screenSize.height * 0.015),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Colors.transparent, // Transparent background
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              4,
-                            ), // Rectangular with slight rounding
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 5,
-                            vertical: 12,
-                          ),
-                        ),
-                        onPressed: () => _openCalendar(context),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Icon(Icons.calendar_today),
-                            SizedBox(width: 8),
-                            Text("Schedule your OOTD!"),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isCompact = constraints.maxWidth < 600;
 
-              Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    top: screenSize.height * 0.01,
-                    right: screenSize.width * 0.02,
-                    bottom: screenSize.height * 0.01,
-                  ),
-                  child: GestureDetector(
-                    onTap: () {
-                      showSystemOutfitDialog(context, currentOutfit!['name']!);
-                    },
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child:
-                          currentOutfit != null
-                              ? CachedNetworkImage(
-                                imageUrl: currentOutfit['image_url']!,
-                                fit: BoxFit.cover,
-                                placeholder:
-                                    (context, url) => Container(
-                                      color: Colors.grey[200],
-                                      child: const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    ),
-                                errorWidget:
-                                    (context, url, error) => Container(
-                                      color: Colors.grey[300],
-                                      child: const Center(
-                                        child: Icon(
-                                          Icons.broken_image,
-                                          size: 40,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    ),
-                              )
-                              : Container(
-                                color: Colors.grey[200],
-                                child: const Center(
-                                  child: CircularProgressIndicator(),
-                                ),
-                              ),
+            return Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenSize.width * 0.04,
+                      vertical: screenSize.height * 0.015,
                     ),
+                    child: _buildInfoSection(textTheme, colorScheme, screenSize, isCompact),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: SizedBox(
+                    width: isCompact ? 120 : 180,
+                    height: isCompact ? 160 : 220,
+                    child: _buildImageSection(currentOutfit),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoSection(TextTheme textTheme, ColorScheme colorScheme, Size screenSize, bool isCompact) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Today, ${DateFormat('MMM').format(now)} ${now.day}',
+          style: textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w500,
+            color: colorScheme.onSurface,
+            fontSize: isCompact ? 18 : screenSize.width * 0.045,
+          ),
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: 6),
+        Row(
+          children: [
+            Icon(Icons.location_on, size: isCompact ? 16 : 18, color: colorScheme.primary.withOpacity(0.8)),
+            const SizedBox(width: 4),
+            Expanded(
+              child: Text(
+                location,
+                overflow: TextOverflow.ellipsis,
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurface,
+                  fontSize: isCompact ? 16 : screenSize.width * 0.045,
+                ),
               ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Text(
+          'Weather',
+          style: textTheme.labelMedium?.copyWith(
+            color: colorScheme.onSurface.withOpacity(0.6),
+            fontSize: isCompact ? 11 : screenSize.width * 0.035,
+          ),
+        ),
+        Row(
+          children: [
+            Text(
+              '$temp°C',
+              style: textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: isCompact ? 24 : screenSize.width * 0.06,
+                color: colorScheme.onSurface,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(width: 8),
+            if (double.tryParse(temp) != null) _getTemperatureIcon(double.parse(temp)),
+          ],
+        ),
+        const SizedBox(height: 10),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 12),
+          ),
+          onPressed: () => _openCalendar(context),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              Icon(Icons.calendar_today),
+              SizedBox(width: 8),
+              Text("Schedule your OOTD!"),
             ],
           ),
         ),
+      ],
+    );
+  }
+
+  Widget _buildImageSection(Map<String, String>? currentOutfit) {
+    return GestureDetector(
+      onTap: () {
+        if (currentOutfit != null) {
+          showSystemOutfitDialog(context, currentOutfit['name']!);
+        }
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: currentOutfit != null
+            ? CachedNetworkImage(
+                imageUrl: currentOutfit['image_url']!,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  color: Colors.grey[200],
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: Colors.grey[300],
+                  child: const Center(
+                    child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                  ),
+                ),
+              )
+            : Container(
+                color: Colors.grey[200],
+                child: const Center(child: CircularProgressIndicator()),
+              ),
       ),
     );
   }

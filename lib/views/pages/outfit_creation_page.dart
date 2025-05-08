@@ -5,8 +5,6 @@ import 'package:fasionrecommender/views/widgets/closetwidgets.dart/popups/saved_
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-// ... (imports remain unchanged)
-
 class OutfitCreationPage extends StatefulWidget {
   const OutfitCreationPage({super.key});
 
@@ -106,32 +104,29 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                 height: MediaQuery.of(context).size.height * 0.5,
                 child: GridView.builder(
                   itemCount: items.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: MediaQuery.of(context).size.width > 600 ? 4 : 3,
+                    crossAxisSpacing: ResponsiveUtils.paddingH(context) * 0.5,
+                    mainAxisSpacing: ResponsiveUtils.paddingV(context) * 0.5,
                   ),
                   itemBuilder: (context, index) {
                     final item = items[index];
                     return GestureDetector(
                       onTap: () {
                         setState(() {
-                          selectedItemIds[displayLabel] =
-                              item['item_id'].toString();
+                          selectedItemIds[displayLabel] = item['item_id'].toString();
                           selectedItemImages[displayLabel] = item['image_url'];
                         });
                         Navigator.of(context).pop();
                       },
-                      child:
-                          item['image_url'] != null
-                              ? Image.network(
-                                item['image_url'],
-                                fit: BoxFit.cover,
-                                errorBuilder:
-                                    (context, error, stackTrace) =>
-                                        const Icon(Icons.broken_image),
-                              )
-                              : const Icon(Icons.image_not_supported),
+                      child: item['image_url'] != null
+                          ? Image.network(
+                              item['image_url'],
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.broken_image),
+                            )
+                          : const Icon(Icons.image_not_supported),
                     );
                   },
                 ),
@@ -145,6 +140,8 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
 
   Widget _buildItemTile(String label) {
     final selectedImage = selectedItemImages[label];
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return GestureDetector(
       onTap: () {
         final category = _categoryMap[label] ?? label;
@@ -154,20 +151,19 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
         children: [
           Container(
             width: double.infinity,
-            height: MediaQuery.of(context).size.height * 0.16,
+            height: screenHeight * 0.16,
             decoration: BoxDecoration(
               color: Colors.grey[300],
               borderRadius: BorderRadius.circular(12),
-              image:
-                  selectedImage != null
-                      ? DecorationImage(
-                        image: NetworkImage(selectedImage),
-                        fit: BoxFit.cover,
-                      )
-                      : null,
+              image: selectedImage != null
+                  ? DecorationImage(
+                      image: NetworkImage(selectedImage),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
             ),
           ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+          SizedBox(height: screenHeight * 0.01),
           Text(
             label,
             style: TextStyle(
@@ -182,11 +178,10 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final paddingH = ResponsiveUtils.paddingH(context);
-    final paddingV = ResponsiveUtils.paddingV(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    final titleFontSize = ResponsiveUtils.titleSize(context);
+    final paddingH = ResponsiveUtils.paddingH(context);
+    final paddingV = ResponsiveUtils.paddingV(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -195,10 +190,10 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
         title: Text(
           'Create an Outfit',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-            fontSize: titleFontSize,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
+                fontWeight: FontWeight.w600,
+                fontSize: ResponsiveUtils.titleSize(context),
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
         ),
       ),
       body: Padding(
@@ -231,22 +226,21 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                                   isExpanded: true,
                                   hint: const Text("Occasion"),
                                   value: selectedOccasion,
-                                  items:
-                                      [
-                                        'Formal',
-                                        'Casual',
-                                        'Sporty',
-                                        'Outdoor',
-                                        'Professional',
-                                        'Party',
-                                        'Beach',
-                                        'Cold Weather',
-                                      ].map((String value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(value),
-                                        );
-                                      }).toList(),
+                                  items: [
+                                    'Formal',
+                                    'Casual',
+                                    'Sporty',
+                                    'Outdoor',
+                                    'Professional',
+                                    'Party',
+                                    'Beach',
+                                    'Cold Weather',
+                                  ].map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
                                   onChanged: (String? newValue) {
                                     setState(() {
                                       selectedOccasion = newValue;
@@ -260,15 +254,12 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                                   isExpanded: true,
                                   hint: const Text("WeatherFit"),
                                   value: selectedWeatherFit,
-                                  items:
-                                      ['Cold', 'Mild', 'Warm'].map((
-                                        String value,
-                                      ) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(value),
-                                        );
-                                      }).toList(),
+                                  items: ['Cold', 'Mild', 'Warm'].map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
                                   onChanged: (String? newValue) {
                                     setState(() {
                                       selectedWeatherFit = newValue;
@@ -282,9 +273,9 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                       ),
                     ),
                     GridView.count(
-                      crossAxisCount: 2,
+                      crossAxisCount: screenWidth > 600 ? 3 : 2,
                       crossAxisSpacing: screenWidth * 0.03,
-                      mainAxisSpacing: screenHeight * 0.001,
+                      mainAxisSpacing: screenHeight * 0.01,
                       childAspectRatio: 1,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -310,9 +301,8 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                   child: ElevatedButton(
                     onPressed: () async {
                       final outfitName = nameController.text.trim();
-
-                      if (selectedItemIds['Top']!.isEmpty ||
-                          selectedItemIds['Bottom']!.isEmpty ||
+                      if (selectedItemIds['Top'] == null ||
+                          selectedItemIds['Bottom'] == null ||
                           selectedOccasion == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -342,7 +332,7 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:Theme.of(context).colorScheme.primary,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
                       padding: EdgeInsets.symmetric(
                         vertical: screenHeight * 0.02,
                       ),
@@ -352,7 +342,8 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                     ),
                     child: Text(
                       "Create Outfit",
-                      style: TextStyle(color:Theme.of(context).colorScheme.onPrimary,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
                   ),
@@ -375,46 +366,36 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                       }
 
                       try {
-                        final generatedItems = await outfitService
-                            .generateSmartOutfit(
-                              outfitName: outfitName,
-                              occasion: selectedOccasion!,
-                              weatherFit: selectedWeatherFit,
-                            );
+                        final generatedItems = await outfitService.generateSmartOutfit(
+                          outfitName: outfitName,
+                          occasion: selectedOccasion!,
+                          weatherFit: selectedWeatherFit,
+                        );
 
                         if (generatedItems == null ||
                             !generatedItems.containsKey('Top') ||
                             !generatedItems.containsKey('Bottom')) {
-                          showFailureDialog(
-                            context,
-                            'Generated outfit is missing a Top or Bottom item.',
-                          );
+                          showFailureDialog(context,
+                              'Generated outfit is missing a Top or Bottom item.');
                           return;
                         }
 
-                        // Extract and assign only valid IDs (defensive)
                         final generatedTop = generatedItems['Top'];
                         final generatedBottom = generatedItems['Bottom'];
 
                         if (generatedTop?['id'] == null ||
                             generatedBottom?['id'] == null) {
                           showFailureDialog(
-                            context,
-                            'Missing Top or Bottom item ID.',
-                          );
+                              context, 'Missing Top or Bottom item ID.');
                           return;
                         }
 
                         setState(() {
-                          selectedItemIds['Top'] =
-                              generatedTop['id'].toString();
-                          selectedItemIds['Bottom'] =
-                              generatedBottom['id'].toString();
+                          selectedItemIds['Top'] = generatedTop['id'].toString();
+                          selectedItemIds['Bottom'] = generatedBottom['id'].toString();
                           selectedItemImages['Top'] = generatedTop['image_url'];
-                          selectedItemImages['Bottom'] =
-                              generatedBottom['image_url'];
+                          selectedItemImages['Bottom'] = generatedBottom['image_url'];
 
-                          // Optional: loop through rest of the items
                           for (final entry in generatedItems.entries) {
                             final key = entry.key;
                             final item = entry.value;
@@ -437,7 +418,7 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                         borderRadius: BorderRadius.circular(11),
                       ),
                     ),
-                    child:Text(
+                    child: Text(
                       "Generate Outfit",
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onPrimary,

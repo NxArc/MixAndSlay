@@ -5,9 +5,14 @@ import 'package:fasionrecommender/views/pages/widget_tree.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/scheduler.dart'; // Required for brightness detection
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Detect and set initial theme mode based on system brightness
+  final brightness = SchedulerBinding.instance.platformDispatcher.platformBrightness;
+  themeModeNotifier.value = brightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light;
 
   await Supabase.initialize(
     url: 'https://dqderqwpilsitwnbvjhj.supabase.co',

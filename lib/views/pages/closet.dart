@@ -87,6 +87,7 @@ class _VirtualClosetPageState extends State<VirtualClosetPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 OutfitOfTheDayWidget(),
+                SizedBox(height: verticalPadding * 0.75),
                 CollectionSection(
                   isExpanded: expandedIndex == 0,
                   onTap: () => toggleExpand(0),
