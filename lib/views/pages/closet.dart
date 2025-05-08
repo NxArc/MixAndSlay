@@ -1,4 +1,5 @@
 import 'package:fasionrecommender/data/responsive_utils.dart';
+import 'package:fasionrecommender/views/widgets/closetwidgets.dart/sections/ootd_section.dart';
 import 'package:flutter/material.dart';
 import 'package:fasionrecommender/views/widgets/closetwidgets.dart/sections/collection_section.dart';
 import 'package:fasionrecommender/views/widgets/closetwidgets.dart/popups/outfit_display.dart';
@@ -19,21 +20,22 @@ Future<void> showOutfitDialog(BuildContext context, String outfitId) {
     builder: (context) {
       return Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        backgroundColor: Theme.of(context).colorScheme.onSurface
-
-        ,
+        backgroundColor: Theme.of(context).colorScheme.onSurface,
         child: Stack(
           children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: MediaQuery.of(context).size.height * 0.8,
-                child: OutfitDisplayWidget(outfitID: outfitId),
-              ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: MediaQuery.of(context).size.height * 0.8,
+              child: OutfitDisplayWidget(outfitID: outfitId),
+            ),
             Positioned(
               right: 8,
               top: 8,
               child: IconButton(
-                icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface),
+                icon: Icon(
+                  Icons.close,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ),
@@ -68,10 +70,10 @@ class _VirtualClosetPageState extends State<VirtualClosetPage> {
         title: Text(
           'Closet',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-                fontSize: titleFontSize,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+            fontWeight: FontWeight.w600,
+            fontSize: titleFontSize,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
       ),
       body: LayoutBuilder(
@@ -84,6 +86,7 @@ class _VirtualClosetPageState extends State<VirtualClosetPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                OutfitOfTheDayWidget(),
                 CollectionSection(
                   isExpanded: expandedIndex == 0,
                   onTap: () => toggleExpand(0),
@@ -98,10 +101,15 @@ class _VirtualClosetPageState extends State<VirtualClosetPage> {
                   onPressed: () {
                     showAddItemDialog(context);
                   },
-                  icon: Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimary),
+                  icon: Icon(
+                    Icons.add,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
                   label: Text(
                     'New Item',
-                    style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,

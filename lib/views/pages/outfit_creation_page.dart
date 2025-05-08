@@ -342,11 +342,19 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
+                      backgroundColor:Theme.of(context).colorScheme.primary,
                       padding: EdgeInsets.symmetric(
                         vertical: screenHeight * 0.02,
                       ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(11),
+                      ),
                     ),
-                    child: const Text("Create Outfit"),
+                    child: Text(
+                      "Create Outfit",
+                      style: TextStyle(color:Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
                   ),
                 ),
                 SizedBox(width: screenWidth * 0.15),
@@ -420,7 +428,21 @@ class _OutfitCreationPageState extends State<OutfitCreationPage> {
                         showFailureDialog(context, e.toString());
                       }
                     },
-                    child: const Text("Generate Outfit"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      padding: EdgeInsets.symmetric(
+                        vertical: screenHeight * 0.02,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(11),
+                      ),
+                    ),
+                    child:Text(
+                      "Generate Outfit",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
                   ),
                 ),
               ],

@@ -7,49 +7,46 @@ class OutfitService with ChangeNotifier {
 
   OutfitService(this.supabase);
 
- Future<void> createCustomOutfit({
-  required String topId,
-  required String bottomId,
-  String? headwearId,
-  String? accessoriesId,
-  String? footwearId,
-  String? weatherFit,
-  String? outerwearId,
-  String? outfitName,
-  required String occasion,
-}) async {
-  try {
-    final user = supabase.auth.currentUser;
-    if (user == null) throw Exception('User not authenticated');
+  Future<void> createCustomOutfit({
+    required String topId,
+    required String bottomId,
+    String? headwearId,
+    String? accessoriesId,
+    String? footwearId,
+    String? weatherFit,
+    String? outerwearId,
+    String? outfitName,
+    required String occasion,
+  }) async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
 
-    outfitName ??= 'Unnamed Outfit';
+      outfitName ??= 'Unnamed Outfit';
 
-    final insertData = {
-      'uuid': user.id,
-      'created_at': DateTime.now().toIso8601String(),
-      'outfit_name': outfitName,
-      'top': topId,
-      'bottom': bottomId,
-      'occasion': occasion,
+      final insertData = {
+        'uuid': user.id,
+        'created_at': DateTime.now().toIso8601String(),
+        'outfit_name': outfitName,
+        'top': topId,
+        'bottom': bottomId,
+        'occasion': occasion,
+      };
 
-    };
-
-    if (headwearId != null) insertData['headwear'] = headwearId;
-    if (accessoriesId != null) insertData['accessories'] = accessoriesId;
-    if (footwearId != null) insertData['footwear'] = footwearId;
-    if (outerwearId != null) insertData['outerwear'] = outerwearId;
-    if (weatherFit != null) insertData['weatherFit'] = weatherFit;
-    // Insert the outfit into the database
-    await supabase.from('user_outfits').insert(insertData);
-    // Notify listeners if you're using ChangeNotifier
-    notifyListeners();
-  } catch (e) {
-    print('Error creating custom outfit: $e');
-    rethrow; // Optional: propagate the error if needed
+      if (headwearId != null) insertData['headwear'] = headwearId;
+      if (accessoriesId != null) insertData['accessories'] = accessoriesId;
+      if (footwearId != null) insertData['footwear'] = footwearId;
+      if (outerwearId != null) insertData['outerwear'] = outerwearId;
+      if (weatherFit != null) insertData['weatherFit'] = weatherFit;
+      // Insert the outfit into the database
+      await supabase.from('user_outfits').insert(insertData);
+      // Notify listeners if you're using ChangeNotifier
+      notifyListeners();
+    } catch (e) {
+      print('Error creating custom outfit: $e');
+      rethrow; // Optional: propagate the error if needed
+    }
   }
-}
-
-
 
   //Delete Outfit From Database
   Future<void> deleteOutfit(String outfitId) async {
@@ -117,7 +114,7 @@ class OutfitService with ChangeNotifier {
     }
   }
 
-//Retrieve System Outfit by Category
+  //Retrieve System Outfit by Category
   Future<List<Map<String, dynamic>>> retrieveSystemOutfitsByCategory({
     required String category,
   }) async {
@@ -135,9 +132,7 @@ class OutfitService with ChangeNotifier {
   }
 
   //Retrieve System Outfit By Name
-  Future<Map<String, dynamic>?> retrieveSystemOutfitByName(
-    String name,
-  ) async {
+  Future<Map<String, dynamic>?> retrieveSystemOutfitByName(String name) async {
     try {
       final response =
           await supabase
@@ -399,4 +394,115 @@ class OutfitService with ChangeNotifier {
 
     return List<Map<String, dynamic>>.from(response);
   }
+
+  // Add Outfit of the Day (OOTD)
+Future<void> setOutfitOfTheDay({
+  required String outfitId,
+  required DateTime date,
+}) async {
+  try {
+    final user = supabase.auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    final isoDateOnly = DateTime(date.year, date.month, date.day).toIso8601String();
+
+    // Delete any existing entry for this user and date (match on date only, not timestamp)
+    await supabase
+        .from('user_ootd')
+        .delete()
+        .eq('uid', user.id)
+        .eq('date', isoDateOnly);
+
+    // Prepare new insert data
+    final insertData = {
+      'uid': user.id,
+      'outfit_id': outfitId,
+      'date': isoDateOnly,
+      'created_at': DateTime.now().toIso8601String(),
+    };
+
+    // Insert the new OOTD entry
+    await supabase.from('user_ootd').insert(insertData);
+
+    notifyListeners();
+    print('Outfit of the Day set successfully.');
+  } catch (e) {
+    print('Error setting Outfit of the Day: $e');
+    rethrow;
+  }
+}
+
+
+  Future<List<Map<String, dynamic>>> retrieveOutfitsOfTheDay() async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+
+      final response = await supabase
+          .from('user_ootd')
+          .select('outfit_id, date')
+          .eq('uid', user.id);
+
+      final data = response;
+
+        return data.cast<Map<String, dynamic>>();
+
+    } catch (e) {
+      print('Error retrieving OOTDs: $e');
+      rethrow;
+    }
+  }
+
+  // Retrieve Outfit of the Day by date
+  Future<Map<String, dynamic>?> getOutfitOfTheDay(DateTime date) async {
+  try {
+    final user = supabase.auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    // Step 1: Retrieve the Outfit ID for the given date
+    final response =
+        await supabase
+            .from('user_ootd')
+            .select('outfit_id, date')
+            .eq('uid', user.id)
+            .eq('date', date.toIso8601String())
+            .maybeSingle();
+
+    if (response != null && response['outfit_id'] != null) {
+      final outfitId = response['outfit_id'];
+
+      // Step 2: Retrieve the outfit details based on the outfit_id
+      final outfitResponse =
+          await supabase
+              .from('user_outfits')
+              .select('*')
+              .eq('outfit_id', outfitId)
+              .maybeSingle();
+
+      return outfitResponse;
+    } else {
+      print('No Outfit of the Day set for this date.');
+      return null;
+    }
+  } catch (e) {
+    print('Error retrieving Outfit of the Day: $e');
+    return null;
+  }
+}
+  Future<void> deleteOutfitOfTheDay(DateTime date) async {
+  final userId = supabase.auth.currentUser?.id;
+  if (userId == null) {
+    throw Exception('User not authenticated');
+  }
+
+  final formattedDate = DateTime(date.year, date.month, date.day);
+
+  await supabase
+      .from('user_ootd')
+      .delete()
+      .eq('uid', userId)
+      .eq('date', formattedDate.toIso8601String().split('T').first);
+
+}
+
 }

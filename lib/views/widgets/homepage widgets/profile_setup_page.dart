@@ -130,7 +130,6 @@ class _ProfilePageState extends State<ProfilePage> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final themeColor = themeColorNotifier.value;
-    final screenSize = MediaQuery.of(context).size;
 
     // Use responsive utilities for layout
     final padding = ResponsiveUtils.paddingH(context);

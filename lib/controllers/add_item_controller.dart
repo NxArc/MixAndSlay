@@ -2,7 +2,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:fasionrecommender/views/widgets/object%20widgets/clothing_item_upload_page.dart';
+import 'package:fasionrecommender/views/widgets/object%20creation/clothing_item_upload_page.dart';
 
 class AddItemController {
   final ImagePicker _picker = ImagePicker();
